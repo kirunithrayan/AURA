@@ -1,0 +1,88 @@
+name: aura
+description: "AURA — Adaptive Unified Repository Assistant. AI-powered Knowledge Workspace for Android."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Dependency Injection
+  get_it: ^8.0.2
+
+  # Database
+  sqflite_sqlcipher: ^3.1.0+1
+  flutter_secure_storage: ^9.2.2
+
+  # Background Processing
+  workmanager: ^0.5.2
+
+  # AI / ML
+  flutter_onnxruntime: ^0.5.0
+
+  # OCR
+  google_mlkit_text_recognition: ^0.14.0
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Serialization
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # File Picking
+  file_picker: ^8.1.6
+
+  # PDF
+  pdfx: ^2.7.0
+
+  # Image Viewing
+  photo_view: ^0.15.0
+
+  # Graph Visualization
+  graphview: ^1.2.0
+
+  # Icons
+  material_symbols_icons: ^4.2796.0
+
+  # Utilities
+  path_provider: ^2.1.5
+  path: ^1.9.0
+  uuid: ^4.5.1
+  equatable: ^2.0.7
+  crypto: ^3.0.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.6.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/models/
+    - assets/icons/
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
