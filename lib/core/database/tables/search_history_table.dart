@@ -11,7 +11,10 @@ class SearchHistoryTable {
       search_type TEXT,
       result_count INTEGER,
       workspace_id TEXT,
-      created_at INTEGER
+      created_at INTEGER,
+      last_used INTEGER,
+      hit_count INTEGER DEFAULT 0,
+      is_pinned INTEGER DEFAULT 0
     )
   ''';
 }

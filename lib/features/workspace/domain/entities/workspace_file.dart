@@ -18,6 +18,12 @@ class WorkspaceFile extends Equatable {
   final String? contentHash;
   final List<String> tags;
 
+  // Document Viewer State
+  final int? lastOpenedAt;
+  final int? lastViewedPage;
+  final double? lastZoomLevel;
+  final double? lastScrollPosition;
+
   const WorkspaceFile({
     required this.id,
     required this.workspaceId,
@@ -34,6 +40,10 @@ class WorkspaceFile extends Equatable {
     this.aiStage = 1,
     this.contentHash,
     this.tags = const [],
+    this.lastOpenedAt,
+    this.lastViewedPage,
+    this.lastZoomLevel,
+    this.lastScrollPosition,
   });
 
   @override
@@ -53,5 +63,9 @@ class WorkspaceFile extends Equatable {
         aiStage,
         contentHash,
         tags,
+        lastOpenedAt,
+        lastViewedPage,
+        lastZoomLevel,
+        lastScrollPosition,
       ];
 }

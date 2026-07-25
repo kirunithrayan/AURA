@@ -26,10 +26,12 @@ class AuraEmptyState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 64,
-              color: context.theme.colorScheme.outline.withOpacity(0.5),
+            ExcludeSemantics(
+              child: Icon(
+                icon,
+                size: 64,
+                color: context.theme.colorScheme.outline.withOpacity(0.5),
+              ),
             ),
             AppSpacing.v24,
             Text(

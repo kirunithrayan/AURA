@@ -11,8 +11,10 @@ abstract class WorkspaceLocalDataSource {
   Future<WorkspaceModel> updateWorkspace(WorkspaceModel workspace);
   Future<void> deleteWorkspace(String id);
 
+  Future<WorkspaceFileModel> getFileById(String fileId);
   Future<List<WorkspaceFileModel>> getWorkspaceFiles(String workspaceId);
   Future<WorkspaceFileModel> addFile(WorkspaceFileModel file);
+  Future<void> updateFileViewerState(String fileId, {int? lastOpenedAt, int? lastViewedPage, double? lastZoomLevel, double? lastScrollPosition});
   Future<void> removeFile(String id);
 
   Future<List<WorkspaceFileModel>> getPinnedDocuments(String workspaceId);
@@ -87,7 +89,6 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
   Future<void> deleteWorkspace(String id) async {
     try {
       final db = await dbHelper.database;
-      // ON DELETE CASCADE will handle files, edges, etc.
       await db.delete(
         DbConstants.workspacesTable,
         where: 'id = ?',
@@ -95,6 +96,23 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
       );
     } catch (e) {
       throw DatabaseException('Failed to delete workspace: $e');
+    }
+  }
+
+  @override
+  Future<WorkspaceFileModel> getFileById(String fileId) async {
+    try {
+      final db = await dbHelper.database;
+      final results = await db.query(
+        DbConstants.workspaceFilesTable,
+        where: 'id = ?',
+        whereArgs: [fileId],
+      );
+      if (results.isEmpty) throw const NotFoundException('File not found');
+      return WorkspaceFileModel.fromMap(results.first);
+    } catch (e) {
+      if (e is NotFoundException) rethrow;
+      throw DatabaseException('Failed to get file: $e');
     }
   }
 
@@ -120,7 +138,6 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
       final db = await dbHelper.database;
       await db.insert(DbConstants.workspaceFilesTable, file.toMap());
       
-      // Update workspace file_count and total_size
       await db.rawUpdate('''
         UPDATE ${DbConstants.workspacesTable} 
         SET file_count = file_count + 1, 
@@ -135,11 +152,33 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
   }
 
   @override
+  Future<void> updateFileViewerState(String fileId, {int? lastOpenedAt, int? lastViewedPage, double? lastZoomLevel, double? lastScrollPosition}) async {
+    try {
+      final db = await dbHelper.database;
+      final Map<String, dynamic> updates = {};
+      if (lastOpenedAt != null) updates['last_opened_at'] = lastOpenedAt;
+      if (lastViewedPage != null) updates['last_viewed_page'] = lastViewedPage;
+      if (lastZoomLevel != null) updates['last_zoom_level'] = lastZoomLevel;
+      if (lastScrollPosition != null) updates['last_scroll_position'] = lastScrollPosition;
+      
+      if (updates.isEmpty) return;
+      
+      await db.update(
+        DbConstants.workspaceFilesTable,
+        updates,
+        where: 'id = ?',
+        whereArgs: [fileId],
+      );
+    } catch (e) {
+      throw DatabaseException('Failed to update file viewer state: $e');
+    }
+  }
+
+  @override
   Future<void> removeFile(String id) async {
     try {
       final db = await dbHelper.database;
       
-      // Get file to adjust workspace stats before delete
       final fileResult = await db.query(DbConstants.workspaceFilesTable, where: 'id = ?', whereArgs: [id]);
       if (fileResult.isNotEmpty) {
         final file = WorkspaceFileModel.fromMap(fileResult.first);
@@ -166,7 +205,6 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
   Future<List<WorkspaceFileModel>> getPinnedDocuments(String workspaceId) async {
     try {
       final db = await dbHelper.database;
-      // Join pinned_documents with workspace_files
       final results = await db.rawQuery('''
         SELECT wf.* FROM ${DbConstants.workspaceFilesTable} wf
         INNER JOIN ${DbConstants.pinnedDocumentsTable} pd ON wf.id = pd.file_id
@@ -185,7 +223,7 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
     try {
       final db = await dbHelper.database;
       final Map<String, dynamic> data = {
-        'id': '\${fileId}_\${workspaceId}', // composite pseudo-id
+        'id': '${fileId}_${workspaceId}',
         'file_id': fileId,
         'workspace_id': workspaceId,
         'pinned_at': DateTime.now().millisecondsSinceEpoch,

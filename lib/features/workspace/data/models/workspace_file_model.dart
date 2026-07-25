@@ -19,6 +19,10 @@ class WorkspaceFileModel extends WorkspaceFile {
     super.aiStage,
     super.contentHash,
     super.tags,
+    super.lastOpenedAt,
+    super.lastViewedPage,
+    super.lastZoomLevel,
+    super.lastScrollPosition,
   });
 
   factory WorkspaceFileModel.fromMap(Map<String, dynamic> map) {
@@ -48,6 +52,10 @@ class WorkspaceFileModel extends WorkspaceFile {
       aiStage: map['ai_stage'] as int? ?? 1,
       contentHash: map['content_hash'] as String?,
       tags: parsedTags,
+      lastOpenedAt: map['last_opened_at'] as int?,
+      lastViewedPage: map['last_viewed_page'] as int?,
+      lastZoomLevel: map['last_zoom_level'] as double?,
+      lastScrollPosition: map['last_scroll_position'] as double?,
     );
   }
 
@@ -68,6 +76,10 @@ class WorkspaceFileModel extends WorkspaceFile {
       'ai_stage': aiStage,
       'content_hash': contentHash,
       'tags': jsonEncode(tags),
+      'last_opened_at': lastOpenedAt,
+      'last_viewed_page': lastViewedPage,
+      'last_zoom_level': lastZoomLevel,
+      'last_scroll_position': lastScrollPosition,
     };
   }
 
@@ -88,6 +100,10 @@ class WorkspaceFileModel extends WorkspaceFile {
       aiStage: entity.aiStage,
       contentHash: entity.contentHash,
       tags: entity.tags,
+      lastOpenedAt: entity.lastOpenedAt,
+      lastViewedPage: entity.lastViewedPage,
+      lastZoomLevel: entity.lastZoomLevel,
+      lastScrollPosition: entity.lastScrollPosition,
     );
   }
 }

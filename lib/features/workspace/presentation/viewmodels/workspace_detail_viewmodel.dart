@@ -7,7 +7,6 @@ import '../../domain/usecases/pin_document.dart';
 import '../../domain/usecases/unpin_document.dart';
 import '../../domain/usecases/import_files.dart';
 import '../../../../services/file_service.dart';
-import 'package:get_it/get_it.dart';
 
 part 'workspace_detail_viewmodel.g.dart';
 
@@ -18,16 +17,13 @@ class WorkspaceDetailState {
   final List<WorkspaceFile> allFiles;
   final List<WorkspaceFile> pinnedFiles;
   final DocumentSortOption sortOption;
-  final bool isLoading;
-  final String? error;
-
+  final String workspaceId; // we should probably keep track if we need, but wait, the viewmodel passes it.
+  
   const WorkspaceDetailState({
     this.workspace,
     this.allFiles = const [],
     this.pinnedFiles = const [],
     this.sortOption = DocumentSortOption.date,
-    this.isLoading = false,
-    this.error,
   });
 
   WorkspaceDetailState copyWith({
@@ -35,16 +31,12 @@ class WorkspaceDetailState {
     List<WorkspaceFile>? allFiles,
     List<WorkspaceFile>? pinnedFiles,
     DocumentSortOption? sortOption,
-    bool? isLoading,
-    String? error,
   }) {
     return WorkspaceDetailState(
       workspace: workspace ?? this.workspace,
       allFiles: allFiles ?? this.allFiles,
       pinnedFiles: pinnedFiles ?? this.pinnedFiles,
       sortOption: sortOption ?? this.sortOption,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
     );
   }
 }
@@ -64,7 +56,7 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
     _pinDocument = PinDocument(repo);
     _unpinDocument = UnpinDocument(repo);
     _importFile = ImportFile(repo);
-    _fileService = GetIt.I<FileService>();
+    _fileService = ref.watch(fileServiceProvider);
 
     return _fetchData(workspaceId);
   }
@@ -146,10 +138,8 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
   Future<void> importFiles() async {
     if (!state.hasValue || state.value == null) return;
     
-    // We don't want to lose current state completely, so we just set loading flag
-    // but Riverpod 2 AsyncValue handles this well with state = AsyncValue.loading()
-    final currentState = state.value!;
-    state = AsyncValue.data(currentState.copyWith(isLoading: true));
+    // Instead of custom loading flag, use native AsyncValue loading
+    state = const AsyncValue.loading();
     
     try {
       final pickedFiles = await _fileService.pickFiles(
@@ -168,8 +158,8 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
       }
       
       state = AsyncValue.data(await _fetchData(workspaceId));
-    } catch (e) {
-      state = AsyncValue.data((await _fetchData(workspaceId)).copyWith(error: e.toString()));
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 }

@@ -1,0 +1,30 @@
+# Dart & Flutter
+.dart_tool/
+build/
+.pub/
+coverage/
+
+# IDE & Editor
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Logs & Temporary Files
+*.log
+*.tmp
+
+# Runtime Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary Caches
+.cache/
+tmp/
+temp/
+
+# DO NOT IGNORE (Explicit inclusion for documentation purposes)
+# !*.g.dart
+# !*.freezed.dart

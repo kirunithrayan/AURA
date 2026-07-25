@@ -21,6 +21,19 @@ class WorkspaceFilesTable {
       ai_stage INTEGER DEFAULT 1,
       content_hash TEXT,
       tags TEXT,
+      last_opened_at INTEGER,
+      last_viewed_page INTEGER,
+      last_zoom_level REAL,
+      last_scroll_position REAL,
+      open_count INTEGER DEFAULT 0,
+      page_count INTEGER,
+      resolution TEXT,
+      word_count INTEGER,
+      paragraph_count INTEGER,
+      character_count INTEGER,
+      is_favorite INTEGER DEFAULT 0,
+      is_pinned INTEGER DEFAULT 0,
+      is_archived INTEGER DEFAULT 0,
       FOREIGN KEY (workspace_id) REFERENCES ${DbConstants.workspacesTable} (id) ON DELETE CASCADE
     )
   ''';

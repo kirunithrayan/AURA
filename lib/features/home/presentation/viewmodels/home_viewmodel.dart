@@ -9,30 +9,21 @@ class HomeState {
   final DashboardStats? stats;
   final List<WorkspaceFile> recentDocuments;
   final List<WorkspaceFile> pinnedDocuments;
-  final bool isLoading;
-  final String? error;
-
   const HomeState({
     this.stats,
     this.recentDocuments = const [],
     this.pinnedDocuments = const [],
-    this.isLoading = false,
-    this.error,
   });
 
   HomeState copyWith({
     DashboardStats? stats,
     List<WorkspaceFile>? recentDocuments,
     List<WorkspaceFile>? pinnedDocuments,
-    bool? isLoading,
-    String? error,
   }) {
     return HomeState(
       stats: stats ?? this.stats,
       recentDocuments: recentDocuments ?? this.recentDocuments,
       pinnedDocuments: pinnedDocuments ?? this.pinnedDocuments,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
     );
   }
 }
@@ -67,8 +58,8 @@ class HomeViewModel extends _$HomeViewModel {
     state = const AsyncValue.loading();
     try {
       state = AsyncValue.data(await _fetchData());
-    } catch (e) {
-      state = AsyncValue.data(HomeState(error: e.toString()));
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 }

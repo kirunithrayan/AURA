@@ -23,7 +23,7 @@ class AnimatedListItem extends StatelessWidget {
           offset: Offset(0, 50 * (1 - value)),
           child: Opacity(
             opacity: value,
-            child: childWidget,
+            child: MergeSemantics(child: childWidget),
           ),
         );
       },

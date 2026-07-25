@@ -4,7 +4,7 @@ class DbConstants {
 
   // Database
   static const String databaseName = 'aura_secure.db';
-  static const int databaseVersion = 1;
+  static const int databaseVersion = 6;
   static const String encryptionKeyAlias = 'aura_db_key';
 
   // Table Names

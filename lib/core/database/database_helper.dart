@@ -13,8 +13,6 @@ import 'tables/workspace_files_table.dart';
 import 'tables/embeddings_table.dart';
 import 'tables/tags_table.dart';
 import 'tables/search_history_table.dart';
-import 'tables/recent_documents_table.dart';
-import 'tables/pinned_documents_table.dart';
 import 'tables/scheduler_queue_table.dart';
 import 'tables/ai_jobs_table.dart';
 import 'tables/knowledge_edges_table.dart';
@@ -72,12 +70,15 @@ class DatabaseHelper {
     batch.execute(EmbeddingsTable.createTableQuery);
     batch.execute(TagsTable.createTableQuery);
     batch.execute(SearchHistoryTable.createTableQuery);
-    batch.execute(RecentDocumentsTable.createTableQuery);
-    batch.execute(PinnedDocumentsTable.createTableQuery);
     batch.execute(SchedulerQueueTable.createTableQuery);
     batch.execute(AiJobsTable.createTableQuery);
     batch.execute(KnowledgeEdgesTable.createTableQuery);
     batch.execute(GraphLayoutsTable.createTableQuery);
+    
+    // Performance indexes
+    batch.execute('CREATE INDEX idx_workspace_files_last_opened ON ${DbConstants.workspaceFilesTable} (last_opened_at)');
+    batch.execute('CREATE INDEX idx_workspace_files_favorite ON ${DbConstants.workspaceFilesTable} (is_favorite)');
+    batch.execute('CREATE INDEX idx_workspace_files_pinned ON ${DbConstants.workspaceFilesTable} (is_pinned)');
     
     await batch.commit();
   }

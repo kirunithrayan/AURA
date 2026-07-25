@@ -53,8 +53,6 @@ class WorkspaceDetailScreen extends ConsumerWidget {
       ),
       body: stateAsync.when(
         data: (state) {
-          if (state.isLoading) return const AuraLoading();
-
           final hasNoDocuments = state.allFiles.isEmpty && state.pinnedFiles.isEmpty;
 
           return CustomScrollView(
