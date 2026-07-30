@@ -9,9 +9,8 @@ import '../../features/document_metadata/domain/services/recent_documents_servic
 import '../../features/document_metadata/domain/services/favorite_documents_service.dart';
 import '../../features/document_metadata/domain/services/pinned_documents_service.dart';
 
-// AI
-import '../../ai/retrieval/retrieval_engine.dart';
-import '../../ai/providers/ai_provider.dart';
+// AI Foundation (Phase 6)
+export '../../features/ai/presentation/providers/ai_providers.dart';
 
 // Repositories
 import '../../features/home/domain/repositories/home_repository.dart';
@@ -34,9 +33,7 @@ final recentDocumentsServiceProvider = Provider<RecentDocumentsService>((ref) =>
 final favoriteDocumentsServiceProvider = Provider<FavoriteDocumentsService>((ref) => sl<FavoriteDocumentsService>());
 final pinnedDocumentsServiceProvider = Provider<PinnedDocumentsService>((ref) => sl<PinnedDocumentsService>());
 
-// --- AI Interfaces ---
-final retrievalEngineProvider = Provider<RetrievalEngine>((ref) => sl<RetrievalEngine>());
-final aiProvider = Provider<AIProvider>((ref) => sl<AIProvider>());
+// --- AI Interfaces (Exported from ai_providers.dart) ---
 
 // --- Repositories ---
 final homeRepositoryProvider = Provider<HomeRepository>((ref) => sl<HomeRepository>());

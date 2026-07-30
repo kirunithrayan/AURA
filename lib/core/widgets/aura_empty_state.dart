@@ -4,10 +4,6 @@ import '../theme/app_spacing.dart';
 
 /// A standard empty state widget for lists or grids that have no data.
 class AuraEmptyState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String? message;
-  final Widget? action;
 
   const AuraEmptyState({
     super.key,
@@ -16,10 +12,13 @@ class AuraEmptyState extends StatelessWidget {
     this.message,
     this.action,
   });
+  final IconData icon;
+  final String title;
+  final String? message;
+  final Widget? action;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: Padding(
         padding: AppSpacing.edgeInsetsAll24,
         child: Column(
@@ -30,7 +29,7 @@ class AuraEmptyState extends StatelessWidget {
               child: Icon(
                 icon,
                 size: 64,
-                color: context.theme.colorScheme.outline.withOpacity(0.5),
+                color: context.theme.colorScheme.outline.withValues(alpha: 0.5),
               ),
             ),
             AppSpacing.v24,
@@ -59,5 +58,4 @@ class AuraEmptyState extends StatelessWidget {
         ),
       ),
     );
-  }
 }

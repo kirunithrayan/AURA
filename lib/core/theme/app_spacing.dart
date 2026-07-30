@@ -16,12 +16,14 @@ class AppSpacing {
   // Spacing Widgets (SizedBox)
   static const SizedBox h4 = SizedBox(width: xs);
   static const SizedBox h8 = SizedBox(width: sm);
+  static const SizedBox h12 = SizedBox(width: 12.0);
   static const SizedBox h16 = SizedBox(width: md);
   static const SizedBox h24 = SizedBox(width: lg);
   static const SizedBox h32 = SizedBox(width: xl);
 
   static const SizedBox v4 = SizedBox(height: xs);
   static const SizedBox v8 = SizedBox(height: sm);
+  static const SizedBox v12 = SizedBox(height: 12.0);
   static const SizedBox v16 = SizedBox(height: md);
   static const SizedBox v24 = SizedBox(height: lg);
   static const SizedBox v32 = SizedBox(height: xl);
@@ -29,6 +31,7 @@ class AppSpacing {
 
   // Common Paddings
   static const EdgeInsets edgeInsetsAll8 = EdgeInsets.all(sm);
+  static const EdgeInsets edgeInsetsAll12 = EdgeInsets.all(12.0);
   static const EdgeInsets edgeInsetsAll16 = EdgeInsets.all(md);
   static const EdgeInsets edgeInsetsAll24 = EdgeInsets.all(lg);
   

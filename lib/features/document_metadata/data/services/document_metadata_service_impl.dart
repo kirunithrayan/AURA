@@ -9,10 +9,10 @@ import '../models/document_metadata_model.dart';
 import '../cache/metadata_cache.dart';
 
 class DocumentMetadataServiceImpl implements DocumentMetadataService {
-  final DatabaseHelper dbHelper;
-  final MetadataCache cache;
 
   DocumentMetadataServiceImpl(this.dbHelper, this.cache);
+  final DatabaseHelper dbHelper;
+  final MetadataCache cache;
 
   @override
   Future<Either<Failure, DocumentMetadata>> getMetadata(String id) async {

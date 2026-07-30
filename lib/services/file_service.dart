@@ -9,15 +9,6 @@ import '../core/error/exceptions.dart';
 import '../core/utils/file_utils.dart';
 
 class FileMetadata {
-  final String fileName;
-  final String filePath;
-  final String originalPath;
-  final String extension;
-  final String mimeType;
-  final int size;
-  final DateTime createdAt;
-  final DateTime modifiedAt;
-  final String contentHash;
 
   FileMetadata({
     required this.fileName,
@@ -30,6 +21,15 @@ class FileMetadata {
     required this.modifiedAt,
     required this.contentHash,
   });
+  final String fileName;
+  final String filePath;
+  final String originalPath;
+  final String extension;
+  final String mimeType;
+  final int size;
+  final DateTime createdAt;
+  final DateTime modifiedAt;
+  final String contentHash;
 }
 
 /// Service for handling file system operations (importing, copying, metadata extraction).

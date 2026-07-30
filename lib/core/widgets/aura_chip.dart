@@ -3,12 +3,6 @@ import '../extensions/context_extensions.dart';
 
 /// A custom chip widget used for tags and filters in AURA.
 class AuraChip extends StatelessWidget {
-  final String label;
-  final VoidCallback? onTap;
-  final VoidCallback? onDeleted;
-  final bool isSelected;
-  final IconData? icon;
-  final Color? color;
 
   const AuraChip({
     super.key,
@@ -19,6 +13,12 @@ class AuraChip extends StatelessWidget {
     this.icon,
     this.color,
   });
+  final String label;
+  final VoidCallback? onTap;
+  final VoidCallback? onDeleted;
+  final bool isSelected;
+  final IconData? icon;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class AuraChip extends StatelessWidget {
       onPressed: onTap,
       backgroundColor: isSelected 
           ? chipColor 
-          : chipColor.withOpacity(0.1),
+          : chipColor.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: isSelected 
             ? context.theme.colorScheme.onPrimary 

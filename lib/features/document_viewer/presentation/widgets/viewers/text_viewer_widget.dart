@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
-import '../../domain/entities/reading_preferences.dart';
-import '../../../../../core/text_engine/models/text_document.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/core/theme/app_colors.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
+import '../../../domain/entities/reading_preferences.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import '../base_viewer_screen.dart';
 import 'viewer_lifecycle.dart';
 
 class TextViewerWidget extends ConsumerStatefulWidget {
-  final WorkspaceFile file;
 
   const TextViewerWidget({super.key, required this.file});
+  final WorkspaceFile file;
 
   @override
   ConsumerState<TextViewerWidget> createState() => _TextViewerWidgetState();

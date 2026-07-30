@@ -3,9 +3,6 @@ import 'package:go_router/go_router.dart';
 
 /// A reusable confirmation dialog for destructive actions like deleting a workspace.
 class DeleteConfirmationDialog extends StatelessWidget {
-  final String title;
-  final String message;
-  final VoidCallback onConfirm;
 
   const DeleteConfirmationDialog({
     super.key,
@@ -13,10 +10,12 @@ class DeleteConfirmationDialog extends StatelessWidget {
     required this.message,
     required this.onConfirm,
   });
+  final String title;
+  final String message;
+  final VoidCallback onConfirm;
 
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
+  Widget build(BuildContext context) => AlertDialog(
       title: Text(title),
       content: Text(message),
       actions: [
@@ -36,5 +35,4 @@ class DeleteConfirmationDialog extends StatelessWidget {
         ),
       ],
     );
-  }
 }

@@ -16,7 +16,7 @@ void callbackDispatcher() {
 
 /// Service to handle registration of background tasks via WorkManager.
 class WorkManagerService {
-  static const String _periodicTaskName = "com.aura.scheduler.periodic";
+  static const String _periodicTaskName = 'com.aura.scheduler.periodic';
 
   /// Initializes WorkManager and registers the background dispatcher.
   Future<void> initialize() async {
@@ -29,17 +29,17 @@ class WorkManagerService {
   /// Registers the periodic scheduler task that wakes up the app in the background.
   Future<void> registerPeriodicScheduler() async {
     await Workmanager().registerPeriodicTask(
-      "aura_scheduler_task",
+      'aura_scheduler_task',
       _periodicTaskName,
       frequency: const Duration(minutes: AppConstants.schedulerIntervalMinutes),
       constraints: Constraints(
-        networkType: NetworkType.not_required,
+        networkType: NetworkType.notRequired,
         requiresBatteryNotLow: true,
         requiresCharging: false,
         requiresDeviceIdle: false,
         requiresStorageNotLow: true,
       ),
-      existingWorkPolicy: ExistingWorkPolicy.keep,
+      existingWorkPolicy: ExistingPeriodicWorkPolicy.keep,
     );
   }
 

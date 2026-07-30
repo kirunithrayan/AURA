@@ -8,14 +8,10 @@ import 'abstract_document_parser.dart';
 
 class DocxParser implements AbstractDocumentParser {
   @override
-  bool supportsExtension(String extension) {
-    return extension.toLowerCase() == 'docx';
-  }
+  bool supportsExtension(String extension) => extension.toLowerCase() == 'docx';
 
   @override
-  Future<Map<String, dynamic>> extractMetadata(WorkspaceFile file) async {
-    return {'parserVersion': '1.0', 'sourceType': 'DOCX'};
-  }
+  Future<Map<String, dynamic>> extractMetadata(WorkspaceFile file) async => {'parserVersion': '1.0', 'sourceType': 'DOCX'};
 
   @override
   Future<TextDocument> parse(WorkspaceFile file) async {
@@ -23,7 +19,7 @@ class DocxParser implements AbstractDocumentParser {
     final archive = ZipDecoder().decodeBytes(bytes);
 
     String content = '';
-    List<String> headings = [];
+    final List<String> headings = [];
     int paragraphs = 0;
 
     final documentEntry = archive.findFile('word/document.xml');

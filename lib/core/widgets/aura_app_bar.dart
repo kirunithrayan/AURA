@@ -3,10 +3,6 @@ import '../extensions/context_extensions.dart';
 
 /// A custom AppBar for AURA that applies consistent styling.
 class AuraAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
-  final List<Widget>? actions;
-  final Widget? leading;
-  final bool centerTitle;
 
   const AuraAppBar({
     super.key,
@@ -15,10 +11,13 @@ class AuraAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.centerTitle = false,
   });
+  final String title;
+  final List<Widget>? actions;
+  final Widget? leading;
+  final bool centerTitle;
 
   @override
-  Widget build(BuildContext context) {
-    return AppBar(
+  Widget build(BuildContext context) => AppBar(
       title: Text(
         title,
         style: context.textTheme.titleLarge?.copyWith(
@@ -32,7 +31,6 @@ class AuraAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       scrolledUnderElevation: 0,
     );
-  }
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);

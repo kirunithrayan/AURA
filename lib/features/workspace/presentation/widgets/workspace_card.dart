@@ -7,10 +7,6 @@ import '../../../../core/utils/date_formatter.dart';
 import '../../domain/entities/workspace.dart';
 
 class WorkspaceCard extends StatelessWidget {
-  final Workspace workspace;
-  final VoidCallback onTap;
-  final VoidCallback? onLongPress;
-  final bool isListMode;
 
   const WorkspaceCard({
     super.key,
@@ -19,6 +15,10 @@ class WorkspaceCard extends StatelessWidget {
     this.onLongPress,
     this.isListMode = false,
   });
+  final Workspace workspace;
+  final VoidCallback onTap;
+  final VoidCallback? onLongPress;
+  final bool isListMode;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class WorkspaceCard extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: workspace.color != null 
-                    ? Color(workspace.color!).withOpacity(0.1) 
+                    ? Color(workspace.color!).withValues(alpha: 0.1) 
                     : context.theme.colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(12),
               ),

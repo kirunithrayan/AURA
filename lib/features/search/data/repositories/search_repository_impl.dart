@@ -4,12 +4,10 @@ import '../../../document_metadata/domain/entities/document_metadata.dart';
 import '../datasources/local_search_datasource.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
-  final LocalSearchDatasource _localDatasource;
 
   SearchRepositoryImpl(this._localDatasource);
+  final LocalSearchDatasource _localDatasource;
 
   @override
-  Future<List<DocumentMetadata>> getCandidateMetadata(SearchQuery query) async {
-    return _localDatasource.getCandidateMetadata(query);
-  }
+  Future<List<DocumentMetadata>> getCandidateMetadata(SearchQuery query) async => _localDatasource.getCandidateMetadata(query);
 }

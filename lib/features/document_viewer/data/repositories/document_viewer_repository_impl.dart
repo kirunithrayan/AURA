@@ -2,13 +2,13 @@ import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../workspace/data/datasources/workspace_local_datasource.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../../domain/repositories/document_viewer_repository.dart';
 
 class DocumentViewerRepositoryImpl implements DocumentViewerRepository {
-  final WorkspaceLocalDataSource localDataSource;
 
   DocumentViewerRepositoryImpl({required this.localDataSource});
+  final WorkspaceLocalDataSource localDataSource;
 
   @override
   Future<Either<Failure, WorkspaceFile>> getDocumentForViewing(String id) async {

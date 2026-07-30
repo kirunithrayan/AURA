@@ -1,4 +1,3 @@
-import 'package:sqflite_sqlcipher/sqflite.dart';
 import '../../../../core/database/database_helper.dart';
 import '../../../../core/constants/db_constants.dart';
 import '../../../document_metadata/domain/entities/document_metadata.dart';
@@ -7,9 +6,9 @@ import '../../domain/entities/search_query.dart';
 import '../../domain/entities/search_failure.dart';
 
 class LocalSearchDatasource {
-  final DatabaseHelper _dbHelper;
 
   LocalSearchDatasource(this._dbHelper);
+  final DatabaseHelper _dbHelper;
 
   Future<List<DocumentMetadata>> getCandidateMetadata(SearchQuery query) async {
     try {
@@ -17,7 +16,7 @@ class LocalSearchDatasource {
       
       // Base query
       String sql = 'SELECT * FROM ${DbConstants.workspaceFilesTable} WHERE 1=1';
-      List<dynamic> args = [];
+      final List<dynamic> args = [];
     
     // Filter by workspace
     if (query.workspaceId != null) {
@@ -71,7 +70,7 @@ class LocalSearchDatasource {
 
       final results = await db.rawQuery(sql, args);
       
-      return results.map((map) => DocumentMetadataModel.fromMap(map)).toList();
+      return results.map(DocumentMetadataModel.fromMap).toList();
     } catch (e) {
       throw DatabaseFailure('Failed to execute metadata search query', e);
     }

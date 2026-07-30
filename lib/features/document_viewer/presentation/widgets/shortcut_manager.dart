@@ -3,14 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/viewer_capability.dart';
 import 'registries/viewer_action_registry.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 
 class ViewerShortcutManager extends ConsumerWidget {
-  final Widget child;
-  final WorkspaceFile file;
-  final Set<ViewerCapability> capabilities;
-  final ViewerActionRegistry actionRegistry;
 
   const ViewerShortcutManager({
     super.key,
@@ -19,6 +15,10 @@ class ViewerShortcutManager extends ConsumerWidget {
     required this.capabilities,
     required this.actionRegistry,
   });
+  final Widget child;
+  final WorkspaceFile file;
+  final Set<ViewerCapability> capabilities;
+  final ViewerActionRegistry actionRegistry;
 
   void _execute(WidgetRef ref, BuildContext context, ViewerCapability cap, [dynamic payload]) {
     actionRegistry.getCommand(cap)?.execute(

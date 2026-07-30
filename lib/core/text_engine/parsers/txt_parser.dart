@@ -6,14 +6,10 @@ import 'abstract_document_parser.dart';
 
 class TxtParser implements AbstractDocumentParser {
   @override
-  bool supportsExtension(String extension) {
-    return extension.toLowerCase() == 'txt';
-  }
+  bool supportsExtension(String extension) => extension.toLowerCase() == 'txt';
 
   @override
-  Future<Map<String, dynamic>> extractMetadata(WorkspaceFile file) async {
-    return {'parserVersion': '1.0', 'sourceType': 'TXT'};
-  }
+  Future<Map<String, dynamic>> extractMetadata(WorkspaceFile file) async => {'parserVersion': '1.0', 'sourceType': 'TXT'};
 
   @override
   Future<TextDocument> parse(WorkspaceFile file) async {

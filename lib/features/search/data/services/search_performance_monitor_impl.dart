@@ -6,6 +6,10 @@ import '../../domain/entities/search_event.dart';
 import '../../domain/entities/indexing/search_index_event.dart';
 
 class SearchPerformanceMonitorImpl implements SearchPerformanceMonitor {
+  
+  SearchPerformanceMonitorImpl(this._eventBus) {
+    _subscription = _eventBus.events.listen(_onEvent);
+  }
   final SearchEventBus _eventBus;
   StreamSubscription? _subscription;
 
@@ -18,12 +22,8 @@ class SearchPerformanceMonitorImpl implements SearchPerformanceMonitor {
   int _cacheHits = 0;
   int _cacheMisses = 0;
 
-  int _totalRankingDurationMs = 0;
+  final int _totalRankingDurationMs = 0;
   int _totalMergeDurationMs = 0;
-  
-  SearchPerformanceMonitorImpl(this._eventBus) {
-    _subscription = _eventBus.events.listen(_onEvent);
-  }
 
   void _onEvent(SearchEvent event) {
     if (event is SearchCompleted) {
@@ -31,7 +31,7 @@ class SearchPerformanceMonitorImpl implements SearchPerformanceMonitor {
       _totalQueryDurationMs += event.duration.inMilliseconds;
     } else if (event is IndexCompleted) {
       _totalIndexes++;
-      _totalIndexDurationMs += event.statistics.indexDuration.inMilliseconds;
+      _totalIndexDurationMs += event.statistics.indexingDuration.inMilliseconds;
     } else if (event is CacheHit) {
       _cacheHits++;
     } else if (event is CacheMiss) {
@@ -42,8 +42,7 @@ class SearchPerformanceMonitorImpl implements SearchPerformanceMonitor {
   }
 
   @override
-  PerformanceSnapshot getSnapshot() {
-    return PerformanceSnapshot(
+  PerformanceSnapshot getSnapshot() => PerformanceSnapshot(
       averageQueryTime: _totalQueries > 0 
           ? Duration(milliseconds: _totalQueryDurationMs ~/ _totalQueries)
           : Duration.zero,
@@ -53,16 +52,16 @@ class SearchPerformanceMonitorImpl implements SearchPerformanceMonitor {
       cacheHitRate: (_cacheHits + _cacheMisses) > 0 
           ? _cacheHits / (_cacheHits + _cacheMisses)
           : 0.0,
+      cacheHits: _cacheHits,
+      cacheMisses: _cacheMisses,
       averageRankingDuration: _totalQueries > 0 
           ? Duration(milliseconds: _totalRankingDurationMs ~/ _totalQueries)
           : Duration.zero,
       averageMergeDuration: _totalQueries > 0 
           ? Duration(milliseconds: _totalMergeDurationMs ~/ _totalQueries)
           : Duration.zero,
-      averageDeduplicationDuration: Duration.zero, // Add deduplication events if needed
-      estimatedMemoryUsageBytes: _cacheHits * 1024, // Mock memory estimation
+      averageDeduplicationDuration: Duration.zero,
     );
-  }
 
   void dispose() {
     _subscription?.cancel();

@@ -1,12 +1,4 @@
 class SearchLogContext {
-  final String operation;
-  final Duration? duration;
-  final bool success;
-  final String? workspaceId;
-  final String? queryHash;
-  final String? searchEngine;
-  final bool? cacheHit;
-  final DateTime timestamp;
 
   SearchLogContext({
     required this.operation,
@@ -18,9 +10,16 @@ class SearchLogContext {
     this.cacheHit,
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
+  final String operation;
+  final Duration? duration;
+  final bool success;
+  final String? workspaceId;
+  final String? queryHash;
+  final String? searchEngine;
+  final bool? cacheHit;
+  final DateTime timestamp;
 
-  Map<String, dynamic> toMap() {
-    return {
+  Map<String, dynamic> toMap() => {
       'operation': operation,
       if (duration != null) 'duration_ms': duration!.inMilliseconds,
       'success': success,
@@ -30,5 +29,4 @@ class SearchLogContext {
       if (cacheHit != null) 'cacheHit': cacheHit,
       'timestamp': timestamp.toIso8601String(),
     };
-  }
 }

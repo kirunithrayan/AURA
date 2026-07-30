@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../domain/entities/viewer_type.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import 'viewers/pdf_viewer_widget.dart';
 import 'viewers/image_viewer_widget.dart';
 import 'viewers/text_viewer_widget.dart';

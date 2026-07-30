@@ -13,11 +13,6 @@ part 'workspace_detail_viewmodel.g.dart';
 enum DocumentSortOption { name, date, size }
 
 class WorkspaceDetailState {
-  final Workspace? workspace;
-  final List<WorkspaceFile> allFiles;
-  final List<WorkspaceFile> pinnedFiles;
-  final DocumentSortOption sortOption;
-  final String workspaceId; // we should probably keep track if we need, but wait, the viewmodel passes it.
   
   const WorkspaceDetailState({
     this.workspace,
@@ -25,20 +20,22 @@ class WorkspaceDetailState {
     this.pinnedFiles = const [],
     this.sortOption = DocumentSortOption.date,
   });
+  final Workspace? workspace;
+  final List<WorkspaceFile> allFiles;
+  final List<WorkspaceFile> pinnedFiles;
+  final DocumentSortOption sortOption;
 
   WorkspaceDetailState copyWith({
     Workspace? workspace,
     List<WorkspaceFile>? allFiles,
     List<WorkspaceFile>? pinnedFiles,
     DocumentSortOption? sortOption,
-  }) {
-    return WorkspaceDetailState(
+  }) => WorkspaceDetailState(
       workspace: workspace ?? this.workspace,
       allFiles: allFiles ?? this.allFiles,
       pinnedFiles: pinnedFiles ?? this.pinnedFiles,
       sortOption: sortOption ?? this.sortOption,
     );
-  }
 }
 
 @riverpod

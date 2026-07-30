@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'viewer_command.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import '../document_metadata_sheet.dart';
 import '../viewer_settings_sheet.dart';
-import '../../../../../core/di/riverpod_providers.dart';
-import '../../domain/entities/viewer_type.dart';
+import '../../../domain/entities/viewer_type.dart';
+import '../providers/metadata_provider.dart';
+import '../providers/document_metadata_providers.dart';
 
 class ViewMetadataCommand implements ViewerCommand {
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {
     if (payload is BuildContext) {
-      final state = notifier.state.valueOrNull;
+      final state = notifier.currentState;
       if (state == null) return;
       
       MetadataProvider? provider;
@@ -39,7 +40,7 @@ class OpenTextSettingsCommand implements ViewerCommand {
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {
     if (payload is BuildContext) {
-      final state = notifier.state.valueOrNull;
+      final state = notifier.currentState;
       if (state == null) return;
 
       showModalBottomSheet(

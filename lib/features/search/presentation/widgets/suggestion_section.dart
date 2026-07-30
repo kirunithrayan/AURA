@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../domain/entities/search_suggestion.dart';
 
 class SuggestionSection extends StatelessWidget {
-  final List<SearchSuggestion> suggestions;
-  final ValueChanged<String> onSuggestionTap;
 
   const SuggestionSection({
     super.key,
     required this.suggestions,
     required this.onSuggestionTap,
   });
+  final List<SearchSuggestion> suggestions;
+  final ValueChanged<String> onSuggestionTap;
 
   @override
   Widget build(BuildContext context) {

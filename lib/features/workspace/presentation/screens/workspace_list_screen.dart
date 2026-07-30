@@ -5,7 +5,7 @@ import '../../../../core/widgets/aura_app_bar.dart';
 import '../../../../core/widgets/aura_loading.dart';
 import '../../../../core/widgets/aura_empty_state.dart';
 import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/router/app_router.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../domain/entities/workspace.dart';
 import '../viewmodels/workspace_list_viewmodel.dart';
 import '../widgets/workspace_card.dart';
@@ -119,7 +119,7 @@ class WorkspaceListScreen extends ConsumerWidget {
                   workspace: workspace,
                   isListMode: true,
                   onTap: () => context.pushNamed(
-                    AppRouter.workspaceDetail,
+                    AppRoutes.workspaceDetail,
                     pathParameters: {'id': workspace.id},
                   ),
                   onLongPress: () => _showWorkspaceOptions(context, ref, workspace),
@@ -144,7 +144,7 @@ class WorkspaceListScreen extends ConsumerWidget {
                 workspace: workspace,
                 isListMode: false,
                 onTap: () => context.pushNamed(
-                  AppRouter.workspaceDetail,
+                  AppRoutes.workspaceDetail,
                   pathParameters: {'id': workspace.id},
                 ),
                 onLongPress: () => _showWorkspaceOptions(context, ref, workspace),
@@ -156,7 +156,7 @@ class WorkspaceListScreen extends ConsumerWidget {
         error: (err, _) => Center(child: Text('Error: $err')),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.pushNamed(AppRouter.createWorkspace),
+        onPressed: () => context.pushNamed(AppRoutes.createWorkspace),
         child: const Icon(Icons.add),
       ),
     );

@@ -1,22 +1,18 @@
 import 'metadata_provider.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 
 class PdfMetadataProvider implements MetadataProvider {
   @override
-  Map<String, String> getMetadata(DocumentViewerViewModelState state) {
-    return {
+  Map<String, String> getMetadata(DocumentViewerViewModelState state) => {
       'Pages': state.viewState.pageCount.toString(),
     };
-  }
 }
 
 class ImageMetadataProvider implements MetadataProvider {
   @override
-  Map<String, String> getMetadata(DocumentViewerViewModelState state) {
-    return {
+  Map<String, String> getMetadata(DocumentViewerViewModelState state) => {
       'Resolution': 'Unknown',
     };
-  }
 }
 
 class TextMetadataProvider implements MetadataProvider {

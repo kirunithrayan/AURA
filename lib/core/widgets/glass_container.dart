@@ -6,9 +6,6 @@ import '../theme/app_colors.dart';
 
 /// A container that applies a glassmorphism effect (blur + translucency).
 class GlassContainer extends StatelessWidget {
-  final Widget child;
-  final double borderRadius;
-  final EdgeInsetsGeometry? padding;
 
   const GlassContainer({
     super.key,
@@ -16,6 +13,9 @@ class GlassContainer extends StatelessWidget {
     this.borderRadius = UiConstants.radiusMedium,
     this.padding,
   });
+  final Widget child;
+  final double borderRadius;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class GlassContainer extends StatelessWidget {
             color: glassColor,
             borderRadius: BorderRadius.circular(borderRadius),
             border: Border.all(
-              color: context.theme.colorScheme.outline.withOpacity(UiConstants.glassBorderOpacity),
+              color: context.theme.colorScheme.outline.withValues(alpha: UiConstants.glassBorderOpacity),
             ),
           ),
           child: child,

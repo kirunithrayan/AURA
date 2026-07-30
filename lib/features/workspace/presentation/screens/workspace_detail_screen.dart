@@ -7,19 +7,21 @@ import '../../../../core/widgets/aura_empty_state.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/utils/date_formatter.dart';
-import '../../../../core/router/app_router.dart';
+import '../../../../core/router/app_routes.dart';
 import '../viewmodels/workspace_detail_viewmodel.dart';
 import '../widgets/pinned_documents_section.dart';
 import '../widgets/file_list_tile.dart';
 import '../widgets/import_fab.dart';
+import '../../../ai/personalization/presentation/widgets/recommendations_section.dart';
+import '../../../ai/personalization/presentation/widgets/workspace_insights_dashboard.dart';
 
 class WorkspaceDetailScreen extends ConsumerWidget {
-  final String workspaceId;
 
   const WorkspaceDetailScreen({
     super.key,
     required this.workspaceId,
   });
+  final String workspaceId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +36,7 @@ class WorkspaceDetailScreen extends ConsumerWidget {
             icon: const Icon(Icons.hub),
             tooltip: 'Knowledge Graph',
             onPressed: () => context.pushNamed(
-              AppRouter.knowledgeGraph,
+              AppRoutes.knowledgeGraph,
               pathParameters: {'workspaceId': workspaceId},
             ),
           ),
@@ -65,9 +67,9 @@ class WorkspaceDetailScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (state.workspace!.description.isNotEmpty) ...[
+                        if (state.workspace!.description != null && state.workspace!.description!.isNotEmpty) ...[
                           Text(
-                            state.workspace!.description,
+                            state.workspace!.description!,
                             style: context.textTheme.bodyMedium?.copyWith(
                               color: context.theme.colorScheme.onSurfaceVariant,
                             ),
@@ -100,12 +102,19 @@ class WorkspaceDetailScreen extends ConsumerWidget {
                     child: PinnedDocumentsSection(
                       files: state.pinnedFiles,
                       onFileTap: (file) => context.pushNamed(
-                        AppRouter.documentViewer,
+                        AppRoutes.documentViewer,
                         pathParameters: {'id': file.id},
                       ),
                       onUnpin: (file) => notifier.unpinFile(file.id),
                     ),
                   ),
+                
+                SliverToBoxAdapter(
+                  child: RecommendationsSection(workspaceId: workspaceId),
+                ),
+                SliverToBoxAdapter(
+                  child: WorkspaceInsightsDashboard(workspaceId: workspaceId),
+                ),
                 
                 // All Documents Header
                 SliverToBoxAdapter(
@@ -132,7 +141,7 @@ class WorkspaceDetailScreen extends ConsumerWidget {
                         return FileListTile(
                           file: file,
                           onTap: () => context.pushNamed(
-                            AppRouter.documentViewer,
+                            AppRoutes.documentViewer,
                             pathParameters: {'id': file.id},
                           ),
                           onPin: isPinned 
@@ -152,9 +161,7 @@ class WorkspaceDetailScreen extends ConsumerWidget {
         error: (err, _) => Center(child: Text('Error: $err')),
       ),
       floatingActionButton: ImportFab(
-        onImport: () {
-          notifier.importFiles();
-        },
+        onImport: notifier.importFiles,
       ),
     );
   }

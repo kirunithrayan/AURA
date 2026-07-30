@@ -1,11 +1,11 @@
-import '../../domain/entities/search_suggestion.dart';
-import '../../domain/services/search_history_service.dart';
-import '../../domain/services/search_suggestion_provider.dart';
+import '../../../domain/entities/search_suggestion.dart';
+import '../../../domain/services/search_history_service.dart';
+import '../../../domain/services/search_suggestion_provider.dart';
 
 class HistorySuggestionProvider implements SuggestionProvider {
-  final SearchHistoryService _historyService;
 
   HistorySuggestionProvider(this._historyService);
+  final SearchHistoryService _historyService;
 
   @override
   String get providerId => 'history';

@@ -25,6 +25,28 @@ class WorkspaceFileModel extends WorkspaceFile {
     super.lastScrollPosition,
   });
 
+  factory WorkspaceFileModel.fromEntity(WorkspaceFile entity) => WorkspaceFileModel(
+      id: entity.id,
+      workspaceId: entity.workspaceId,
+      fileName: entity.fileName,
+      filePath: entity.filePath,
+      originalPath: entity.originalPath,
+      extension: entity.extension,
+      mimeType: entity.mimeType,
+      size: entity.size,
+      createdAt: entity.createdAt,
+      modifiedAt: entity.modifiedAt,
+      importedAt: entity.importedAt,
+      thumbnailPath: entity.thumbnailPath,
+      aiStage: entity.aiStage,
+      contentHash: entity.contentHash,
+      tags: entity.tags,
+      lastOpenedAt: entity.lastOpenedAt,
+      lastViewedPage: entity.lastViewedPage,
+      lastZoomLevel: entity.lastZoomLevel,
+      lastScrollPosition: entity.lastScrollPosition,
+    );
+
   factory WorkspaceFileModel.fromMap(Map<String, dynamic> map) {
     List<String> parsedTags = [];
     if (map['tags'] != null && (map['tags'] as String).isNotEmpty) {
@@ -59,8 +81,7 @@ class WorkspaceFileModel extends WorkspaceFile {
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
+  Map<String, dynamic> toMap() => {
       'id': id,
       'workspace_id': workspaceId,
       'file_name': fileName,
@@ -81,29 +102,4 @@ class WorkspaceFileModel extends WorkspaceFile {
       'last_zoom_level': lastZoomLevel,
       'last_scroll_position': lastScrollPosition,
     };
-  }
-
-  factory WorkspaceFileModel.fromEntity(WorkspaceFile entity) {
-    return WorkspaceFileModel(
-      id: entity.id,
-      workspaceId: entity.workspaceId,
-      fileName: entity.fileName,
-      filePath: entity.filePath,
-      originalPath: entity.originalPath,
-      extension: entity.extension,
-      mimeType: entity.mimeType,
-      size: entity.size,
-      createdAt: entity.createdAt,
-      modifiedAt: entity.modifiedAt,
-      importedAt: entity.importedAt,
-      thumbnailPath: entity.thumbnailPath,
-      aiStage: entity.aiStage,
-      contentHash: entity.contentHash,
-      tags: entity.tags,
-      lastOpenedAt: entity.lastOpenedAt,
-      lastViewedPage: entity.lastViewedPage,
-      lastZoomLevel: entity.lastZoomLevel,
-      lastScrollPosition: entity.lastScrollPosition,
-    );
-  }
 }

@@ -3,11 +3,9 @@ import '../../../../core/error/failures.dart';
 import '../repositories/workspace_repository.dart';
 
 class DeleteWorkspace {
-  final WorkspaceRepository repository;
 
   DeleteWorkspace(this.repository);
+  final WorkspaceRepository repository;
 
-  Future<Either<Failure, void>> call(String id) async {
-    return await repository.deleteWorkspace(id);
-  }
+  Future<Either<Failure, void>> call(String id) async => await repository.deleteWorkspace(id);
 }

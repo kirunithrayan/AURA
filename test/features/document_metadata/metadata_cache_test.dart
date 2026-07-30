@@ -5,7 +5,7 @@ import 'package:aura/features/document_metadata/domain/entities/document_metadat
 void main() {
   group('MetadataCache', () {
     late MetadataCache cache;
-    final testDoc = DocumentMetadata(
+    const testDoc = DocumentMetadata(
       id: '1',
       workspaceId: 'w1',
       fileName: 'test.pdf',

@@ -1,9 +1,4 @@
 class SearchCacheConfiguration {
-  final int maxEntries;
-  final int maxMemoryBytes;
-  final Duration defaultTTL;
-  final Duration cleanupInterval;
-  final bool enableMetrics;
 
   const SearchCacheConfiguration({
     this.maxEntries = 50,
@@ -12,6 +7,11 @@ class SearchCacheConfiguration {
     this.cleanupInterval = const Duration(minutes: 1),
     this.enableMetrics = true,
   });
+  final int maxEntries;
+  final int maxMemoryBytes;
+  final Duration defaultTTL;
+  final Duration cleanupInterval;
+  final bool enableMetrics;
 
   SearchCacheConfiguration copyWith({
     int? maxEntries,
@@ -19,13 +19,11 @@ class SearchCacheConfiguration {
     Duration? defaultTTL,
     Duration? cleanupInterval,
     bool? enableMetrics,
-  }) {
-    return SearchCacheConfiguration(
+  }) => SearchCacheConfiguration(
       maxEntries: maxEntries ?? this.maxEntries,
       maxMemoryBytes: maxMemoryBytes ?? this.maxMemoryBytes,
       defaultTTL: defaultTTL ?? this.defaultTTL,
       cleanupInterval: cleanupInterval ?? this.cleanupInterval,
       enableMetrics: enableMetrics ?? this.enableMetrics,
     );
-  }
 }

@@ -13,11 +13,6 @@ import 'package:uuid/uuid.dart';
 /// Orchestrator use case for the full search pipeline:
 ///   Cache → Orchestrator → Cache → Log
 class PerformSearchUseCase {
-  final AbstractHybridSearchOrchestrator _orchestrator;
-  final AbstractSearchCache _searchCache;
-  final SearchEventBus _eventBus;
-  final SearchLogger _logger;
-  final SearchQueryNormalizer _normalizer;
 
   PerformSearchUseCase(
     this._orchestrator,
@@ -26,6 +21,11 @@ class PerformSearchUseCase {
     this._logger,
     this._normalizer,
   );
+  final AbstractHybridSearchOrchestrator _orchestrator;
+  final AbstractSearchCache _searchCache;
+  final SearchEventBus _eventBus;
+  final SearchLogger _logger;
+  final SearchQueryNormalizer _normalizer;
 
   Future<List<SearchResult>> call(SearchQuery query) async {
     final stopwatch = Stopwatch()..start();

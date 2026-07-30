@@ -2,24 +2,18 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/di/riverpod_providers.dart';
 import '../../../../core/utils/app_logger.dart';
 
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../../core/utils/file_type_helper.dart';
 import '../../domain/entities/viewer_type.dart';
 import '../../domain/entities/document_view_state.dart';
-import '../../domain/entities/text_document.dart';
+import '../../../../../core/text_engine/models/text_document.dart';
 import '../../domain/entities/reading_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../data/datasources/reading_preferences_local_datasource.dart';
-import '../../../../core/text_engine/abstract_text_document_engine.dart';
 
 part 'document_viewer_viewmodel.g.dart';
 
 class DocumentViewerViewModelState {
-  final WorkspaceFile? file;
-  final ViewerType viewerType;
-  final DocumentViewState viewState;
-  final TextDocument? textDocument;
-  final ReadingPreferences readingPreferences;
 
   const DocumentViewerViewModelState({
     this.file,
@@ -28,6 +22,11 @@ class DocumentViewerViewModelState {
     this.textDocument,
     this.readingPreferences = const ReadingPreferences(),
   });
+  final WorkspaceFile? file;
+  final ViewerType viewerType;
+  final DocumentViewState viewState;
+  final TextDocument? textDocument;
+  final ReadingPreferences readingPreferences;
 
   DocumentViewerViewModelState copyWith({
     WorkspaceFile? file,
@@ -35,23 +34,21 @@ class DocumentViewerViewModelState {
     DocumentViewState? viewState,
     TextDocument? textDocument,
     ReadingPreferences? readingPreferences,
-  }) {
-    return DocumentViewerViewModelState(
+  }) => DocumentViewerViewModelState(
       file: file ?? this.file,
       viewerType: viewerType ?? this.viewerType,
       viewState: viewState ?? this.viewState,
       textDocument: textDocument ?? this.textDocument,
       readingPreferences: readingPreferences ?? this.readingPreferences,
     );
-  }
 }
 
 @riverpod
 class DocumentViewerViewModel extends _$DocumentViewerViewModel {
+  DocumentViewerViewModelState? get currentState => state.valueOrNull;
+
   @override
-  FutureOr<DocumentViewerViewModelState> build(String documentId) async {
-    return _fetchDocument(documentId);
-  }
+  FutureOr<DocumentViewerViewModelState> build(String documentId) async => _fetchDocument(documentId);
 
   Future<DocumentViewerViewModelState> _fetchDocument(String documentId) async {
     AppLogger.info('DocumentViewerViewModel: Loading document $documentId');
@@ -100,7 +97,7 @@ class DocumentViewerViewModel extends _$DocumentViewerViewModel {
 
   Future<DocumentViewerViewModelState> _loadTextDocumentAdditions(DocumentViewerViewModelState currentState) async {
     try {
-      final storage = const FlutterSecureStorage();
+      const storage = FlutterSecureStorage();
       final prefsDataSource = ReadingPreferencesLocalDataSource(storage);
       final prefs = await prefsDataSource.getPreferences();
       
@@ -240,7 +237,7 @@ class DocumentViewerViewModel extends _$DocumentViewerViewModel {
     
     state = AsyncValue.data(currentState.copyWith(readingPreferences: prefs));
     
-    final storage = const FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     final prefsDataSource = ReadingPreferencesLocalDataSource(storage);
     await prefsDataSource.savePreferences(prefs);
   }

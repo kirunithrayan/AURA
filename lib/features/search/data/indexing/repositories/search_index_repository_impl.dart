@@ -4,9 +4,9 @@ import 'search_index_repository.dart';
 
 /// Concrete implementation delegating all storage to the local datasource.
 class SearchIndexRepositoryImpl implements SearchIndexRepository {
-  final SearchIndexLocalDatasource _localDatasource;
 
   SearchIndexRepositoryImpl(this._localDatasource);
+  final SearchIndexLocalDatasource _localDatasource;
 
   @override
   Future<void> saveIndex(SearchIndex index) => _localDatasource.saveIndex(index);

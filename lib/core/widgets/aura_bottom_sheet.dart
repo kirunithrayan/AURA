@@ -10,13 +10,11 @@ class AuraBottomSheet {
     required BuildContext context,
     required WidgetBuilder builder,
     bool isScrollControlled = true,
-  }) {
-    return showModalBottomSheet<T>(
+  }) => showModalBottomSheet<T>(
       context: context,
       isScrollControlled: isScrollControlled,
       backgroundColor: Colors.transparent,
-      builder: (BuildContext ctx) {
-        return Container(
+      builder: (BuildContext ctx) => Container(
           decoration: BoxDecoration(
             color: ctx.theme.colorScheme.surface,
             borderRadius: const BorderRadius.vertical(
@@ -34,7 +32,7 @@ class AuraBottomSheet {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: ctx.theme.colorScheme.outline.withOpacity(0.3),
+                  color: ctx.theme.colorScheme.outline.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -42,8 +40,6 @@ class AuraBottomSheet {
               Flexible(child: builder(ctx)),
             ],
           ),
-        );
-      },
+        ),
     );
-  }
 }

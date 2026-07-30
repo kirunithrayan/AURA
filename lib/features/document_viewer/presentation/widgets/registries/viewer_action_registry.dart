@@ -8,7 +8,5 @@ class ViewerActionRegistry {
     _registry[capability] = command;
   }
 
-  ViewerCommand? getCommand(ViewerCapability capability) {
-    return _registry[capability];
-  }
+  ViewerCommand? getCommand(ViewerCapability capability) => _registry[capability];
 }

@@ -4,9 +4,6 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
 
 class AiStatusCard extends StatelessWidget {
-  final bool isSchedulerActive;
-  final int pendingJobs;
-  final int recentlyProcessed;
 
   const AiStatusCard({
     super.key,
@@ -14,10 +11,12 @@ class AiStatusCard extends StatelessWidget {
     required this.pendingJobs,
     required this.recentlyProcessed,
   });
+  final bool isSchedulerActive;
+  final int pendingJobs;
+  final int recentlyProcessed;
 
   @override
-  Widget build(BuildContext context) {
-    return GlassContainer(
+  Widget build(BuildContext context) => GlassContainer(
       padding: AppSpacing.edgeInsetsAll16,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,10 +49,8 @@ class AiStatusCard extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildStat(BuildContext context, String value, String label) {
-    return Column(
+  Widget _buildStat(BuildContext context, String value, String label) => Column(
       children: [
         Text(
           value,
@@ -70,5 +67,4 @@ class AiStatusCard extends StatelessWidget {
         ),
       ],
     );
-  }
 }

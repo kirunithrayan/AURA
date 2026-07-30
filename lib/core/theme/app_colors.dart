@@ -58,4 +58,11 @@ class AppColors {
   // Glassmorphism Base
   static const Color glassLight = Color(0x1AFFFFFF);
   static const Color glassDark = Color(0x1A000000);
+
+  // Compatibility aliases
+  static const Color background = backgroundLight;
+  static const Color surface = surfaceLight;
+  static const Color textPrimary = onSurfaceLight;
+  static const Color textSecondary = onSurfaceVariantLight;
+  static const Color divider = outlineLight;
 }

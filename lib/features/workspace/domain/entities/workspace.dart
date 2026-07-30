@@ -2,16 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Domain entity representing a Workspace.
 class Workspace extends Equatable {
-  final String id;
-  final String name;
-  final String? description;
-  final String? icon;
-  final int? color;
-  final int createdAt;
-  final int updatedAt;
-  final int fileCount;
-  final int totalSize;
-  final bool isPinned;
 
   const Workspace({
     required this.id,
@@ -25,6 +15,16 @@ class Workspace extends Equatable {
     this.totalSize = 0,
     this.isPinned = false,
   });
+  final String id;
+  final String name;
+  final String? description;
+  final String? icon;
+  final int? color;
+  final int createdAt;
+  final int updatedAt;
+  final int fileCount;
+  final int totalSize;
+  final bool isPinned;
 
   @override
   List<Object?> get props => [
@@ -39,4 +39,28 @@ class Workspace extends Equatable {
         totalSize,
         isPinned,
       ];
+
+  Workspace copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? icon,
+    int? color,
+    int? createdAt,
+    int? updatedAt,
+    int? fileCount,
+    int? totalSize,
+    bool? isPinned,
+  }) => Workspace(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      icon: icon ?? this.icon,
+      color: color ?? this.color,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      fileCount: fileCount ?? this.fileCount,
+      totalSize: totalSize ?? this.totalSize,
+      isPinned: isPinned ?? this.isPinned,
+    );
 }

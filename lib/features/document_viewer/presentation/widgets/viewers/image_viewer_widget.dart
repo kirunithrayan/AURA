@@ -1,18 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/widgets/aura_empty_state.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
-import '../base_viewer_screen.dart';
+import 'package:aura/core/widgets/aura_empty_state.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import 'viewer_lifecycle.dart';
 import 'image/abstract_image_controller.dart';
 import 'image/image_engine_wrapper.dart';
 
 class ImageViewerWidget extends ConsumerStatefulWidget {
-  final WorkspaceFile file;
 
   const ImageViewerWidget({super.key, required this.file});
+  final WorkspaceFile file;
 
   @override
   ConsumerState<ImageViewerWidget> createState() => _ImageViewerWidgetState();
@@ -20,7 +19,7 @@ class ImageViewerWidget extends ConsumerStatefulWidget {
 
 class _ImageViewerWidgetState extends ConsumerState<ImageViewerWidget> implements ViewerLifecycle {
   late final AbstractImageController _imageController;
-  bool _showOverlay = true;
+  final bool _showOverlay = true;
   Timer? _hideTimer;
 
   @override
@@ -70,8 +69,7 @@ class _ImageViewerWidgetState extends ConsumerState<ImageViewerWidget> implement
     final stateAsync = ref.watch(documentViewerViewModelProvider(widget.file.id));
 
     return stateAsync.when(
-      data: (state) {
-        return Container(
+      data: (state) => Container(
           color: Colors.black, // Dark background for images
           child: Center(
             child: ImageEngineWrapper(
@@ -85,8 +83,7 @@ class _ImageViewerWidgetState extends ConsumerState<ImageViewerWidget> implement
               onTap: () {},
             ),
           ),
-        );
-      },
+        ),
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, st) => AuraEmptyState(icon: Icons.error, title: 'Error', message: e.toString()),
     );

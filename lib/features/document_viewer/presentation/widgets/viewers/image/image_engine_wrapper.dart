@@ -5,12 +5,6 @@ import 'package:photo_view/photo_view.dart';
 import 'abstract_image_controller.dart';
 
 class ImageEngineWrapper extends StatefulWidget {
-  final String filePath;
-  final double initialZoom;
-  final double initialRotation; // In degrees
-  final AbstractImageController controller;
-  final void Function(double zoom) onZoomChanged;
-  final VoidCallback onTap;
 
   const ImageEngineWrapper({
     super.key,
@@ -21,6 +15,12 @@ class ImageEngineWrapper extends StatefulWidget {
     required this.onZoomChanged,
     required this.onTap,
   });
+  final String filePath;
+  final double initialZoom;
+  final double initialRotation; // In degrees
+  final AbstractImageController controller;
+  final void Function(double zoom) onZoomChanged;
+  final VoidCallback onTap;
 
   @override
   State<ImageEngineWrapper> createState() => _ImageEngineWrapperState();
@@ -65,8 +65,7 @@ class _ImageEngineWrapperState extends State<ImageEngineWrapper> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(BuildContext context) => GestureDetector(
       onTap: widget.onTap,
       child: PhotoView(
         imageProvider: FileImage(File(widget.filePath)),
@@ -84,7 +83,6 @@ class _ImageEngineWrapperState extends State<ImageEngineWrapper> {
         ),
       ),
     );
-  }
 }
 
 class ImageEngineControllerImpl implements AbstractImageController {
@@ -131,9 +129,7 @@ class ImageEngineControllerImpl implements AbstractImageController {
   }
 
   @override
-  double getZoomLevel() {
-    return _controller?.scale ?? 1.0;
-  }
+  double getZoomLevel() => _controller?.scale ?? 1.0;
 
   @override
   void close() {

@@ -3,16 +3,16 @@ import '../../../domain/entities/indexing/search_index.dart';
 
 /// In-memory LRU cache for search indexes, with TTL-ready design.
 class SearchIndexCache {
-  final int _maxSize;
-  final Duration _ttl;
-  final LinkedHashMap<String, _IndexCacheEntry> _cache =
-      LinkedHashMap<String, _IndexCacheEntry>();
 
   SearchIndexCache({
     int maxSize = 30,
     Duration ttl = const Duration(minutes: 10),
   })  : _maxSize = maxSize,
         _ttl = ttl;
+  final int _maxSize;
+  final Duration _ttl;
+  final LinkedHashMap<String, _IndexCacheEntry> _cache =
+      LinkedHashMap<String, _IndexCacheEntry>();
 
   void put(String documentId, SearchIndex index) {
     if (_cache.length >= _maxSize) {
@@ -44,14 +44,12 @@ class SearchIndexCache {
     _cache.clear();
   }
 
-  bool contains(String documentId) {
-    return get(documentId) != null;
-  }
+  bool contains(String documentId) => get(documentId) != null;
 }
 
 class _IndexCacheEntry {
-  final SearchIndex index;
-  final DateTime timestamp;
 
   _IndexCacheEntry({required this.index, required this.timestamp});
+  final SearchIndex index;
+  final DateTime timestamp;
 }

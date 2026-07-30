@@ -8,10 +8,10 @@ import '../../data/models/document_metadata_model.dart';
 import '../../data/cache/metadata_cache.dart';
 
 class RecentDocumentsService {
-  final DatabaseHelper dbHelper;
-  final MetadataCache cache;
 
   RecentDocumentsService(this.dbHelper, this.cache);
+  final DatabaseHelper dbHelper;
+  final MetadataCache cache;
 
   Future<Either<Failure, List<DocumentMetadata>>> getRecentDocuments({int limit = 20}) async {
     try {

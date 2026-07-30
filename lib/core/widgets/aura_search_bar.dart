@@ -4,13 +4,6 @@ import '../extensions/context_extensions.dart';
 
 /// A custom search bar styled for AURA.
 class AuraSearchBar extends StatelessWidget {
-  final String hintText;
-  final TextEditingController controller;
-  final ValueChanged<String>? onChanged;
-  final VoidCallback? onSubmitted;
-  final VoidCallback? onClear;
-  final bool readOnly;
-  final VoidCallback? onTap;
 
   const AuraSearchBar({
     super.key,
@@ -22,15 +15,21 @@ class AuraSearchBar extends StatelessWidget {
     this.readOnly = false,
     this.onTap,
   });
+  final String hintText;
+  final TextEditingController controller;
+  final ValueChanged<String>? onChanged;
+  final VoidCallback? onSubmitted;
+  final VoidCallback? onClear;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       decoration: BoxDecoration(
-        color: context.theme.colorScheme.surfaceVariant.withOpacity(0.5),
+        color: context.theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(UiConstants.radiusRound),
         border: Border.all(
-          color: context.theme.colorScheme.outline.withOpacity(0.2),
+          color: context.theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: TextField(
@@ -57,5 +56,4 @@ class AuraSearchBar extends StatelessWidget {
         ),
       ),
     );
-  }
 }

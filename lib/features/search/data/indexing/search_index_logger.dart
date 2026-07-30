@@ -1,5 +1,5 @@
 import '../../../../../core/utils/app_logger.dart';
-import '../../../domain/entities/indexing/search_index_statistics.dart';
+import '../../domain/entities/indexing/search_index_statistics.dart';
 
 /// Abstraction for logging indexing operations.
 abstract class SearchIndexLogger {

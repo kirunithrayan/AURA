@@ -1,14 +1,12 @@
 import 'package:fpdart/fpdart.dart';
 import '../../../../core/error/failures.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../repositories/document_viewer_repository.dart';
 
 class GetDocumentForViewing {
-  final DocumentViewerRepository repository;
 
   GetDocumentForViewing(this.repository);
+  final DocumentViewerRepository repository;
 
-  Future<Either<Failure, WorkspaceFile>> call(String id) async {
-    return await repository.getDocumentForViewing(id);
-  }
+  Future<Either<Failure, WorkspaceFile>> call(String id) async => await repository.getDocumentForViewing(id);
 }

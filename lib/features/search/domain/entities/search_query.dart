@@ -2,13 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'search_filter.dart';
 
 class SearchQuery extends Equatable {
-  final String keyword;
-  final String? workspaceId;
-  final SearchFilter filter;
-  final int offset;
-  final int limit;
-  final String? sortField;
-  final bool ascending;
 
   const SearchQuery({
     required this.keyword,
@@ -19,6 +12,13 @@ class SearchQuery extends Equatable {
     this.sortField,
     this.ascending = false,
   });
+  final String keyword;
+  final String? workspaceId;
+  final SearchFilter filter;
+  final int offset;
+  final int limit;
+  final String? sortField;
+  final bool ascending;
 
   SearchQuery copyWith({
     String? keyword,
@@ -28,8 +28,7 @@ class SearchQuery extends Equatable {
     int? limit,
     String? sortField,
     bool? ascending,
-  }) {
-    return SearchQuery(
+  }) => SearchQuery(
       keyword: keyword ?? this.keyword,
       workspaceId: workspaceId ?? this.workspaceId,
       filter: filter ?? this.filter,
@@ -38,7 +37,6 @@ class SearchQuery extends Equatable {
       sortField: sortField ?? this.sortField,
       ascending: ascending ?? this.ascending,
     );
-  }
 
   @override
   List<Object?> get props => [

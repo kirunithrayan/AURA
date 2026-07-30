@@ -24,8 +24,7 @@ class _CreateWorkspaceScreenState extends ConsumerState<CreateWorkspaceScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AuraAppBar(
         title: 'New Workspace',
         actions: [
@@ -69,5 +68,4 @@ class _CreateWorkspaceScreenState extends ConsumerState<CreateWorkspaceScreen> {
         ),
       ),
     );
-  }
 }

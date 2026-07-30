@@ -5,12 +5,12 @@ import '../../../domain/entities/indexing/search_index_entry.dart';
 
 /// Local SQLite datasource for persisting and retrieving search indexes.
 class SearchIndexLocalDatasource {
+
+  SearchIndexLocalDatasource(this._dbHelper);
   final DatabaseHelper _dbHelper;
 
   static const String _indexTable = 'search_indexes';
   static const String _entryTable = 'search_index_entries';
-
-  SearchIndexLocalDatasource(this._dbHelper);
 
   /// Ensures the indexing tables exist.
   Future<void> ensureTables() async {
@@ -71,7 +71,7 @@ class SearchIndexLocalDatasource {
     if (indexMaps.isEmpty) return null;
 
     final entryMaps = await db.query(_entryTable, where: 'document_id = ?', whereArgs: [documentId]);
-    final entries = entryMaps.map((m) => SearchIndexEntry.fromMap(m)).toList();
+    final entries = entryMaps.map(SearchIndexEntry.fromMap).toList();
 
     return SearchIndex.fromMap(indexMaps.first, entries);
   }

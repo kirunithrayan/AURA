@@ -5,18 +5,17 @@ import '../../domain/entities/workspace.dart';
 import 'workspace_card.dart';
 
 class WorkspaceGrid extends StatelessWidget {
-  final List<Workspace> workspaces;
-  final Function(Workspace) onTap;
 
   const WorkspaceGrid({
     super.key,
     required this.workspaces,
     required this.onTap,
   });
+  final List<Workspace> workspaces;
+  final Function(Workspace) onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
+  Widget build(BuildContext context) => GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: UiConstants.workspaceGridCrossAxisCount,
         childAspectRatio: UiConstants.workspaceGridChildAspectRatio,
@@ -24,15 +23,12 @@ class WorkspaceGrid extends StatelessWidget {
         mainAxisSpacing: UiConstants.gridSpacing,
       ),
       itemCount: workspaces.length,
-      itemBuilder: (context, index) {
-        return AnimatedListItem(
+      itemBuilder: (context, index) => AnimatedListItem(
           index: index,
           child: WorkspaceCard(
             workspace: workspaces[index],
             onTap: () => onTap(workspaces[index]),
           ),
-        );
-      },
+        ),
     );
-  }
 }

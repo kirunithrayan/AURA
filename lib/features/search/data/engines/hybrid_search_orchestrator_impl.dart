@@ -12,17 +12,9 @@ import '../../domain/entities/search_result.dart';
 import '../../domain/entities/search_event.dart';
 import '../../domain/entities/search_execution_context.dart';
 import '../../domain/entities/search_execution_policy.dart';
+import '../../domain/entities/search_mode.dart';
 
 class HybridSearchOrchestratorImpl implements AbstractHybridSearchOrchestrator {
-  final AbstractSearchEngineRegistry _registry;
-  final AbstractMergeStrategy _mergeStrategy;
-  final AbstractDuplicateResolver _duplicateResolver;
-  final AbstractScoreNormalizer _scoreNormalizer;
-  final AbstractFilterEngine _filterEngine;
-  final AbstractRankingEngine _rankingEngine;
-  final AbstractSearchPostProcessor _postProcessor;
-  final SearchEventBus _eventBus;
-  final SearchExecutionPolicy _policy;
 
   HybridSearchOrchestratorImpl({
     required AbstractSearchEngineRegistry registry,
@@ -43,13 +35,32 @@ class HybridSearchOrchestratorImpl implements AbstractHybridSearchOrchestrator {
         _postProcessor = postProcessor,
         _eventBus = eventBus,
         _policy = policy;
+  final AbstractSearchEngineRegistry _registry;
+  final AbstractMergeStrategy _mergeStrategy;
+  final AbstractDuplicateResolver _duplicateResolver;
+  final AbstractScoreNormalizer _scoreNormalizer;
+  final AbstractFilterEngine _filterEngine;
+  final AbstractRankingEngine _rankingEngine;
+  final AbstractSearchPostProcessor _postProcessor;
+  final SearchEventBus _eventBus;
+  final SearchExecutionPolicy _policy;
 
   @override
   Future<List<SearchResult>> search(SearchQuery query) async {
     final queryId = DateTime.now().millisecondsSinceEpoch.toString();
     
-    final activeEngines = _registry.getActiveEngines();
+    final allActiveEngines = _registry.getActiveEngines();
     
+    // Filter engines based on SearchMode
+    final activeEngines = allActiveEngines.where((descriptor) {
+      if (query.filter.mode == SearchMode.keyword) {
+        return descriptor.engine.engineType == 'keyword';
+      } else if (query.filter.mode == SearchMode.semantic) {
+        return descriptor.engine.engineType == 'semantic';
+      }
+      return true; // hybrid: keep all
+    }).toList();
+
     var context = SearchExecutionContext(
       query: query,
       activeEngines: activeEngines,
@@ -128,7 +139,7 @@ class HybridSearchOrchestratorImpl implements AbstractHybridSearchOrchestrator {
     final mergeStopwatch = Stopwatch()..start();
 
     // Normalization per engine result
-    final normalizedResultsList = engineResultsList.map((res) => _scoreNormalizer.normalize(res)).toList();
+    final normalizedResultsList = engineResultsList.map(_scoreNormalizer.normalize).toList();
 
     // Merging
     final mergedResults = _mergeStrategy.merge(normalizedResultsList);
@@ -155,7 +166,7 @@ class HybridSearchOrchestratorImpl implements AbstractHybridSearchOrchestrator {
     );
 
     // Ranking
-    final rankedResults = _rankingEngine.rank(query, filteredResults);
+    final rankedResults = await _rankingEngine.rank(query, filteredResults);
 
     // Post processing
     final finalResults = await _postProcessor.process(context, rankedResults);

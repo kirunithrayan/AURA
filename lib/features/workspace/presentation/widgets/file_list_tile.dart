@@ -6,11 +6,6 @@ import '../../../../core/widgets/file_icon_widget.dart';
 import '../../domain/entities/workspace_file.dart';
 
 class FileListTile extends StatelessWidget {
-  final WorkspaceFile file;
-  final VoidCallback onTap;
-  final bool isPinned;
-  final VoidCallback? onPinToggle;
-  final VoidCallback? onPin;
 
   const FileListTile({
     super.key,
@@ -20,6 +15,11 @@ class FileListTile extends StatelessWidget {
     this.onPinToggle,
     this.onPin,
   });
+  final WorkspaceFile file;
+  final VoidCallback onTap;
+  final bool isPinned;
+  final VoidCallback? onPinToggle;
+  final VoidCallback? onPin;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class FileListTile extends StatelessWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: context.theme.colorScheme.surfaceVariant,
+          color: context.theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
         ),
         child: FileIconWidget(

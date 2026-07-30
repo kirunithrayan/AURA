@@ -1,12 +1,11 @@
-import 'package:flutter/material.dart';
 import 'viewer_command.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import '../../../domain/services/document_share_service.dart';
 
 class ShareCommand implements ViewerCommand {
-  final DocumentShareService shareService;
   
   ShareCommand(this.shareService);
+  final DocumentShareService shareService;
 
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {
@@ -18,9 +17,9 @@ class ShareCommand implements ViewerCommand {
 }
 
 class OpenExternallyCommand implements ViewerCommand {
-  final DocumentShareService shareService;
   
   OpenExternallyCommand(this.shareService);
+  final DocumentShareService shareService;
 
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {
@@ -32,9 +31,9 @@ class OpenExternallyCommand implements ViewerCommand {
 }
 
 class CopyDocumentPathCommand implements ViewerCommand {
-  final DocumentShareService shareService;
   
   CopyDocumentPathCommand(this.shareService);
+  final DocumentShareService shareService;
 
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {

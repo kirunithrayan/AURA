@@ -1,17 +1,4 @@
 class TextDocument {
-  final String title;
-  final String content;
-  final List<String> headings;
-  final int paragraphCount;
-  final int wordCount;
-  final int characterCount;
-  final String sourceType;
-  
-  // Optional Metadata
-  final String? detectedLanguage;
-  final String? encoding;
-  final int? estimatedReadingTime;
-  final String? parserVersion;
 
   const TextDocument({
     required this.title,
@@ -26,4 +13,17 @@ class TextDocument {
     this.estimatedReadingTime,
     this.parserVersion,
   });
+  final String title;
+  final String content;
+  final List<String> headings;
+  final int paragraphCount;
+  final int wordCount;
+  final int characterCount;
+  final String sourceType;
+  
+  // Optional Metadata
+  final String? detectedLanguage;
+  final String? encoding;
+  final int? estimatedReadingTime;
+  final String? parserVersion;
 }

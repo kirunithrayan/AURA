@@ -2,27 +2,6 @@ import 'package:equatable/equatable.dart';
 
 /// Domain entity representing a file inside a Workspace.
 class WorkspaceFile extends Equatable {
-  final String id;
-  final String workspaceId;
-  final String fileName;
-  final String filePath;
-  final String? originalPath;
-  final String? extension;
-  final String? mimeType;
-  final int? size;
-  final int createdAt;
-  final int modifiedAt;
-  final int importedAt;
-  final String? thumbnailPath;
-  final int aiStage;
-  final String? contentHash;
-  final List<String> tags;
-
-  // Document Viewer State
-  final int? lastOpenedAt;
-  final int? lastViewedPage;
-  final double? lastZoomLevel;
-  final double? lastScrollPosition;
 
   const WorkspaceFile({
     required this.id,
@@ -45,6 +24,27 @@ class WorkspaceFile extends Equatable {
     this.lastZoomLevel,
     this.lastScrollPosition,
   });
+  final String id;
+  final String workspaceId;
+  final String fileName;
+  final String filePath;
+  final String? originalPath;
+  final String? extension;
+  final String? mimeType;
+  final int? size;
+  final int createdAt;
+  final int modifiedAt;
+  final int importedAt;
+  final String? thumbnailPath;
+  final int aiStage;
+  final String? contentHash;
+  final List<String> tags;
+
+  // Document Viewer State
+  final int? lastOpenedAt;
+  final int? lastViewedPage;
+  final double? lastZoomLevel;
+  final double? lastScrollPosition;
 
   @override
   List<Object?> get props => [

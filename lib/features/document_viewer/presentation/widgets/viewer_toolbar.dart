@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/core/theme/app_colors.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../../domain/entities/viewer_capability.dart';
 import 'registries/viewer_action_registry.dart';
 import 'viewer_action_menu.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 
 class ViewerToolbar extends ConsumerWidget implements PreferredSizeWidget {
-  final WorkspaceFile? file;
-  final Set<ViewerCapability> capabilities;
-  final ViewerActionRegistry actionRegistry;
 
   const ViewerToolbar({
     super.key,
@@ -18,6 +15,9 @@ class ViewerToolbar extends ConsumerWidget implements PreferredSizeWidget {
     required this.capabilities,
     required this.actionRegistry,
   });
+  final WorkspaceFile? file;
+  final Set<ViewerCapability> capabilities;
+  final ViewerActionRegistry actionRegistry;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -35,7 +35,7 @@ class ViewerToolbar extends ConsumerWidget implements PreferredSizeWidget {
         children: [
           Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           if (subtitle.isNotEmpty)
-            Text(subtitle, style: TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+            Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
         ],
       ),
       actions: _buildActions(context, ref),

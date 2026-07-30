@@ -5,16 +5,15 @@ import '../../../../core/extensions/context_extensions.dart';
 import '../../domain/entities/dashboard_stats.dart';
 
 class DashboardStatsGrid extends StatelessWidget {
-  final DashboardStats stats;
 
   const DashboardStatsGrid({
     super.key,
     required this.stats,
   });
+  final DashboardStats stats;
 
   @override
-  Widget build(BuildContext context) {
-    return GridView.count(
+  Widget build(BuildContext context) => GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -42,14 +41,9 @@ class DashboardStatsGrid extends StatelessWidget {
         ),
       ],
     );
-  }
 }
 
 class _StatCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
 
   const _StatCard({
     required this.title,
@@ -57,10 +51,13 @@ class _StatCard extends StatelessWidget {
     required this.icon,
     required this.color,
   });
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
 
   @override
-  Widget build(BuildContext context) {
-    return AuraCard(
+  Widget build(BuildContext context) => AuraCard(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,5 +84,4 @@ class _StatCard extends StatelessWidget {
         ],
       ),
     );
-  }
 }

@@ -3,6 +3,7 @@ import '../../../../core/constants/db_constants.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/workspace_model.dart';
 import '../models/workspace_file_model.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart' hide DatabaseException;
 
 abstract class WorkspaceLocalDataSource {
   Future<List<WorkspaceModel>> getWorkspaces();
@@ -23,9 +24,9 @@ abstract class WorkspaceLocalDataSource {
 }
 
 class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
-  final DatabaseHelper dbHelper;
 
   WorkspaceLocalDataSourceImpl(this.dbHelper);
+  final DatabaseHelper dbHelper;
 
   @override
   Future<List<WorkspaceModel>> getWorkspaces() async {
@@ -35,7 +36,7 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
         DbConstants.workspacesTable,
         orderBy: 'created_at DESC',
       );
-      return results.map((map) => WorkspaceModel.fromMap(map)).toList();
+      return results.map(WorkspaceModel.fromMap).toList();
     } catch (e) {
       throw DatabaseException('Failed to get workspaces: $e');
     }
@@ -126,7 +127,7 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
         whereArgs: [workspaceId],
         orderBy: 'created_at DESC',
       );
-      return results.map((map) => WorkspaceFileModel.fromMap(map)).toList();
+      return results.map(WorkspaceFileModel.fromMap).toList();
     } catch (e) {
       throw DatabaseException('Failed to get workspace files: $e');
     }
@@ -212,7 +213,7 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
         ORDER BY pd.pinned_at DESC
       ''', [workspaceId]);
       
-      return results.map((map) => WorkspaceFileModel.fromMap(map)).toList();
+      return results.map(WorkspaceFileModel.fromMap).toList();
     } catch (e) {
       throw DatabaseException('Failed to get pinned documents: $e');
     }
@@ -223,7 +224,7 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
     try {
       final db = await dbHelper.database;
       final Map<String, dynamic> data = {
-        'id': '${fileId}_${workspaceId}',
+        'id': '${fileId}_$workspaceId',
         'file_id': fileId,
         'workspace_id': workspaceId,
         'pinned_at': DateTime.now().millisecondsSinceEpoch,

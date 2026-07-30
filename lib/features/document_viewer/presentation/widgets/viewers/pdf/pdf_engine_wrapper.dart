@@ -4,13 +4,6 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'abstract_pdf_controller.dart';
 
 class PdfEngineWrapper extends StatefulWidget {
-  final String filePath;
-  final int initialPage;
-  final double initialZoom;
-  final AbstractPdfController controller;
-  final void Function(int page, int totalPages) onPageChanged;
-  final void Function(double zoom) onZoomChanged;
-  final void Function(bool isProtected) onPasswordProtected;
 
   const PdfEngineWrapper({
     super.key,
@@ -22,6 +15,13 @@ class PdfEngineWrapper extends StatefulWidget {
     required this.onZoomChanged,
     required this.onPasswordProtected,
   });
+  final String filePath;
+  final int initialPage;
+  final double initialZoom;
+  final AbstractPdfController controller;
+  final void Function(int page, int totalPages) onPageChanged;
+  final void Function(double zoom) onZoomChanged;
+  final void Function(bool isProtected) onPasswordProtected;
 
   @override
   State<PdfEngineWrapper> createState() => _PdfEngineWrapperState();
@@ -48,16 +48,17 @@ class _PdfEngineWrapperState extends State<PdfEngineWrapper> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SfPdfViewer.file(
+  Widget build(BuildContext context) => SfPdfViewer.file(
       File(widget.filePath),
       controller: _pdfViewerController,
-      initialPageNumber: widget.initialPage,
       initialZoomLevel: widget.initialZoom,
       canShowScrollHead: false,
       canShowScrollStatus: false,
       onDocumentLoaded: (PdfDocumentLoadedDetails details) {
         _pageCount = details.document.pages.count;
+        if (widget.initialPage > 1) {
+          _pdfViewerController.jumpToPage(widget.initialPage);
+        }
         widget.onPageChanged(widget.initialPage, _pageCount);
       },
       onPageChanged: (PdfPageChangedDetails details) {
@@ -72,7 +73,6 @@ class _PdfEngineWrapperState extends State<PdfEngineWrapper> {
         }
       },
     );
-  }
 }
 
 class PdfEngineControllerImpl implements AbstractPdfController {
@@ -122,19 +122,13 @@ class PdfEngineControllerImpl implements AbstractPdfController {
   }
 
   @override
-  int getCurrentPage() {
-    return _controller?.pageNumber ?? 1;
-  }
+  int getCurrentPage() => _controller?.pageNumber ?? 1;
 
   @override
-  int getPageCount() {
-    return _controller?.pageCount ?? 0;
-  }
+  int getPageCount() => _controller?.pageCount ?? 0;
 
   @override
-  double getZoomLevel() {
-    return _controller?.zoomLevel ?? 1.0;
-  }
+  double getZoomLevel() => _controller?.zoomLevel ?? 1.0;
 
   @override
   void close() {

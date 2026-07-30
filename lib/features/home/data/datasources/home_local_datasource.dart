@@ -1,4 +1,4 @@
-import 'package:sqflite_sqlcipher/sqflite.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart' hide DatabaseException;
 import '../../../../core/database/database_helper.dart';
 import '../../../../core/constants/db_constants.dart';
 import '../../../../core/error/exceptions.dart';
@@ -12,9 +12,9 @@ abstract class HomeLocalDataSource {
 }
 
 class HomeLocalDataSourceImpl implements HomeLocalDataSource {
-  final DatabaseHelper dbHelper;
 
   HomeLocalDataSourceImpl(this.dbHelper);
+  final DatabaseHelper dbHelper;
 
   @override
   Future<DashboardStatsModel> getDashboardStats() async {
@@ -49,7 +49,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         orderBy: 'created_at DESC',
         limit: limit,
       );
-      return results.map((map) => WorkspaceFileModel.fromMap(map)).toList();
+      return results.map(WorkspaceFileModel.fromMap).toList();
     } catch (e) {
       throw DatabaseException('Failed to fetch recent documents: $e');
     }
@@ -64,7 +64,7 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
         INNER JOIN ${DbConstants.pinnedDocumentsTable} pd ON wf.id = pd.file_id
         ORDER BY pd.pinned_at DESC
       ''');
-      return results.map((map) => WorkspaceFileModel.fromMap(map)).toList();
+      return results.map(WorkspaceFileModel.fromMap).toList();
     } catch (e) {
       throw DatabaseException('Failed to fetch global pinned documents: $e');
     }

@@ -11,27 +11,25 @@ enum WorkspaceSortOption { name, date, size }
 enum WorkspaceViewMode { grid, list }
 
 class WorkspaceListState {
-  final List<Workspace> workspaces;
-  final WorkspaceSortOption sortOption;
-  final WorkspaceViewMode viewMode;
 
   WorkspaceListState({
     this.workspaces = const [],
     this.sortOption = WorkspaceSortOption.date,
     this.viewMode = WorkspaceViewMode.grid,
   });
+  final List<Workspace> workspaces;
+  final WorkspaceSortOption sortOption;
+  final WorkspaceViewMode viewMode;
 
   WorkspaceListState copyWith({
     List<Workspace>? workspaces,
     WorkspaceSortOption? sortOption,
     WorkspaceViewMode? viewMode,
-  }) {
-    return WorkspaceListState(
+  }) => WorkspaceListState(
       workspaces: workspaces ?? this.workspaces,
       sortOption: sortOption ?? this.sortOption,
       viewMode: viewMode ?? this.viewMode,
     );
-  }
 }
 
 @riverpod
@@ -116,9 +114,7 @@ class WorkspaceListViewModel extends _$WorkspaceListViewModel {
       },
       (savedWorkspace) {
         final current = state.value!;
-        final updatedList = current.workspaces.map((w) {
-          return w.id == savedWorkspace.id ? savedWorkspace : w;
-        }).toList();
+        final updatedList = current.workspaces.map<Workspace>((w) => w.id == savedWorkspace.id ? savedWorkspace : w).toList();
         state = AsyncValue.data(current.copyWith(
           workspaces: _sortWorkspaces(updatedList, current.sortOption)
         ));

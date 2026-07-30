@@ -4,11 +4,9 @@ import '../entities/workspace_file.dart';
 import '../repositories/workspace_repository.dart';
 
 class GetWorkspaceFiles {
-  final WorkspaceRepository repository;
 
   GetWorkspaceFiles(this.repository);
+  final WorkspaceRepository repository;
 
-  Future<Either<Failure, List<WorkspaceFile>>> call(String workspaceId) async {
-    return await repository.getWorkspaceFiles(workspaceId);
-  }
+  Future<Either<Failure, List<WorkspaceFile>>> call(String workspaceId) async => await repository.getWorkspaceFiles(workspaceId);
 }

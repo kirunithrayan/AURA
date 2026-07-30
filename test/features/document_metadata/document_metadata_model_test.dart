@@ -4,7 +4,7 @@ import 'package:aura/features/document_metadata/domain/entities/document_metadat
 
 void main() {
   group('DocumentMetadataModel', () {
-    final testEntity = DocumentMetadata(
+    const testEntity = DocumentMetadata(
       id: 'doc-1',
       workspaceId: 'ws-1',
       fileName: 'report.pdf',

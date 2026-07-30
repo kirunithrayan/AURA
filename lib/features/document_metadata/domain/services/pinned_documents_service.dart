@@ -8,10 +8,10 @@ import '../../data/models/document_metadata_model.dart';
 import '../../data/cache/metadata_cache.dart';
 
 class PinnedDocumentsService {
-  final DatabaseHelper dbHelper;
-  final MetadataCache cache;
 
   PinnedDocumentsService(this.dbHelper, this.cache);
+  final DatabaseHelper dbHelper;
+  final MetadataCache cache;
 
   Future<Either<Failure, List<DocumentMetadata>>> getPinned(String workspaceId) async {
     try {
@@ -35,13 +35,9 @@ class PinnedDocumentsService {
     }
   }
 
-  Future<Either<Failure, void>> pin(String id) async {
-    return _updatePinnedStatus(id, true);
-  }
+  Future<Either<Failure, void>> pin(String id) async => _updatePinnedStatus(id, true);
 
-  Future<Either<Failure, void>> unpin(String id) async {
-    return _updatePinnedStatus(id, false);
-  }
+  Future<Either<Failure, void>> unpin(String id) async => _updatePinnedStatus(id, false);
 
   Future<Either<Failure, void>> togglePin(String id) async {
     try {

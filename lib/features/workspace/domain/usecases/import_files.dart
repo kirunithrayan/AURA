@@ -8,14 +8,14 @@ import '../repositories/workspace_repository.dart';
 import '../../data/repositories/workspace_repository_impl.dart';
 
 class ImportFile {
-  final WorkspaceRepository repository;
 
   ImportFile(this.repository);
+  final WorkspaceRepository repository;
 
   Future<Either<Failure, WorkspaceFile>> call(String workspaceId, FileMetadata meta) async {
     if (repository is WorkspaceRepositoryImpl) {
       return await (repository as WorkspaceRepositoryImpl).persistImportedFile(workspaceId, meta);
     }
-    return Left(const FileSystemFailure('Repository implementation does not support advanced import'));
+    return const Left(FileSystemFailure('Repository implementation does not support advanced import'));
   }
 }

@@ -11,7 +11,6 @@ import '../../../../core/text_engine/abstract_text_document_engine.dart';
 import '../../../workspace/domain/entities/workspace_file.dart';
 import '../../domain/repositories/search_logger.dart';
 import '../../domain/entities/search_log_context.dart';
-import '../../domain/entities/search_failure.dart';
 
 /// Production keyword search engine operating on the persisted Search Index.
 ///
@@ -23,14 +22,6 @@ import '../../domain/entities/search_failure.dart';
 ///   5. Generate snippets for matched documents
 ///   6. Return unranked candidate SearchResults
 class KeywordSearchEngine implements AbstractSearchEngine {
-  final SearchRepository _repository;
-  final SearchIndexRepository _indexRepository;
-  final SearchIndexCache _indexCache;
-  final AbstractQueryProcessor _queryProcessor;
-  final AbstractMatchingStrategy _matchingStrategy;
-  final SearchSnippetGenerator _snippetGenerator;
-  final AbstractTextDocumentEngine _textEngine;
-  final SearchLogger _logger;
 
   KeywordSearchEngine(
     this._repository,
@@ -42,6 +33,14 @@ class KeywordSearchEngine implements AbstractSearchEngine {
     this._textEngine,
     this._logger,
   );
+  final SearchRepository _repository;
+  final SearchIndexRepository _indexRepository;
+  final SearchIndexCache _indexCache;
+  final AbstractQueryProcessor _queryProcessor;
+  final AbstractMatchingStrategy _matchingStrategy;
+  final SearchSnippetGenerator _snippetGenerator;
+  final AbstractTextDocumentEngine _textEngine;
+  final SearchLogger _logger;
 
   @override
   String get engineType => 'keyword';

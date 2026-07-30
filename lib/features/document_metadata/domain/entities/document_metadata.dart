@@ -1,6 +1,32 @@
 import 'package:equatable/equatable.dart';
 
 class DocumentMetadata extends Equatable {
+
+  const DocumentMetadata({
+    required this.id,
+    required this.workspaceId,
+    required this.fileName,
+    this.fileExtension,
+    this.mimeType,
+    required this.filePath,
+    this.fileSize,
+    this.sha256,
+    required this.createdAt,
+    required this.modifiedAt,
+    required this.importedAt,
+    this.lastOpenedAt,
+    this.openCount = 0,
+    this.lastViewedPage,
+    this.lastScrollPosition,
+    this.pageCount,
+    this.resolution,
+    this.wordCount,
+    this.paragraphCount,
+    this.characterCount,
+    this.isFavorite = false,
+    this.isPinned = false,
+    this.isArchived = false,
+  });
   // Core Information
   final String id;
   final String workspaceId;
@@ -34,32 +60,6 @@ class DocumentMetadata extends Equatable {
   final bool isPinned;
   final bool isArchived;
 
-  const DocumentMetadata({
-    required this.id,
-    required this.workspaceId,
-    required this.fileName,
-    this.fileExtension,
-    this.mimeType,
-    required this.filePath,
-    this.fileSize,
-    this.sha256,
-    required this.createdAt,
-    required this.modifiedAt,
-    required this.importedAt,
-    this.lastOpenedAt,
-    this.openCount = 0,
-    this.lastViewedPage,
-    this.lastScrollPosition,
-    this.pageCount,
-    this.resolution,
-    this.wordCount,
-    this.paragraphCount,
-    this.characterCount,
-    this.isFavorite = false,
-    this.isPinned = false,
-    this.isArchived = false,
-  });
-
   DocumentMetadata copyWith({
     String? id,
     String? workspaceId,
@@ -84,8 +84,7 @@ class DocumentMetadata extends Equatable {
     bool? isFavorite,
     bool? isPinned,
     bool? isArchived,
-  }) {
-    return DocumentMetadata(
+  }) => DocumentMetadata(
       id: id ?? this.id,
       workspaceId: workspaceId ?? this.workspaceId,
       fileName: fileName ?? this.fileName,
@@ -110,7 +109,6 @@ class DocumentMetadata extends Equatable {
       isPinned: isPinned ?? this.isPinned,
       isArchived: isArchived ?? this.isArchived,
     );
-  }
 
   @override
   List<Object?> get props => [

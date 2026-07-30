@@ -11,14 +11,29 @@ import '../../services/thermal_service.dart';
 import '../../services/memory_service.dart';
 import '../../services/workmanager_service.dart';
 
-// AI Abstraction Layer
-import '../../ai/engine/embedding_config.dart';
-import '../../ai/engine/embedding_engine.dart';
-import '../../ai/engine/embedding_engine_mock.dart';
-import '../../ai/retrieval/retrieval_engine.dart';
-import '../../ai/retrieval/retrieval_engine_impl.dart';
-import '../../ai/providers/ai_provider.dart';
-import '../../ai/providers/ai_provider_local.dart';
+// AI Foundation (Phase 6)
+import '../../features/ai/domain/engines/abstract_embedding_engine.dart';
+import '../../features/ai/domain/engines/abstract_inference_engine.dart';
+import '../../features/ai/domain/services/abstract_chunking_service.dart';
+import '../../features/ai/domain/services/abstract_prompt_builder.dart';
+import '../../features/ai/domain/services/abstract_vector_store.dart';
+import '../../features/ai/domain/registry/abstract_ai_service_registry.dart';
+import '../../features/ai/data/stubs/stub_embedding_engine.dart';
+import '../../features/ai/data/stubs/stub_inference_engine.dart';
+import '../../features/ai/data/stubs/stub_chunking_service.dart';
+import '../../features/ai/data/stubs/stub_prompt_builder.dart';
+import '../../features/ai/data/stubs/stub_vector_store.dart';
+import '../../features/ai/data/registry/ai_service_registry_impl.dart';
+
+// AI Embeddings Engine (Phase 6.2)
+import '../../features/ai/embeddings/domain/services/text_preprocessor.dart';
+import '../../features/ai/embeddings/domain/services/document_chunking_service.dart';
+import '../../features/ai/embeddings/domain/services/embedding_service.dart';
+import '../../features/ai/embeddings/data/services/onnx_embedding_service.dart';
+import '../../features/ai/embeddings/domain/repositories/embedding_repository.dart';
+import '../../features/ai/embeddings/data/repositories/embedding_repository_impl.dart';
+import '../../features/ai/embeddings/domain/services/cosine_similarity_service.dart';
+import '../../features/ai/embeddings/domain/services/document_indexing_service.dart';
 
 // Features - Home
 import '../../features/home/data/datasources/home_local_datasource.dart';
@@ -29,9 +44,6 @@ import '../../features/home/data/repositories/home_repository_impl.dart';
 import '../../features/workspace/data/datasources/workspace_local_datasource.dart';
 import '../../features/workspace/domain/repositories/workspace_repository.dart';
 import '../../features/workspace/data/repositories/workspace_repository_impl.dart';
-import '../../features/workspace/domain/usecases/pin_document.dart';
-import '../../features/workspace/domain/usecases/unpin_document.dart';
-import '../../features/workspace/domain/usecases/import_files.dart';
 
 // Document Viewer Imports
 import '../../features/document_viewer/domain/repositories/document_viewer_repository.dart';
@@ -56,9 +68,12 @@ import '../../features/search/domain/repositories/search_logger.dart';
 import '../../features/search/data/repositories/search_logger_impl.dart';
 import '../../features/search/data/cache/search_cache.dart';
 import '../../features/search/domain/engines/abstract_ranking_engine.dart';
-import '../../features/search/data/engines/basic_ranking_engine.dart';
+import '../../features/search/domain/entities/hybrid_ranking_weights.dart';
+import '../../features/search/data/engines/hybrid_ranking_engine.dart';
 import '../../features/search/domain/engines/abstract_search_engine.dart';
 import '../../features/search/data/engines/keyword_search_engine.dart';
+import '../../features/search/data/engines/semantic_search_engine.dart';
+import '../../features/search/data/cache/query_embedding_cache.dart';
 import '../../features/search/domain/usecases/perform_search.dart';
 import '../../features/search/domain/services/search_query_normalizer.dart';
 import '../../features/search/data/services/search_query_normalizer_impl.dart';
@@ -70,7 +85,7 @@ import '../../features/search/domain/services/search_profiler.dart';
 import '../../features/search/data/services/search_profiler_impl.dart';
 // Hybrid Search Orchestrator Imports
 import '../../features/search/domain/engines/abstract_search_engine_registry.dart';
-import '../../features/search/domain/engines/abstract_search_engine.dart';
+import '../../features/search/data/engines/default_search_engine_registry.dart';
 import '../../features/search/domain/cache/abstract_search_cache.dart';
 import '../../features/search/domain/engines/abstract_hybrid_search_orchestrator.dart';
 import '../../features/search/data/engines/hybrid_search_orchestrator_impl.dart';
@@ -122,6 +137,33 @@ import '../../features/search/data/engines/matching/matching_strategy.dart';
 import '../../features/search/data/engines/filter/filter_engine.dart';
 import '../../features/search/data/engines/snippet/search_snippet_generator.dart';
 
+// Phase 6.4 (Ask Documents / RAG)
+import '../../features/ai/rag/domain/entities/ai_config.dart';
+import '../../features/ai/rag/domain/providers/ai_provider_factory.dart';
+import '../../features/ai/rag/data/providers/ai_provider_factory_impl.dart';
+import '../../features/ai/rag/domain/services/context_builder_service.dart';
+import '../../features/ai/rag/data/services/context_builder_service_impl.dart';
+import '../../features/ai/rag/domain/services/prompt_builder_service.dart';
+import '../../features/ai/rag/data/services/prompt_builder_service_impl.dart';
+import '../../features/ai/rag/domain/services/rag_service.dart';
+import '../../features/ai/rag/data/services/rag_service_impl.dart';
+
+// Knowledge Graph
+import '../../features/ai/knowledge_graph/domain/repositories/knowledge_graph_repository.dart';
+import '../../features/ai/knowledge_graph/data/repositories/knowledge_graph_repository_impl.dart';
+import '../../features/ai/knowledge_graph/domain/services/concept_extraction_service.dart';
+import '../../features/ai/knowledge_graph/domain/services/relationship_detection_service.dart';
+import '../../features/ai/knowledge_graph/domain/services/knowledge_graph_builder.dart';
+import '../../features/ai/knowledge_graph/domain/services/related_documents_service.dart';
+
+// Phase 6.6 (AI Memory & Personalization)
+import '../../features/ai/personalization/domain/repositories/interaction_repository.dart';
+import '../../features/ai/personalization/data/repositories/interaction_repository_impl.dart';
+import '../../features/ai/personalization/domain/services/app_usage_service.dart';
+import '../../features/ai/personalization/domain/services/personalization_engine.dart';
+import '../../features/ai/personalization/domain/services/workspace_insights_service.dart';
+import '../../features/ai/personalization/domain/services/recommendation_service.dart';
+
 /// Global service locator instance.
 final sl = GetIt.instance;
 
@@ -132,20 +174,20 @@ Future<void> initInjection() async {
   // ---------------------------------------------------------------------------
   // 1. Core / Database
   // ---------------------------------------------------------------------------
-  sl.registerLazySingleton<DatabaseHelper>(() => DatabaseHelper());
+  sl.registerLazySingleton<DatabaseHelper>(DatabaseHelper.new);
 
   // ---------------------------------------------------------------------------
   // 2. Services
   // ---------------------------------------------------------------------------
-  sl.registerLazySingleton<FileService>(() => FileService());
-  sl.registerLazySingleton<ThumbnailService>(() => ThumbnailService());
-  sl.registerLazySingleton<BatteryService>(() => BatteryService());
-  sl.registerLazySingleton<ThermalService>(() => ThermalService());
-  sl.registerLazySingleton<MemoryService>(() => MemoryService());
-  sl.registerLazySingleton<WorkManagerService>(() => WorkManagerService());
+  sl.registerLazySingleton<FileService>(FileService.new);
+  sl.registerLazySingleton<ThumbnailService>(ThumbnailService.new);
+  sl.registerLazySingleton<BatteryService>(BatteryService.new);
+  sl.registerLazySingleton<ThermalService>(ThermalService.new);
+  sl.registerLazySingleton<MemoryService>(MemoryService.new);
+  sl.registerLazySingleton<WorkManagerService>(WorkManagerService.new);
 
   // Document Metadata Cache and Services
-  sl.registerLazySingleton<MetadataCache>(() => MetadataCache());
+  sl.registerLazySingleton<MetadataCache>(MetadataCache.new);
   
   sl.registerLazySingleton<DocumentMetadataService>(
     () => DocumentMetadataServiceImpl(sl(), sl()),
@@ -164,23 +206,47 @@ Future<void> initInjection() async {
   );
 
   // ---------------------------------------------------------------------------
-  // 3. AI Interfaces & Engines
+  // 3. AI Interfaces & Engines (Phase 6 Foundation)
   // ---------------------------------------------------------------------------
-  sl.registerLazySingleton<EmbeddingConfig>(() => const EmbeddingConfig(
-    modelPath: 'assets/models/stub.onnx',
-    modelVersion: 'mock_v1',
-  ));
-
-  sl.registerLazySingleton<EmbeddingEngine>(
-    () => MockEmbeddingEngine(),
+  sl.registerLazySingleton<AbstractEmbeddingEngine>(
+    () => const StubEmbeddingEngine(),
   );
 
-  sl.registerLazySingleton<RetrievalEngine>(
-    () => RetrievalEngineImpl(embeddingEngine: sl()),
+  sl.registerLazySingleton<AbstractInferenceEngine>(
+    () => const StubInferenceEngine(),
   );
 
-  sl.registerLazySingleton<AIProvider>(
-    () => LocalRetrievalProvider(),
+  sl.registerLazySingleton<AbstractChunkingService>(
+    () => const StubChunkingService(),
+  );
+
+  sl.registerLazySingleton<AbstractPromptBuilder>(
+    () => const StubPromptBuilder(),
+  );
+
+  sl.registerLazySingleton<AbstractVectorStore>(
+    () => const StubVectorStore(),
+  );
+
+  sl.registerLazySingleton<AbstractAIServiceRegistry>(
+    AIServiceRegistryImpl.new,
+  );
+
+  // ---------------------------------------------------------------------------
+  // 3b. AI Embeddings Engine (Phase 6.2)
+  // ---------------------------------------------------------------------------
+  sl.registerLazySingleton<TextPreprocessor>(() => const TextPreprocessor());
+  
+  sl.registerLazySingleton<DocumentChunkingService>(
+    () => const DocumentChunkingService(),
+  );
+  
+  sl.registerLazySingleton<EmbeddingService>(
+    OnnxEmbeddingService.new,
+  );
+  
+  sl.registerLazySingleton<CosineSimilarityService>(
+    () => const CosineSimilarityService(),
   );
 
   // ---------------------------------------------------------------------------
@@ -207,7 +273,7 @@ Future<void> initInjection() async {
     () => SearchCache(sl()),
   );
   
-  sl.registerLazySingleton<DocumentCache>(() => DocumentCache());
+  sl.registerLazySingleton<DocumentCache>(DocumentCache.new);
   
   // Text Engine
   sl.registerLazySingleton<AbstractTextDocumentEngine>(
@@ -233,20 +299,37 @@ Future<void> initInjection() async {
     ),
   );
 
+  sl.registerLazySingleton<EmbeddingRepository>(
+    () => EmbeddingRepositoryImpl(sl()),
+  );
+  
+  sl.registerLazySingleton<DocumentIndexingService>(
+    () => DocumentIndexingService(
+      preprocessor: sl(),
+      chunkingService: sl(),
+      embeddingService: sl(),
+      repository: sl(),
+    ),
+  );
+
   sl.registerLazySingleton<SearchRepository>(
     () => SearchRepositoryImpl(sl()),
   );
 
   sl.registerLazySingleton<SearchEventBus>(
-    () => SearchEventBusImpl(),
+    SearchEventBusImpl.new,
   );
 
   sl.registerLazySingleton<SearchLogger>(
-    () => SearchLoggerImpl(),
+    SearchLoggerImpl.new,
+  );
+
+  sl.registerLazySingleton<HybridRankingWeights>(
+    () => const HybridRankingWeights(),
   );
 
   sl.registerLazySingleton<AbstractRankingEngine>(
-    () => BasicRankingEngine(),
+    () => HybridRankingEngine(sl(), personalizationEngine: sl()),
   );
 
   // Search Engine Pipeline Components (Module 5.3)
@@ -268,27 +351,37 @@ Future<void> initInjection() async {
 
   sl.registerLazySingleton<AbstractSearchEngine>(
     () => KeywordSearchEngine(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    instanceName: 'keyword_engine',
+  );
+
+  sl.registerLazySingleton<QueryEmbeddingCache>(
+    QueryEmbeddingCache.new,
+  );
+
+  sl.registerLazySingleton<AbstractSearchEngine>(
+    () => SemanticSearchEngine(sl(), sl(), sl(), sl(), sl()),
+    instanceName: 'semantic_engine',
   );
 
   // Hybrid Search Orchestrator Pipeline
   sl.registerLazySingleton<AbstractSearchEngineRegistry>(
-    () => DefaultSearchEngineRegistry(),
+    DefaultSearchEngineRegistry.new,
   );
 
   sl.registerLazySingleton<AbstractMergeStrategy>(
-    () => HighestScoreMergeStrategy(),
+    HighestScoreMergeStrategy.new,
   );
 
   sl.registerLazySingleton<AbstractDuplicateResolver>(
-    () => DefaultDuplicateResolver(),
+    DefaultDuplicateResolver.new,
   );
 
   sl.registerLazySingleton<AbstractScoreNormalizer>(
-    () => DefaultScoreNormalizer(),
+    DefaultScoreNormalizer.new,
   );
 
   sl.registerLazySingleton<AbstractSearchPostProcessor>(
-    () => DefaultSearchPostProcessor(),
+    DefaultSearchPostProcessor.new,
   );
 
   sl.registerLazySingleton<AbstractHybridSearchOrchestrator>(
@@ -342,7 +435,7 @@ Future<void> initInjection() async {
   );
 
   sl.registerLazySingleton<AbstractStopWordFilter>(
-    () => DefaultStopWordFilter(),
+    DefaultStopWordFilter.new,
   );
 
   sl.registerLazySingleton<AbstractIndexBuilder>(
@@ -357,7 +450,7 @@ Future<void> initInjection() async {
     () => SearchIndexRepositoryImpl(sl()),
   );
 
-  sl.registerLazySingleton<SearchIndexCache>(() => SearchIndexCache());
+  sl.registerLazySingleton<SearchIndexCache>(SearchIndexCache.new);
 
   sl.registerLazySingleton<SearchIndexLogger>(
     () => const SearchIndexLoggerImpl(),
@@ -385,7 +478,7 @@ Future<void> initInjection() async {
   sl.registerLazySingleton(() => GetDocumentForViewing(sl()));
 
   sl.registerLazySingleton<SearchQueryNormalizer>(
-    () => SearchQueryNormalizerImpl(),
+    () => SearchQueryNormalizerImpl(sl()),
   );
 
   sl.registerLazySingleton(() => PerformSearchUseCase(
@@ -396,14 +489,101 @@ Future<void> initInjection() async {
     sl(),
   ));
 
+  // ---------------------------------------------------------------------------
+  // 7. RAG & Ask Documents (Phase 6.4)
+  // ---------------------------------------------------------------------------
+  sl.registerLazySingleton<AiConfig>(
+    // Note: In production, reading the API key from flutter_dotenv or secure storage is recommended.
+    // For now, pulling from environment as requested/assumed.
+    () => const AiConfig(
+      apiKey: String.fromEnvironment('GEMINI_API_KEY'),
+      providerName: 'gemini',
+    ),
+  );
+
+  sl.registerLazySingleton<AiProviderFactory>(
+    AiProviderFactoryImpl.new,
+  );
+
+  sl.registerLazySingleton<ContextBuilderService>(
+    () => ContextBuilderServiceImpl(sl()),
+  );
+
+  sl.registerLazySingleton<PromptBuilderService>(
+    PromptBuilderServiceImpl.new,
+  );
+
+  sl.registerLazySingleton<RAGService>(
+    () => RAGServiceImpl(
+      sl(instanceName: 'semantic_engine'),
+      sl(),
+      sl(),
+      sl(),
+    ),
+  );
+
+  // ---------------------------------------------------------------------------
+  // 8. Knowledge Graph (Phase 6.5)
+  // ---------------------------------------------------------------------------
+  sl.registerLazySingleton<KnowledgeGraphRepository>(
+    () => KnowledgeGraphRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton<ConceptExtractionService>(
+    ConceptExtractionService.new,
+  );
+
+  sl.registerLazySingleton<RelationshipDetectionService>(
+    RelationshipDetectionService.new,
+  );
+
+  sl.registerLazySingleton<KnowledgeGraphBuilder>(
+    () => KnowledgeGraphBuilder(sl(), sl(), sl(), sl()),
+  );
+
+  sl.registerLazySingleton<RelatedDocumentsService>(
+    () => RelatedDocumentsService(sl(), sl()),
+  );
+
+  // ---------------------------------------------------------------------------
+  // 9. Personalization (Phase 6.6)
+  // ---------------------------------------------------------------------------
+  sl.registerLazySingleton<InteractionRepository>(
+    () => InteractionRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton<AppUsageService>(
+    AppUsageService.new,
+  );
+
+  sl.registerLazySingleton<PersonalizationEngine>(
+    () => PersonalizationEngine(sl()),
+  );
+
+  sl.registerLazySingleton<WorkspaceInsightsService>(
+    () => WorkspaceInsightsService(sl(), sl(), sl()),
+  );
+
+  sl.registerLazySingleton<RecommendationService>(
+    () => RecommendationService(sl(), sl(), sl()),
+  );
+
   // Register default engines with the Orchestrator's Registry
   final registry = sl<AbstractSearchEngineRegistry>();
-  final keywordEngine = sl<AbstractSearchEngine>();
+  final keywordEngine = sl<AbstractSearchEngine>(instanceName: 'keyword_engine');
+  final semanticEngine = sl<AbstractSearchEngine>(instanceName: 'semantic_engine');
   
   registry.registerEngine(SearchEngineDescriptor(
-    id: 'keyword_engine',
+    id: 'keyword',
     name: 'Keyword Search Engine',
     capabilities: {SearchEngineCapability.keyword},
     engine: keywordEngine,
+  ));
+
+  registry.registerEngine(SearchEngineDescriptor(
+    id: 'semantic',
+    name: 'Semantic Search Engine',
+    capabilities: {SearchEngineCapability.semantic},
+    engine: semanticEngine,
   ));
 }

@@ -17,12 +17,6 @@ import 'package:uuid/uuid.dart';
 /// Uses change-detection (checksum + parserVersion) to skip unnecessary work.
 /// Designed so the same pipeline can later run in isolates or WorkManager.
 class SearchIndexService {
-  final AbstractTextDocumentEngine _textEngine;
-  final AbstractIndexBuilder _indexBuilder;
-  final SearchIndexRepository _indexRepository;
-  final SearchIndexCache _indexCache;
-  final SearchEventBus _eventBus;
-  final SearchIndexLogger _logger;
 
   SearchIndexService(
     this._textEngine,
@@ -32,6 +26,12 @@ class SearchIndexService {
     this._eventBus,
     this._logger,
   );
+  final AbstractTextDocumentEngine _textEngine;
+  final AbstractIndexBuilder _indexBuilder;
+  final SearchIndexRepository _indexRepository;
+  final SearchIndexCache _indexCache;
+  final SearchEventBus _eventBus;
+  final SearchIndexLogger _logger;
 
   /// Indexes a document. Skips if the checksum and parser version haven't changed.
   Future<SearchIndex?> indexDocument(WorkspaceFile file) async {
@@ -43,22 +43,7 @@ class SearchIndexService {
       // 1. Check timestamp first (fastest check)
       final existingMeta = await _indexRepository.getIndexMeta(file.id);
       
-      if (existingMeta != null) {
-        final modifiedTime = DateTime.fromMillisecondsSinceEpoch(file.modifiedAt);
-        // If the index is newer than the file's last modified time, we might be able to skip
-        if (existingMeta.indexedAt.isAfter(modifiedTime)) {
-          // Verify parser version too, just in case parsers were upgraded
-          if (existingMeta.parserVersion == _indexBuilder.parserVersion) {
-            _eventBus.publish(IndexSkipped(
-              documentId: file.id,
-              queryId: eventId,
-              reason: 'File unmodified since last index',
-            ));
-            _logger.logSkipped(file.id, 'File unmodified since last index');
-            return _indexCache.get(file.id) ?? await _indexRepository.getIndex(file.id);
-          }
-        }
-      }
+
 
       // 2. Parse document via shared TextEngine
       final textDoc = await _textEngine.openDocument(file);
@@ -144,7 +129,5 @@ class SearchIndexService {
     return persisted;
   }
 
-  String _computeChecksum(String content) {
-    return sha256.convert(utf8.encode(content)).toString();
-  }
+  String _computeChecksum(String content) => sha256.convert(utf8.encode(content)).toString();
 }

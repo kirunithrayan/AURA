@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/core/theme/app_colors.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import 'providers/metadata_provider.dart';
 
 class DocumentMetadataSheet extends StatelessWidget {
-  final DocumentViewerViewModelState state;
-  final MetadataProvider? provider;
 
   const DocumentMetadataSheet({
     super.key,
     required this.state,
     this.provider,
   });
+  final DocumentViewerViewModelState state;
+  final MetadataProvider? provider;
 
   String _formatSize(int? bytes) {
     if (bytes == null) return 'Unknown';
@@ -35,9 +35,9 @@ class DocumentMetadataSheet extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -75,15 +75,14 @@ class DocumentMetadataSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(String label, String value) {
-    return Padding(
+  Widget _buildRow(String label, String value) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
             width: 100,
-            child: Text(label, style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+            child: Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
           ),
           Expanded(
             child: Text(value, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
@@ -91,5 +90,4 @@ class DocumentMetadataSheet extends StatelessWidget {
         ],
       ),
     );
-  }
 }

@@ -4,11 +4,9 @@ import '../entities/dashboard_stats.dart';
 import '../repositories/home_repository.dart';
 
 class GetDashboardStats {
-  final HomeRepository repository;
 
   GetDashboardStats(this.repository);
+  final HomeRepository repository;
 
-  Future<Either<Failure, DashboardStats>> call() async {
-    return await repository.getDashboardStats();
-  }
+  Future<Either<Failure, DashboardStats>> call() async => await repository.getDashboardStats();
 }

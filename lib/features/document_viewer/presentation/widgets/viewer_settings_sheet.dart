@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:aura/core/theme/app_colors.dart';
 import '../../domain/entities/reading_preferences.dart';
 import '../../domain/entities/viewer_preferences.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import '../../data/datasources/viewer_preferences_local_datasource.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ViewerSettingsSheet extends ConsumerStatefulWidget {
-  final String fileId;
-  final ReadingPreferences initialPrefs;
 
   const ViewerSettingsSheet({
     super.key,
     required this.fileId,
     required this.initialPrefs,
   });
+  final String fileId;
+  final ReadingPreferences initialPrefs;
 
   @override
   ConsumerState<ViewerSettingsSheet> createState() => _ViewerSettingsSheetState();
@@ -67,9 +67,9 @@ class _ViewerSettingsSheetState extends ConsumerState<ViewerSettingsSheet> {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -125,8 +125,7 @@ class _ViewerSettingsSheetState extends ConsumerState<ViewerSettingsSheet> {
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
-              children: ReadingTheme.values.map((theme) {
-                return ChoiceChip(
+              children: ReadingTheme.values.map((theme) => ChoiceChip(
                   label: Text(theme.name),
                   selected: _prefs.readingTheme == theme,
                   onSelected: (selected) {
@@ -134,8 +133,7 @@ class _ViewerSettingsSheetState extends ConsumerState<ViewerSettingsSheet> {
                       _updateReadingPrefs(_prefs.copyWith(readingTheme: theme));
                     }
                   },
-                );
-              }).toList(),
+                )).toList(),
             ),
 
             const SizedBox(height: 24),

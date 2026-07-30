@@ -3,18 +3,17 @@ import '../../domain/entities/search_result.dart';
 import 'search_result_card.dart';
 
 class ResultSection extends StatelessWidget {
-  final List<SearchResult> results;
-  final ScrollController? scrollController;
 
   const ResultSection({
     super.key,
     required this.results,
     this.scrollController,
   });
+  final List<SearchResult> results;
+  final ScrollController? scrollController;
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
+  Widget build(BuildContext context) => ListView.builder(
       controller: scrollController,
       itemCount: results.length,
       itemBuilder: (context, index) {
@@ -30,5 +29,4 @@ class ResultSection extends StatelessWidget {
         );
       },
     );
-  }
 }

@@ -6,7 +6,7 @@ import '../../../../core/widgets/aura_loading.dart';
 import '../../../../core/widgets/aura_card.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/extensions/context_extensions.dart';
-import '../../../../core/router/app_router.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/utils/size_formatter.dart';
 import '../viewmodels/home_viewmodel.dart';
 import '../../../workspace/presentation/widgets/pinned_documents_section.dart';
@@ -25,7 +25,7 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
-            onPressed: () => context.pushNamed(AppRouter.settings),
+            onPressed: () => context.pushNamed(AppRoutes.settings),
           ),
         ],
       ),
@@ -61,7 +61,7 @@ class HomeScreen extends ConsumerWidget {
                     child: PinnedDocumentsSection(
                       files: state.pinnedDocuments,
                       onFileTap: (file) => context.pushNamed(
-                        AppRouter.documentViewer,
+                        AppRoutes.documentViewer,
                         pathParameters: {'id': file.id},
                       ),
                       onUnpin: (file) {
@@ -94,7 +94,7 @@ class HomeScreen extends ConsumerWidget {
                           return FileListTile(
                             file: file,
                             onTap: () => context.pushNamed(
-                              AppRouter.documentViewer,
+                              AppRoutes.documentViewer,
                               pathParameters: {'id': file.id},
                             ),
                           );
@@ -113,14 +113,13 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.pushNamed(AppRouter.workspaces),
+        onPressed: () => context.pushNamed(AppRoutes.workspaces),
         child: const Icon(Icons.folder_open),
       ),
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
-    return Column(
+  Widget _buildQuickActions(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -132,7 +131,7 @@ class HomeScreen extends ConsumerWidget {
           children: [
             Expanded(
               child: AuraCard(
-                onTap: () => context.pushNamed(AppRouter.createWorkspace),
+                onTap: () => context.pushNamed(AppRoutes.createWorkspace),
                 color: context.theme.colorScheme.primaryContainer,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -147,7 +146,7 @@ class HomeScreen extends ConsumerWidget {
             AppSpacing.h16,
             Expanded(
               child: AuraCard(
-                onTap: () => context.pushNamed(AppRouter.search),
+                onTap: () => context.pushNamed(AppRoutes.search),
                 color: context.theme.colorScheme.secondaryContainer,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -163,10 +162,8 @@ class HomeScreen extends ConsumerWidget {
         ),
       ],
     );
-  }
 
-  Widget _buildOverviewStats(BuildContext context, dynamic stats) {
-    return Column(
+  Widget _buildOverviewStats(BuildContext context, dynamic stats) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -215,5 +212,4 @@ class HomeScreen extends ConsumerWidget {
         ),
       ],
     );
-  }
 }

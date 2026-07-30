@@ -1,63 +1,81 @@
-# AURA - Smart Document Intelligence System
+# AURA — Adaptive Unified Repository Assistant
 
 ![AURA Banner](docs/images/banner_placeholder.png)
 
 [![Platform](https://img.shields.io/badge/Platform-Flutter-blue.svg)](https://flutter.dev/)
-[![Version](https://img.shields.io/badge/Version-v0.5.0-green.svg)]()
+[![Version](https://img.shields.io/badge/Version-v1.0.0-green.svg)]()
 [![Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-purple.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)]()
 
-## Overview
+## Project Overview
 
-AURA is an AI-powered Offline Knowledge Management and Smart Document Intelligence System. It is designed to index, parse, search, and eventually intelligently analyze large amounts of local documentation without requiring an internet connection.
+**AURA (Adaptive Unified Repository Assistant)** is an AI-powered, 100% offline knowledge management and smart document intelligence system for Android and cross-platform desktop. Designed with privacy by design, AURA parses, indexes, embeds, and executes Retrieval-Augmented Generation (RAG) over your local workspace documents without sending any data to external servers.
 
-This repository holds the **v0.5.0 Production Ready Offline Search Platform**. It completes the foundation of the platform before integrating generative AI intelligence.
+---
 
-## Features
+## Key Features
 
-- **Local Document Management:** Organize, tag, and manage massive collections of local documents.
-- **Advanced Parsers:** Modular parser registry supporting metadata extraction across various file types.
-- **Robust Viewer System:** High-performance local document viewer.
-- **Hybrid Search Orchestrator:** Concurrent, scalable search engine execution.
-- **Keyword Search:** Blazing fast SQLite-backed indexed search with snippet highlighting.
-- **Offline First:** 100% offline functionality. Privacy by design.
+- **AI-Powered Offline RAG & Chat:** Ask questions directly to your documents using locally executed ONNX embeddings and context builder engines.
+- **Hybrid Search Engine:** Combines dense semantic vector search with SQLite-backed indexed BM25 keyword matching for high-precision document retrieval.
+- **Workspace Management:** Create, organize, pin, tag, and manage multi-document workspaces with background file indexing.
+- **High-Performance Document Viewers:** Native rendering for PDFs, Markdown, Plain Text, and Images.
+- **Diagnostics & Health System:** System telemetry monitoring storage usage, battery impact, thermal states, and embedding index status.
+- **Offline First & Secure:** Zero network dependencies. Encrypted database storage using SQLCipher.
+
+---
 
 ## Architecture
 
-AURA strictly follows **Clean Architecture** principles to separate concerns into Presentation, Domain, Data, Core, and Infrastructure layers.
-
-- **State Management:** Riverpod
-- **Architecture Pattern:** MVVM (Model-View-ViewModel)
-- **Data Access:** Repository Pattern
-- **Dependency Injection:** GetIt
-
-For a deep dive into the architecture, please see the [Architecture Documentation](docs/architecture/ARCHITECTURE.md).
-
-## Technology Stack
-
-- **Framework:** Flutter / Dart
-- **Database:** SQLite (sqflite_sqlcipher)
-- **State Management:** flutter_riverpod
-- **Dependency Injection:** get_it
-- **Routing:** go_router
-- **Data Classes:** freezed, json_serializable
-
-## Folder Structure
+AURA is built following **Clean Architecture** principles and the **MVVM (Model-View-ViewModel)** design pattern:
 
 ```
 lib/
-├── ai/                # Future AI Engine (Phase 6)
-├── core/              # Core utilities, themes, routing, and DI
-├── features/          # Application Features
-│   ├── document_metadata/
-│   ├── document_viewer/
-│   ├── home/
-│   ├── search/        # Search Subsystem
-│   └── workspace/     
+├── core/                  # Core utilities, encrypted database, routing, and DI
+├── features/              # Feature modules
+│   ├── ai/                # Embeddings (ONNX), RAG, and Personalization
+│   ├── diagnostics/       # System health, telemetry, and index diagnostics
+│   ├── document_metadata/ # File metadata extraction and caching
+│   ├── document_viewer/   # High-performance viewer registry and widgets
+│   ├── home/              # Main dashboard and navigation
+│   ├── search/            # Hybrid ranking, keyword engine, and semantic search
+│   ├── settings/          # System preferences and configuration
+│   └── workspace/         # Workspace management and background indexing
 └── main.dart
 ```
 
-## Installation & Getting Started
+---
+
+## Technologies Used
+
+- **Framework:** Flutter / Dart
+- **State Management:** Riverpod (`flutter_riverpod`, `riverpod_generator`)
+- **Database:** Encrypted SQLite (`sqflite_sqlcipher`, `flutter_secure_storage`)
+- **AI / Embeddings:** ONNX Runtime (`flutter_onnxruntime`)
+- **OCR:** Google MLKit Text Recognition (`google_mlkit_text_recognition`)
+- **Dependency Injection:** `get_it`
+- **Routing:** `go_router`
+- **Background Processing:** `workmanager`
+- **Serialization:** `freezed`, `json_serializable`
+
+---
+
+## Screenshots
+
+| Dashboard | Document Viewer | Search & RAG |
+| :---: | :---: | :---: |
+| ![Dashboard](docs/images/screenshot_dashboard.png) | ![Viewer](docs/images/screenshot_viewer.png) | ![Search](docs/images/screenshot_search.png) |
+
+---
+
+## Build Instructions & Installation
+
+### Prerequisites
+
+- Flutter SDK (v3.24.0 or higher)
+- Dart SDK (v3.5.0 or higher)
+- Android Studio / Android SDK (API 24+)
+
+### Steps
 
 1. **Clone the repository:**
    ```bash
@@ -65,47 +83,31 @@ lib/
    cd aura
    ```
 
-2. **Install dependencies:**
+2. **Fetch dependencies:**
    ```bash
    flutter pub get
    ```
 
-3. **Run build runner (for generated code):**
+3. **Run code generation (if modifying generated models):**
    ```bash
    dart run build_runner build --delete-conflicting-outputs
    ```
 
-4. **Run the application:**
+4. **Run static analysis and tests:**
    ```bash
-   flutter run
+   dart analyze
+   flutter test
    ```
 
-## Screenshots
+5. **Build release APK:**
+   ```bash
+   flutter build apk --release
+   ```
+   The generated APK will be located at:
+   `build/app/outputs/flutter-apk/app-release.apk`
 
-| Dashboard | Document Viewer | Search |
-| :---: | :---: | :---: |
-| ![Dashboard](docs/images/screenshot_dashboard.png) | ![Viewer](docs/images/screenshot_viewer.png) | ![Search](docs/images/screenshot_search.png) |
-
-## Current Progress & Completed Modules
-
-- [x] **Phase 1:** Core Architecture & Theming
-- [x] **Phase 2:** Workspace & Document Management
-- [x] **Phase 3:** Parsers & Metadata Extraction
-- [x] **Phase 4:** High-Performance Viewer
-- [x] **Phase 5:** Production Search Platform
-
-## Roadmap (Future AI Features)
-
-**Phase 6 (Next Milestone):** AI Intelligence Platform
-- Local LLM Integration
-- Vector Embeddings & Semantic Search
-- Retrieval Augmented Generation (RAG)
-- AI Summarization & Chat-with-Document
-
-## Contributors
-
-Contributions, issues, and feature requests are welcome! See the [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
+---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. (Note: MIT License is highly recommended for this project to encourage community contribution and commercial integration).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

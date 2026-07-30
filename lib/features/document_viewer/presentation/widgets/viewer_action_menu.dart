@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/viewer_capability.dart';
 import 'registries/viewer_action_registry.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import '../../../../core/utils/app_logger.dart';
 
 class ViewerActionMenu extends ConsumerWidget {
-  final ViewerActionRegistry actionRegistry;
-  final Set<ViewerCapability> capabilities;
-  final DocumentViewerViewModelState state;
 
   const ViewerActionMenu({
     super.key,
@@ -16,6 +13,9 @@ class ViewerActionMenu extends ConsumerWidget {
     required this.capabilities,
     required this.state,
   });
+  final ViewerActionRegistry actionRegistry;
+  final Set<ViewerCapability> capabilities;
+  final DocumentViewerViewModelState state;
 
   void _executeCommand(BuildContext context, WidgetRef ref, ViewerCapability capability) {
     final command = actionRegistry.getCommand(capability);
@@ -31,8 +31,7 @@ class ViewerActionMenu extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return PopupMenuButton<ViewerCapability>(
+  Widget build(BuildContext context, WidgetRef ref) => PopupMenuButton<ViewerCapability>(
       icon: const Icon(Icons.more_vert),
       onSelected: (capability) {
         _executeCommand(context, ref, capability);
@@ -89,5 +88,4 @@ class ViewerActionMenu extends ConsumerWidget {
         return items;
       },
     );
-  }
 }

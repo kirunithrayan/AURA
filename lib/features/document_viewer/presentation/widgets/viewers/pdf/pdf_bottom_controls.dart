@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:aura/core/theme/app_colors.dart';
 
 class PdfBottomControls extends StatelessWidget {
-  final int currentPage;
-  final int pageCount;
-  final VoidCallback onPreviousPage;
-  final VoidCallback onNextPage;
-  final VoidCallback onJumpToPage;
-  final VoidCallback onZoomIn;
-  final VoidCallback onZoomOut;
 
   const PdfBottomControls({
     super.key,
@@ -20,14 +13,20 @@ class PdfBottomControls extends StatelessWidget {
     required this.onZoomIn,
     required this.onZoomOut,
   });
+  final int currentPage;
+  final int pageCount;
+  final VoidCallback onPreviousPage;
+  final VoidCallback onNextPage;
+  final VoidCallback onJumpToPage;
+  final VoidCallback onZoomIn;
+  final VoidCallback onZoomOut;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.9),
-        border: Border(top: BorderSide(color: AppColors.divider)),
+        color: AppColors.surface.withValues(alpha: 0.9),
+        border: const Border(top: BorderSide(color: AppColors.divider)),
       ),
       child: SafeArea(
         child: Row(
@@ -76,5 +75,4 @@ class PdfBottomControls extends StatelessWidget {
         ),
       ),
     );
-  }
 }

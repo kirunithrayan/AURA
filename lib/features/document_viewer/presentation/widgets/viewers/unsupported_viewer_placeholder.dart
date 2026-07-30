@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../../../core/widgets/aura_empty_state.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/core/widgets/aura_empty_state.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../base_viewer_screen.dart';
 
 class UnsupportedViewerPlaceholder extends StatelessWidget {
-  final WorkspaceFile file;
 
   const UnsupportedViewerPlaceholder({super.key, required this.file});
+  final WorkspaceFile file;
 
   @override
-  Widget build(BuildContext context) {
-    return BaseViewerScreen(
+  Widget build(BuildContext context) => BaseViewerScreen(
       title: file.fileName,
       file: file,
       child: AuraEmptyState(
@@ -19,5 +18,4 @@ class UnsupportedViewerPlaceholder extends StatelessWidget {
         message: 'AURA does not currently support viewing files of type .${file.extension}.',
       ),
     );
-  }
 }

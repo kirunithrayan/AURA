@@ -5,13 +5,13 @@ enum SuggestionType {
 }
 
 class SearchSuggestion {
-  final String text;
-  final SuggestionType type;
 
   const SearchSuggestion({
     required this.text,
     required this.type,
   });
+  final String text;
+  final SuggestionType type;
 
   @override
   bool operator ==(Object other) =>

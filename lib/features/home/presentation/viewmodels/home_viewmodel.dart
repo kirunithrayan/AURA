@@ -6,34 +6,30 @@ import '../../../workspace/domain/entities/workspace_file.dart';
 part 'home_viewmodel.g.dart';
 
 class HomeState {
-  final DashboardStats? stats;
-  final List<WorkspaceFile> recentDocuments;
-  final List<WorkspaceFile> pinnedDocuments;
   const HomeState({
     this.stats,
     this.recentDocuments = const [],
     this.pinnedDocuments = const [],
   });
+  final DashboardStats? stats;
+  final List<WorkspaceFile> recentDocuments;
+  final List<WorkspaceFile> pinnedDocuments;
 
   HomeState copyWith({
     DashboardStats? stats,
     List<WorkspaceFile>? recentDocuments,
     List<WorkspaceFile>? pinnedDocuments,
-  }) {
-    return HomeState(
+  }) => HomeState(
       stats: stats ?? this.stats,
       recentDocuments: recentDocuments ?? this.recentDocuments,
       pinnedDocuments: pinnedDocuments ?? this.pinnedDocuments,
     );
-  }
 }
 
 @riverpod
 class HomeViewModel extends _$HomeViewModel {
   @override
-  FutureOr<HomeState> build() async {
-    return _fetchData();
-  }
+  FutureOr<HomeState> build() async => _fetchData();
 
   Future<HomeState> _fetchData() async {
     final repo = ref.watch(homeRepositoryProvider);

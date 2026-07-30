@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,14 +14,18 @@ import 'tables/tags_table.dart';
 import 'tables/search_history_table.dart';
 import 'tables/scheduler_queue_table.dart';
 import 'tables/ai_jobs_table.dart';
+import 'tables/knowledge_nodes_table.dart';
 import 'tables/knowledge_edges_table.dart';
 import 'tables/graph_layouts_table.dart';
+import 'tables/document_interactions_table.dart';
+import 'tables/search_interactions_table.dart';
+import 'tables/conversation_summaries_table.dart';
 
 /// Singleton class for managing the SQLite (SQLCipher) database connection.
 class DatabaseHelper {
-  static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
   DatabaseHelper._internal();
+  static final DatabaseHelper _instance = DatabaseHelper._internal();
 
   Database? _database;
   final _secureStorage = const FlutterSecureStorage();
@@ -72,13 +75,22 @@ class DatabaseHelper {
     batch.execute(SearchHistoryTable.createTableQuery);
     batch.execute(SchedulerQueueTable.createTableQuery);
     batch.execute(AiJobsTable.createTableQuery);
+    batch.execute(KnowledgeNodesTable.createTableQuery);
     batch.execute(KnowledgeEdgesTable.createTableQuery);
     batch.execute(GraphLayoutsTable.createTableQuery);
+    batch.execute(DocumentInteractionsTable.createTableQuery);
+    batch.execute(SearchInteractionsTable.createTableQuery);
+    batch.execute(ConversationSummariesTable.createTableQuery);
     
     // Performance indexes
-    batch.execute('CREATE INDEX idx_workspace_files_last_opened ON ${DbConstants.workspaceFilesTable} (last_opened_at)');
-    batch.execute('CREATE INDEX idx_workspace_files_favorite ON ${DbConstants.workspaceFilesTable} (is_favorite)');
-    batch.execute('CREATE INDEX idx_workspace_files_pinned ON ${DbConstants.workspaceFilesTable} (is_pinned)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_workspace_files_last_opened ON ${DbConstants.workspaceFilesTable} (last_opened_at)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_workspace_files_favorite ON ${DbConstants.workspaceFilesTable} (is_favorite)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_workspace_files_pinned ON ${DbConstants.workspaceFilesTable} (is_pinned)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_workspace_files_workspace_id ON ${DbConstants.workspaceFilesTable} (workspace_id)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_embeddings_file_chunk ON ${DbConstants.embeddingsTable} (file_id, chunk_index)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_knowledge_nodes_workspace ON ${DbConstants.knowledgeNodesTable} (workspace_id)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_knowledge_edges_source_target ON ${DbConstants.knowledgeEdgesTable} (source_id, target_id)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_document_interactions_doc ON ${DbConstants.documentInteractionsTable} (document_id)');
     
     await batch.commit();
   }

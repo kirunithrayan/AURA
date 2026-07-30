@@ -3,9 +3,9 @@ import '../../domain/repositories/search_history_repository.dart';
 import '../../domain/services/search_history_service.dart';
 
 class SearchHistoryServiceImpl implements SearchHistoryService {
-  final SearchHistoryRepository _repository;
 
   SearchHistoryServiceImpl(this._repository);
+  final SearchHistoryRepository _repository;
 
   @override
   Future<void> addQuery(SearchHistoryEntry entry) async {
@@ -23,9 +23,7 @@ class SearchHistoryServiceImpl implements SearchHistoryService {
   }
 
   @override
-  Future<List<SearchHistoryEntry>> getRecentQueries({int limit = 50}) async {
-    return _repository.getRecentEntries(limit: limit);
-  }
+  Future<List<SearchHistoryEntry>> getRecentQueries({int limit = 50}) async => _repository.getRecentEntries(limit: limit);
 
   @override
   Future<void> pinQuery(String id) async {

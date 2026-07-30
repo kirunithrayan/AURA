@@ -8,10 +8,10 @@ import '../../data/models/document_metadata_model.dart';
 import '../../data/cache/metadata_cache.dart';
 
 class FavoriteDocumentsService {
-  final DatabaseHelper dbHelper;
-  final MetadataCache cache;
 
   FavoriteDocumentsService(this.dbHelper, this.cache);
+  final DatabaseHelper dbHelper;
+  final MetadataCache cache;
 
   Future<Either<Failure, List<DocumentMetadata>>> getFavorites() async {
     try {
@@ -34,13 +34,9 @@ class FavoriteDocumentsService {
     }
   }
 
-  Future<Either<Failure, void>> addFavorite(String id) async {
-    return _updateFavoriteStatus(id, true);
-  }
+  Future<Either<Failure, void>> addFavorite(String id) async => _updateFavoriteStatus(id, true);
 
-  Future<Either<Failure, void>> removeFavorite(String id) async {
-    return _updateFavoriteStatus(id, false);
-  }
+  Future<Either<Failure, void>> removeFavorite(String id) async => _updateFavoriteStatus(id, false);
 
   Future<Either<Failure, void>> toggleFavorite(String id) async {
     try {

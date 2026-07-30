@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import '../constants/ui_constants.dart';
 import '../extensions/context_extensions.dart';
-import '../extensions/string_extensions.dart';
 
 /// A widget that displays the appropriate icon for a given file extension.
 class FileIconWidget extends StatelessWidget {
-  final String extension;
-  final double size;
-  final Color? color;
 
   const FileIconWidget({
     super.key,
@@ -15,6 +11,9 @@ class FileIconWidget extends StatelessWidget {
     this.size = UiConstants.fileIconSize,
     this.color,
   });
+  final String extension;
+  final double size;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {

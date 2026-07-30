@@ -3,14 +3,14 @@ import '../extensions/context_extensions.dart';
 
 /// A standard loading indicator for AURA.
 class AuraLoading extends StatelessWidget {
-  final String? message;
-  final bool compact;
 
   const AuraLoading({
     super.key,
     this.message,
     this.compact = false,
   });
+  final String? message;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {

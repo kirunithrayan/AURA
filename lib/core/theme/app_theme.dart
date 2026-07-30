@@ -8,8 +8,7 @@ class AppTheme {
   AppTheme._();
 
   /// Light Theme Data
-  static ThemeData get lightTheme {
-    return ThemeData(
+  static ThemeData get lightTheme => ThemeData(
       useMaterial3: true,
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
@@ -29,11 +28,9 @@ class AppTheme {
         onError: AppColors.onError,
         errorContainer: AppColors.errorContainer,
         onErrorContainer: AppColors.onErrorContainer,
-        background: AppColors.backgroundLight,
-        onBackground: AppColors.onBackgroundLight,
         surface: AppColors.surfaceLight,
         onSurface: AppColors.onSurfaceLight,
-        surfaceVariant: AppColors.surfaceVariantLight,
+        surfaceContainerHighest: AppColors.surfaceVariantLight,
         onSurfaceVariant: AppColors.onSurfaceVariantLight,
         outline: AppColors.outlineLight,
       ),
@@ -45,7 +42,7 @@ class AppTheme {
         elevation: UiConstants.elevationNone,
         centerTitle: true,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surfaceLight,
         elevation: UiConstants.elevationLow,
         shape: RoundedRectangleBorder(
@@ -59,11 +56,9 @@ class AppTheme {
         ),
       ),
     );
-  }
 
   /// Dark Theme Data
-  static ThemeData get darkTheme {
-    return ThemeData(
+  static ThemeData get darkTheme => ThemeData(
       useMaterial3: true,
       colorScheme: const ColorScheme(
         brightness: Brightness.dark,
@@ -83,11 +78,9 @@ class AppTheme {
         onError: AppColors.onErrorContainer,
         errorContainer: AppColors.error,
         onErrorContainer: AppColors.onError,
-        background: AppColors.backgroundDark,
-        onBackground: AppColors.onBackgroundDark,
         surface: AppColors.surfaceDark,
         onSurface: AppColors.onSurfaceDark,
-        surfaceVariant: AppColors.surfaceVariantDark,
+        surfaceContainerHighest: AppColors.surfaceVariantDark,
         onSurfaceVariant: AppColors.onSurfaceVariantDark,
         outline: AppColors.outlineDark,
       ),
@@ -99,7 +92,7 @@ class AppTheme {
         elevation: UiConstants.elevationNone,
         centerTitle: true,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.surfaceVariantDark,
         elevation: UiConstants.elevationLow,
         shape: RoundedRectangleBorder(
@@ -113,5 +106,4 @@ class AppTheme {
         ),
       ),
     );
-  }
 }

@@ -5,10 +5,6 @@ import '../../indexing/filter/abstract_stop_word_filter.dart';
 
 /// A processed query ready for index matching.
 class ProcessedQuery {
-  final String rawKeyword;
-  final List<String> tokens;
-  final bool isPhraseSearch;
-  final bool isEmpty;
 
   const ProcessedQuery({
     required this.rawKeyword,
@@ -16,6 +12,10 @@ class ProcessedQuery {
     required this.isPhraseSearch,
     required this.isEmpty,
   });
+  final String rawKeyword;
+  final List<String> tokens;
+  final bool isPhraseSearch;
+  final bool isEmpty;
 }
 
 /// Contract for processing raw search queries into normalized, validated tokens.
@@ -26,15 +26,15 @@ abstract class AbstractQueryProcessor {
 /// Default query processor: normalizes, tokenizes, removes stop words.
 /// Detects phrase search when the keyword is wrapped in double quotes.
 class DefaultQueryProcessor implements AbstractQueryProcessor {
-  final AbstractTokenizer _tokenizer;
-  final AbstractTokenNormalizer _normalizer;
-  final AbstractStopWordFilter _stopWordFilter;
 
   const DefaultQueryProcessor(
     this._tokenizer,
     this._normalizer,
     this._stopWordFilter,
   );
+  final AbstractTokenizer _tokenizer;
+  final AbstractTokenNormalizer _normalizer;
+  final AbstractStopWordFilter _stopWordFilter;
 
   @override
   ProcessedQuery process(SearchQuery query) {

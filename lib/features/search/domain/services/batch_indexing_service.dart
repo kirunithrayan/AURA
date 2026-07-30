@@ -1,4 +1,4 @@
-import '../../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../entities/optimization/batch_index_job.dart';
 
 abstract class BatchIndexingService {

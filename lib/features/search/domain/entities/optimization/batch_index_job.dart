@@ -4,14 +4,6 @@ import '../../../../workspace/domain/entities/workspace_file.dart';
 enum BatchJobStatus { pending, processing, completed, failed }
 
 class BatchIndexJob extends Equatable {
-  final String jobId;
-  final List<WorkspaceFile> files;
-  final BatchJobStatus status;
-  final int processedCount;
-  final int failedCount;
-  final DateTime createdAt;
-  final DateTime? completedAt;
-  final String? error;
 
   const BatchIndexJob({
     required this.jobId,
@@ -23,6 +15,14 @@ class BatchIndexJob extends Equatable {
     this.completedAt,
     this.error,
   });
+  final String jobId;
+  final List<WorkspaceFile> files;
+  final BatchJobStatus status;
+  final int processedCount;
+  final int failedCount;
+  final DateTime createdAt;
+  final DateTime? completedAt;
+  final String? error;
 
   BatchIndexJob copyWith({
     BatchJobStatus? status,
@@ -30,8 +30,7 @@ class BatchIndexJob extends Equatable {
     int? failedCount,
     DateTime? completedAt,
     String? error,
-  }) {
-    return BatchIndexJob(
+  }) => BatchIndexJob(
       jobId: jobId,
       files: files,
       status: status ?? this.status,
@@ -41,7 +40,6 @@ class BatchIndexJob extends Equatable {
       completedAt: completedAt ?? this.completedAt,
       error: error ?? this.error,
     );
-  }
 
   @override
   List<Object?> get props => [

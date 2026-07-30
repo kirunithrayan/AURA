@@ -1,11 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class SearchCacheStatistics extends Equatable {
-  final int totalHits;
-  final int totalMisses;
-  final int currentSize;
-  final int maxSize;
-  final int evictions;
 
   const SearchCacheStatistics({
     required this.totalHits,
@@ -14,6 +9,11 @@ class SearchCacheStatistics extends Equatable {
     required this.maxSize,
     required this.evictions,
   });
+  final int totalHits;
+  final int totalMisses;
+  final int currentSize;
+  final int maxSize;
+  final int evictions;
 
   double get hitRate {
     final total = totalHits + totalMisses;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/widgets/aura_loading.dart';
-import '../../../../core/widgets/aura_empty_state.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/core/widgets/aura_empty_state.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import 'viewer_toolbar.dart';
 import 'viewer_bottom_toolbar.dart';
 import 'shortcut_manager.dart';
@@ -11,12 +11,6 @@ import '../../domain/utils/viewer_capabilities_helper.dart';
 import '../../core/utils/file_type_helper.dart';
 
 class BaseViewerScreen extends ConsumerWidget {
-  final String title;
-  final Widget child;
-  final bool isLoading;
-  final String? error;
-  final WorkspaceFile? file;
-  final List<Widget>? actions;
 
   const BaseViewerScreen({
     super.key,
@@ -27,6 +21,12 @@ class BaseViewerScreen extends ConsumerWidget {
     this.file,
     this.actions,
   });
+  final String title;
+  final Widget child;
+  final bool isLoading;
+  final String? error;
+  final WorkspaceFile? file;
+  final List<Widget>? actions;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

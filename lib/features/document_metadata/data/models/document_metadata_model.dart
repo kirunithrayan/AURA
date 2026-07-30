@@ -27,64 +27,7 @@ class DocumentMetadataModel extends DocumentMetadata {
     super.isArchived = false,
   });
 
-  factory DocumentMetadataModel.fromMap(Map<String, dynamic> map) {
-    return DocumentMetadataModel(
-      id: map['id'] as String,
-      workspaceId: map['workspace_id'] as String,
-      fileName: map['file_name'] as String,
-      fileExtension: map['extension'] as String?,
-      mimeType: map['mime_type'] as String?,
-      filePath: map['file_path'] as String,
-      fileSize: map['size'] as int?,
-      sha256: map['content_hash'] as String?,
-      createdAt: map['created_at'] as int,
-      modifiedAt: map['modified_at'] as int,
-      importedAt: map['imported_at'] as int,
-      lastOpenedAt: map['last_opened_at'] as int?,
-      openCount: map['open_count'] as int? ?? 0,
-      lastViewedPage: map['last_viewed_page'] as int?,
-      lastScrollPosition: map['last_scroll_position'] as double?,
-      pageCount: map['page_count'] as int?,
-      resolution: map['resolution'] as String?,
-      wordCount: map['word_count'] as int?,
-      paragraphCount: map['paragraph_count'] as int?,
-      characterCount: map['character_count'] as int?,
-      isFavorite: (map['is_favorite'] as int? ?? 0) == 1,
-      isPinned: (map['is_pinned'] as int? ?? 0) == 1,
-      isArchived: (map['is_archived'] as int? ?? 0) == 1,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'workspace_id': workspaceId,
-      'file_name': fileName,
-      'extension': fileExtension,
-      'mime_type': mimeType,
-      'file_path': filePath,
-      'size': fileSize,
-      'content_hash': sha256,
-      'created_at': createdAt,
-      'modified_at': modifiedAt,
-      'imported_at': importedAt,
-      'last_opened_at': lastOpenedAt,
-      'open_count': openCount,
-      'last_viewed_page': lastViewedPage,
-      'last_scroll_position': lastScrollPosition,
-      'page_count': pageCount,
-      'resolution': resolution,
-      'word_count': wordCount,
-      'paragraph_count': paragraphCount,
-      'character_count': characterCount,
-      'is_favorite': isFavorite ? 1 : 0,
-      'is_pinned': isPinned ? 1 : 0,
-      'is_archived': isArchived ? 1 : 0,
-    };
-  }
-
-  factory DocumentMetadataModel.fromEntity(DocumentMetadata entity) {
-    return DocumentMetadataModel(
+  factory DocumentMetadataModel.fromEntity(DocumentMetadata entity) => DocumentMetadataModel(
       id: entity.id,
       workspaceId: entity.workspaceId,
       fileName: entity.fileName,
@@ -109,5 +52,56 @@ class DocumentMetadataModel extends DocumentMetadata {
       isPinned: entity.isPinned,
       isArchived: entity.isArchived,
     );
-  }
+
+  factory DocumentMetadataModel.fromMap(Map<String, dynamic> map) => DocumentMetadataModel(
+      id: map['id'] as String,
+      workspaceId: map['workspace_id'] as String,
+      fileName: map['file_name'] as String,
+      fileExtension: map['extension'] as String?,
+      mimeType: map['mime_type'] as String?,
+      filePath: map['file_path'] as String,
+      fileSize: map['size'] as int?,
+      sha256: map['content_hash'] as String?,
+      createdAt: map['created_at'] as int,
+      modifiedAt: map['modified_at'] as int,
+      importedAt: map['imported_at'] as int,
+      lastOpenedAt: map['last_opened_at'] as int?,
+      openCount: map['open_count'] as int? ?? 0,
+      lastViewedPage: map['last_viewed_page'] as int?,
+      lastScrollPosition: map['last_scroll_position'] as double?,
+      pageCount: map['page_count'] as int?,
+      resolution: map['resolution'] as String?,
+      wordCount: map['word_count'] as int?,
+      paragraphCount: map['paragraph_count'] as int?,
+      characterCount: map['character_count'] as int?,
+      isFavorite: (map['is_favorite'] as int? ?? 0) == 1,
+      isPinned: (map['is_pinned'] as int? ?? 0) == 1,
+      isArchived: (map['is_archived'] as int? ?? 0) == 1,
+    );
+
+  Map<String, dynamic> toMap() => {
+      'id': id,
+      'workspace_id': workspaceId,
+      'file_name': fileName,
+      'extension': fileExtension,
+      'mime_type': mimeType,
+      'file_path': filePath,
+      'size': fileSize,
+      'content_hash': sha256,
+      'created_at': createdAt,
+      'modified_at': modifiedAt,
+      'imported_at': importedAt,
+      'last_opened_at': lastOpenedAt,
+      'open_count': openCount,
+      'last_viewed_page': lastViewedPage,
+      'last_scroll_position': lastScrollPosition,
+      'page_count': pageCount,
+      'resolution': resolution,
+      'word_count': wordCount,
+      'paragraph_count': paragraphCount,
+      'character_count': characterCount,
+      'is_favorite': isFavorite ? 1 : 0,
+      'is_pinned': isPinned ? 1 : 0,
+      'is_archived': isArchived ? 1 : 0,
+    };
 }

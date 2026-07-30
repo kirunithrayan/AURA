@@ -11,15 +11,15 @@ import 'abstract_index_builder.dart';
 /// Orchestrates the pipeline: Tokenize → Normalize → Filter → Aggregate.
 /// Each stage is injected and can be swapped independently.
 class DefaultIndexBuilder implements AbstractIndexBuilder {
-  final AbstractTokenizer _tokenizer;
-  final AbstractTokenNormalizer _normalizer;
-  final AbstractStopWordFilter _stopWordFilter;
 
   const DefaultIndexBuilder(
     this._tokenizer,
     this._normalizer,
     this._stopWordFilter,
   );
+  final AbstractTokenizer _tokenizer;
+  final AbstractTokenNormalizer _normalizer;
+  final AbstractStopWordFilter _stopWordFilter;
 
   @override
   ({SearchIndex index, SearchIndexStatistics statistics}) build({
@@ -102,11 +102,11 @@ class DefaultIndexBuilder implements AbstractIndexBuilder {
 }
 
 class _TokenAggregator {
+
+  _TokenAggregator({required this.originalToken, required this.field});
   final String originalToken;
   final String field;
   final List<int> positions = [];
-
-  _TokenAggregator({required this.originalToken, required this.field});
 
   void addPosition(int position) {
     positions.add(position);

@@ -35,7 +35,25 @@ class FileUtils {
   }
 
   /// Generates a safe file name by removing invalid characters.
-  static String sanitizeFileName(String name) {
-    return name.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+  static String sanitizeFileName(String name) => name.replaceAll(RegExp(r'[<>:"/\\|?*]'), '_');
+
+  /// Returns the MIME type based on file extension.
+  static String getMimeType(String extension) {
+    switch (extension.toLowerCase()) {
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'txt':
+        return 'text/plain';
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      default:
+        return 'application/octet-stream';
+    }
   }
 }

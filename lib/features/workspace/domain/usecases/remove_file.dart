@@ -3,11 +3,9 @@ import '../../../../core/error/failures.dart';
 import '../repositories/workspace_repository.dart';
 
 class RemoveFile {
-  final WorkspaceRepository repository;
 
   RemoveFile(this.repository);
+  final WorkspaceRepository repository;
 
-  Future<Either<Failure, void>> call(String fileId) async {
-    return await repository.removeFile(fileId);
-  }
+  Future<Either<Failure, void>> call(String fileId) async => await repository.removeFile(fileId);
 }

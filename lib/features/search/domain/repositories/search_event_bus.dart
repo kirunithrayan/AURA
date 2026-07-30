@@ -1,4 +1,3 @@
-import '../entities/search_query.dart';
 import '../entities/search_event.dart';
 
 abstract class SearchEventBus {

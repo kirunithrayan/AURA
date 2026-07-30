@@ -13,13 +13,13 @@ enum ViewerCapability {
 }
 
 class ViewerActionState {
-  final ViewerCapability capability;
-  final bool enabled;
-  final String? disabledReason;
 
   const ViewerActionState({
     required this.capability,
     required this.enabled,
     this.disabledReason,
   });
+  final ViewerCapability capability;
+  final bool enabled;
+  final String? disabledReason;
 }

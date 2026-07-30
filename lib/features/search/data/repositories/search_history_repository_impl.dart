@@ -5,9 +5,9 @@ import '../../domain/entities/search_history_entry.dart';
 import '../../domain/repositories/search_history_repository.dart';
 
 class SearchHistoryRepositoryImpl implements SearchHistoryRepository {
-  final DatabaseHelper _dbHelper;
 
   SearchHistoryRepositoryImpl(this._dbHelper);
+  final DatabaseHelper _dbHelper;
 
   @override
   Future<void> saveEntry(SearchHistoryEntry entry) async {
@@ -39,9 +39,7 @@ class SearchHistoryRepositoryImpl implements SearchHistoryRepository {
       limit: limit,
     );
 
-    return List.generate(maps.length, (i) {
-      return _fromMap(maps[i]);
-    });
+    return List.generate(maps.length, (i) => _fromMap(maps[i]));
   }
 
   @override
@@ -60,8 +58,7 @@ class SearchHistoryRepositoryImpl implements SearchHistoryRepository {
     await db.delete(DbConstants.searchHistoryTable);
   }
 
-  Map<String, dynamic> _toMap(SearchHistoryEntry entry) {
-    return {
+  Map<String, dynamic> _toMap(SearchHistoryEntry entry) => {
       'id': entry.id,
       'query': entry.query,
       'search_type': 'hybrid', // Setting a default type
@@ -72,10 +69,8 @@ class SearchHistoryRepositoryImpl implements SearchHistoryRepository {
       'hit_count': entry.hitCount,
       'is_pinned': entry.pinned ? 1 : 0,
     };
-  }
 
-  SearchHistoryEntry _fromMap(Map<String, dynamic> map) {
-    return SearchHistoryEntry(
+  SearchHistoryEntry _fromMap(Map<String, dynamic> map) => SearchHistoryEntry(
       id: map['id'],
       query: map['query'],
       searchedAt: DateTime.fromMillisecondsSinceEpoch(map['created_at']),
@@ -85,5 +80,4 @@ class SearchHistoryRepositoryImpl implements SearchHistoryRepository {
       workspaceId: map['workspace_id'],
       resultCount: map['result_count'] ?? 0,
     );
-  }
 }

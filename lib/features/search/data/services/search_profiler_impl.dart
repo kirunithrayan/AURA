@@ -5,14 +5,14 @@ import '../../domain/repositories/search_event_bus.dart';
 import '../../domain/entities/search_event.dart';
 
 class SearchProfilerImpl implements SearchProfiler {
-  final SearchEventBus _eventBus;
-  StreamSubscription? _subscription;
-  
-  final Map<String, _QueryProfileBuilder> _builders = {};
 
   SearchProfilerImpl(this._eventBus) {
     _subscription = _eventBus.events.listen(_onEvent);
   }
+  final SearchEventBus _eventBus;
+  StreamSubscription? _subscription;
+  
+  final Map<String, _QueryProfileBuilder> _builders = {};
 
   void _onEvent(SearchEvent event) {
     if (event is SearchStarted) {
@@ -53,6 +53,8 @@ class SearchProfilerImpl implements SearchProfiler {
 }
 
 class _QueryProfileBuilder {
+
+  _QueryProfileBuilder(this.queryId);
   final String queryId;
   Duration engineExecutionDuration = Duration.zero;
   Duration filteringDuration = Duration.zero;
@@ -60,10 +62,7 @@ class _QueryProfileBuilder {
   Duration postProcessingDuration = Duration.zero;
   Duration totalPipelineDuration = Duration.zero;
 
-  _QueryProfileBuilder(this.queryId);
-
-  SearchProfile build() {
-    return SearchProfile(
+  SearchProfile build() => SearchProfile(
       queryId: queryId,
       engineExecutionDuration: engineExecutionDuration,
       filteringDuration: filteringDuration,
@@ -71,5 +70,4 @@ class _QueryProfileBuilder {
       postProcessingDuration: postProcessingDuration,
       totalPipelineDuration: totalPipelineDuration,
     );
-  }
 }

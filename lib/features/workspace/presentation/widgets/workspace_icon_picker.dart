@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../../../core/extensions/context_extensions.dart';
 
 class WorkspaceIconPicker extends StatelessWidget {
-  final String selectedIcon;
-  final Function(String) onIconSelected;
 
   const WorkspaceIconPicker({
     super.key,
     required this.selectedIcon,
     required this.onIconSelected,
   });
+  final String selectedIcon;
+  final Function(String) onIconSelected;
 
   // Small curated list of icons for Phase 1
   static const Map<String, IconData> _icons = {
@@ -26,8 +26,7 @@ class WorkspaceIconPicker extends StatelessWidget {
   };
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -50,7 +49,7 @@ class WorkspaceIconPicker extends StatelessWidget {
                   border: Border.all(
                     color: isSelected 
                         ? context.theme.colorScheme.primary 
-                        : context.theme.colorScheme.outline.withOpacity(0.3),
+                        : context.theme.colorScheme.outline.withValues(alpha: 0.3),
                   ),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -64,5 +63,4 @@ class WorkspaceIconPicker extends StatelessWidget {
         ),
       ],
     );
-  }
 }

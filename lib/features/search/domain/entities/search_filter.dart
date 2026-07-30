@@ -1,11 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'search_mode.dart';
 
 class SearchFilter extends Equatable {
-  final List<String> fileTypes;
-  final bool favoritesOnly;
-  final bool pinnedOnly;
-  final DateTime? startDate;
-  final DateTime? endDate;
 
   const SearchFilter({
     this.fileTypes = const [],
@@ -13,7 +9,14 @@ class SearchFilter extends Equatable {
     this.pinnedOnly = false,
     this.startDate,
     this.endDate,
+    this.mode = SearchMode.hybrid,
   });
+  final List<String> fileTypes;
+  final bool favoritesOnly;
+  final bool pinnedOnly;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final SearchMode mode;
 
   SearchFilter copyWith({
     List<String>? fileTypes,
@@ -21,15 +24,15 @@ class SearchFilter extends Equatable {
     bool? pinnedOnly,
     DateTime? startDate,
     DateTime? endDate,
-  }) {
-    return SearchFilter(
+    SearchMode? mode,
+  }) => SearchFilter(
       fileTypes: fileTypes ?? this.fileTypes,
       favoritesOnly: favoritesOnly ?? this.favoritesOnly,
       pinnedOnly: pinnedOnly ?? this.pinnedOnly,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
+      mode: mode ?? this.mode,
     );
-  }
 
   @override
   List<Object?> get props => [
@@ -38,5 +41,6 @@ class SearchFilter extends Equatable {
         pinnedOnly,
         startDate,
         endDate,
+        mode,
       ];
 }

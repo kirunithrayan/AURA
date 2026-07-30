@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/widgets/aura_empty_state.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
-import '../base_viewer_screen.dart';
+import 'package:aura/core/widgets/aura_empty_state.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import 'viewer_lifecycle.dart';
-import 'image/abstract_image_controller.dart';
-import 'image/image_engine_wrapper.dart';
 import 'pdf/abstract_pdf_controller.dart';
 import 'pdf/pdf_engine_wrapper.dart';
 import 'pdf/jump_to_page_dialog.dart';
 
 class PdfViewerWidget extends ConsumerStatefulWidget {
-  final WorkspaceFile file;
 
   const PdfViewerWidget({super.key, required this.file});
+  final WorkspaceFile file;
 
   @override
   ConsumerState<PdfViewerWidget> createState() => _PdfViewerWidgetState();
@@ -51,23 +48,19 @@ class _PdfViewerWidgetState extends ConsumerState<PdfViewerWidget> implements Vi
     ref.read(documentViewerViewModelProvider(widget.file.id).notifier).saveViewerState();
   }
 
-  void _showJumpToPageDialog(BuildContext context, int currentPage, int pageCount) async        return Container(
-          color: Colors.black, // Dark background for images
-          child: Center(
-            child: ImageEngineWrapper(
-              filePath: widget.file.filePath,
-              initialZoom: state.viewState.zoomLevel,
-              initialRotation: state.viewState.rotation,
-              controller: _imageController,
-              onZoomChanged: (zoom) {
-                ref.read(documentViewerViewModelProvider(widget.file.id).notifier).updateZoom(zoom);
-              },
-              onTap: () {
-                // Future tap handling
-              },
-            ),
-          ),
-        );
+  void _showJumpToPageDialog(BuildContext context, int currentPage, int pageCount) async {
+    final selectedPage = await showDialog<int>(
+      context: context,
+      builder: (context) => JumpToPageDialog(
+        currentPage: currentPage,
+        pageCount: pageCount,
+      ),
+    );
+
+    if (selectedPage != null && selectedPage != currentPage) {
+      ref.read(documentViewerViewModelProvider(widget.file.id).notifier).updatePageState(selectedPage, pageCount);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/core/theme/app_colors.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../../domain/entities/viewer_capability.dart';
 import 'registries/viewer_action_registry.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import 'viewers/pdf/jump_to_page_dialog.dart';
 
 class ViewerBottomToolbar extends ConsumerWidget {
-  final WorkspaceFile file;
-  final Set<ViewerCapability> capabilities;
-  final ViewerActionRegistry actionRegistry;
 
   const ViewerBottomToolbar({
     super.key,
@@ -18,6 +15,9 @@ class ViewerBottomToolbar extends ConsumerWidget {
     required this.capabilities,
     required this.actionRegistry,
   });
+  final WorkspaceFile file;
+  final Set<ViewerCapability> capabilities;
+  final ViewerActionRegistry actionRegistry;
 
   void _execute(WidgetRef ref, BuildContext context, ViewerCapability cap, [dynamic payload]) {
     actionRegistry.getCommand(cap)?.execute(
@@ -102,8 +102,8 @@ class ViewerBottomToolbar extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.9),
-        border: Border(top: BorderSide(color: AppColors.divider)),
+        color: AppColors.surface.withValues(alpha: 0.9),
+        border: const Border(top: BorderSide(color: AppColors.divider)),
       ),
       child: SafeArea(
         child: Row(

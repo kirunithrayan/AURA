@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 class SearchBarWidget extends StatefulWidget {
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
-  final VoidCallback onClear;
-  final ValueChanged<String>? onSubmitted;
-  final FocusNode? focusNode;
 
   const SearchBarWidget({
     super.key,
@@ -15,6 +10,11 @@ class SearchBarWidget extends StatefulWidget {
     this.onSubmitted,
     this.focusNode,
   });
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onClear;
+  final ValueChanged<String>? onSubmitted;
+  final FocusNode? focusNode;
 
   @override
   State<SearchBarWidget> createState() => _SearchBarWidgetState();
@@ -46,8 +46,7 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -77,5 +76,4 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
         ),
       ),
     );
-  }
 }

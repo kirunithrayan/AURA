@@ -1,7 +1,7 @@
 /// Base exception for all AURA exceptions.
 abstract class AuraException implements Exception {
-  final String message;
   const AuraException(this.message);
+  final String message;
 
   @override
   String toString() => '$runtimeType: $message';

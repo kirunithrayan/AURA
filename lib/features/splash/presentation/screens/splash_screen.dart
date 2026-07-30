@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/router/app_router.dart';
+import '../../../../core/router/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,14 +16,13 @@ class _SplashScreenState extends State<SplashScreen> {
     // Simulate initialization delay, then navigate to Onboarding or Home
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        context.goNamed(AppRouter.onboarding);
+        context.goNamed(AppRoutes.onboarding);
       }
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: Center(
         child: Column(
@@ -44,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Text(
               'Adaptive Unified Repository Assistant',
               style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
+                color: Colors.white.withValues(alpha: 0.8),
                 fontSize: 14,
               ),
             ),
@@ -54,5 +53,4 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       ),
     );
-  }
 }

@@ -1,8 +1,8 @@
 abstract class SearchFailure implements Exception {
-  final String message;
-  final dynamic cause;
 
   const SearchFailure(this.message, [this.cause]);
+  final String message;
+  final dynamic cause;
 
   @override
   String toString() => '$runtimeType: $message${cause != null ? ' (Cause: $cause)' : ''}';

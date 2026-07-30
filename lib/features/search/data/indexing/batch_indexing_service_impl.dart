@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:uuid/uuid.dart';
-import '../../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import '../../domain/entities/optimization/batch_index_job.dart';
 import '../../domain/services/batch_indexing_service.dart';
 import '../../domain/repositories/search_event_bus.dart';
@@ -10,6 +10,8 @@ import '../../domain/entities/search_log_context.dart';
 import 'search_index_service.dart';
 
 class BatchIndexingServiceImpl implements BatchIndexingService {
+
+  BatchIndexingServiceImpl(this._indexService, this._eventBus, this._logger);
   final SearchIndexService _indexService;
   final SearchEventBus _eventBus;
   final SearchLogger _logger;
@@ -17,8 +19,6 @@ class BatchIndexingServiceImpl implements BatchIndexingService {
   // In-memory job tracking for now. In a full isolate implementation, 
   // this would likely be persisted or communicated via ports.
   final Map<String, BatchIndexJob> _jobs = {};
-
-  BatchIndexingServiceImpl(this._indexService, this._eventBus, this._logger);
 
   @override
   Future<String> enqueueBatch(List<WorkspaceFile> files, {int batchSize = 10}) async {
@@ -39,9 +39,7 @@ class BatchIndexingServiceImpl implements BatchIndexingService {
   }
 
   @override
-  Future<BatchIndexJob?> getJobStatus(String jobId) async {
-    return _jobs[jobId];
-  }
+  Future<BatchIndexJob?> getJobStatus(String jobId) async => _jobs[jobId];
 
   Future<void> _processBatch(String jobId, int batchSize) async {
     var job = _jobs[jobId];
@@ -50,7 +48,7 @@ class BatchIndexingServiceImpl implements BatchIndexingService {
     job = job.copyWith(status: BatchJobStatus.processing);
     _jobs[jobId] = job;
 
-    _eventBus.publish(BatchIndexStarted(jobId: jobId, documentCount: job.files.length));
+    _eventBus.publish(BatchIndexStarted(queryId: jobId, documentCount: job.files.length));
 
     int processedCount = 0;
     int failedCount = 0;
@@ -92,7 +90,7 @@ class BatchIndexingServiceImpl implements BatchIndexingService {
       );
 
       _eventBus.publish(BatchIndexCompleted(
-        jobId: jobId,
+        queryId: jobId,
         processedCount: processedCount,
         failedCount: failedCount,
       ));
@@ -102,7 +100,7 @@ class BatchIndexingServiceImpl implements BatchIndexingService {
         error: e.toString(),
         completedAt: DateTime.now(),
       );
-      _eventBus.publish(BatchIndexFailed(jobId: jobId, error: e.toString()));
+      _eventBus.publish(BatchIndexFailed(queryId: jobId, error: e.toString()));
     }
   }
 }

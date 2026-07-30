@@ -2,12 +2,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../domain/entities/viewer_preferences.dart';
 
 class ViewerPreferencesLocalDataSource {
+
+  ViewerPreferencesLocalDataSource(this._storage);
   final FlutterSecureStorage _storage;
   
   static const _keyKeepAwake = 'pref_keep_awake';
   static const _keyRestorePos = 'pref_restore_pos';
-
-  ViewerPreferencesLocalDataSource(this._storage);
 
   Future<ViewerPreferences> getPreferences() async {
     final awakeStr = await _storage.read(key: _keyKeepAwake);

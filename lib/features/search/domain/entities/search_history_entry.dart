@@ -1,12 +1,4 @@
 class SearchHistoryEntry {
-  final String id;
-  final String query;
-  final DateTime searchedAt;
-  final DateTime lastUsed;
-  final int hitCount;
-  final bool pinned;
-  final String? workspaceId;
-  final int resultCount;
 
   const SearchHistoryEntry({
     required this.id,
@@ -18,6 +10,14 @@ class SearchHistoryEntry {
     this.workspaceId,
     required this.resultCount,
   });
+  final String id;
+  final String query;
+  final DateTime searchedAt;
+  final DateTime lastUsed;
+  final int hitCount;
+  final bool pinned;
+  final String? workspaceId;
+  final int resultCount;
 
   SearchHistoryEntry copyWith({
     String? id,
@@ -28,8 +28,7 @@ class SearchHistoryEntry {
     bool? pinned,
     String? workspaceId,
     int? resultCount,
-  }) {
-    return SearchHistoryEntry(
+  }) => SearchHistoryEntry(
       id: id ?? this.id,
       query: query ?? this.query,
       searchedAt: searchedAt ?? this.searchedAt,
@@ -39,5 +38,4 @@ class SearchHistoryEntry {
       workspaceId: workspaceId ?? this.workspaceId,
       resultCount: resultCount ?? this.resultCount,
     );
-  }
 }

@@ -4,7 +4,7 @@ class DbConstants {
 
   // Database
   static const String databaseName = 'aura_secure.db';
-  static const int databaseVersion = 6;
+  static const int databaseVersion = 10;
   static const String encryptionKeyAlias = 'aura_db_key';
 
   // Table Names
@@ -17,8 +17,12 @@ class DbConstants {
   static const String pinnedDocumentsTable = 'pinned_documents';
   static const String schedulerQueueTable = 'scheduler_queue';
   static const String aiJobsTable = 'ai_jobs';
+  static const String knowledgeNodesTable = 'knowledge_nodes';
   static const String knowledgeEdgesTable = 'knowledge_edges';
   static const String graphLayoutsTable = 'graph_layouts';
+  static const String documentInteractionsTable = 'document_interactions';
+  static const String searchInteractionsTable = 'search_interactions';
+  static const String conversationSummariesTable = 'conversation_summaries';
 
   // Job Types (scheduler_queue)
   static const String jobTypeEmbedding = 'embedding';

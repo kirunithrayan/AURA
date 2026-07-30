@@ -5,9 +5,6 @@ import '../../domain/entities/workspace_file.dart';
 import 'file_list_tile.dart';
 
 class PinnedDocumentsSection extends StatelessWidget {
-  final List<WorkspaceFile> files;
-  final Function(WorkspaceFile) onFileTap;
-  final Function(WorkspaceFile) onUnpin;
 
   const PinnedDocumentsSection({
     super.key,
@@ -15,10 +12,12 @@ class PinnedDocumentsSection extends StatelessWidget {
     required this.onFileTap,
     required this.onUnpin,
   });
+  final List<WorkspaceFile> files;
+  final Function(WorkspaceFile) onFileTap;
+  final Function(WorkspaceFile) onUnpin;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -41,17 +40,14 @@ class PinnedDocumentsSection extends StatelessWidget {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: files.length,
-          itemBuilder: (context, index) {
-            return FileListTile(
+          itemBuilder: (context, index) => FileListTile(
               file: files[index],
               onTap: () => onFileTap(files[index]),
               isPinned: true,
               onPinToggle: () => onUnpin(files[index]),
-            );
-          },
+            ),
         ),
         const Divider(),
       ],
     );
-  }
 }

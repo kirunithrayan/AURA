@@ -6,9 +6,9 @@ import '../../../../core/text_engine/abstract_text_document_engine.dart';
 // though typical normalization is simpler here.
 
 class SearchQueryNormalizerImpl implements SearchQueryNormalizer {
-  final AbstractTextDocumentEngine _textEngine;
 
   SearchQueryNormalizerImpl(this._textEngine);
+  final AbstractTextDocumentEngine _textEngine;
 
   @override
   NormalizedSearchQuery normalize(SearchQuery query) {

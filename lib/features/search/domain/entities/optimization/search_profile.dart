@@ -1,12 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class SearchProfile extends Equatable {
-  final String queryId;
-  final Duration engineExecutionDuration;
-  final Duration filteringDuration;
-  final Duration rankingDuration;
-  final Duration postProcessingDuration;
-  final Duration totalPipelineDuration;
 
   const SearchProfile({
     required this.queryId,
@@ -16,6 +10,12 @@ class SearchProfile extends Equatable {
     required this.postProcessingDuration,
     required this.totalPipelineDuration,
   });
+  final String queryId;
+  final Duration engineExecutionDuration;
+  final Duration filteringDuration;
+  final Duration rankingDuration;
+  final Duration postProcessingDuration;
+  final Duration totalPipelineDuration;
 
   @override
   List<Object?> get props => [

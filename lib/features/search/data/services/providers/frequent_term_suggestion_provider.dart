@@ -1,11 +1,11 @@
-import '../../domain/entities/search_suggestion.dart';
-import '../../domain/services/search_suggestion_provider.dart';
-import '../../../../database/database_helper.dart';
+import '../../../domain/entities/search_suggestion.dart';
+import '../../../domain/services/search_suggestion_provider.dart';
+import '../../../../../core/database/database_helper.dart';
 
 class FrequentTermSuggestionProvider implements SuggestionProvider {
-  final DatabaseHelper _dbHelper;
 
   FrequentTermSuggestionProvider(this._dbHelper);
+  final DatabaseHelper _dbHelper;
 
   @override
   String get providerId => 'frequent_term';

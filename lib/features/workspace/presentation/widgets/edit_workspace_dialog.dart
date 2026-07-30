@@ -5,9 +5,9 @@ import '../../domain/entities/workspace.dart';
 
 /// Dialog to edit workspace details (name and description).
 class EditWorkspaceDialog extends StatefulWidget {
-  final Workspace workspace;
   
   const EditWorkspaceDialog({super.key, required this.workspace});
+  final Workspace workspace;
 
   @override
   State<EditWorkspaceDialog> createState() => _EditWorkspaceDialogState();
@@ -32,8 +32,7 @@ class _EditWorkspaceDialogState extends State<EditWorkspaceDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
+  Widget build(BuildContext context) => AlertDialog(
       title: const Text('Edit Workspace'),
       content: SingleChildScrollView(
         child: Column(
@@ -70,7 +69,7 @@ class _EditWorkspaceDialogState extends State<EditWorkspaceDialog> {
               widget.workspace.copyWith(
                 name: _nameController.text.trim(),
                 description: _descController.text.trim(),
-                updatedAt: DateTime.now(),
+                updatedAt: DateTime.now().millisecondsSinceEpoch,
               ),
             );
           },
@@ -78,5 +77,4 @@ class _EditWorkspaceDialogState extends State<EditWorkspaceDialog> {
         ),
       ],
     );
-  }
 }

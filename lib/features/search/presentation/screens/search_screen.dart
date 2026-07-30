@@ -7,11 +7,11 @@ import '../viewmodels/search_viewmodel.dart';
 import '../viewmodels/search_suggestions_provider.dart';
 import '../../domain/entities/search_filter.dart';
 
-import 'widgets/search_bar_widget.dart';
-import 'widgets/suggestion_section.dart';
-import 'widgets/filter_section.dart';
-import 'widgets/statistics_section.dart';
-import 'widgets/result_section.dart';
+import '../widgets/search_bar_widget.dart';
+import '../widgets/suggestion_section.dart';
+import '../widgets/filter_section.dart';
+import '../widgets/statistics_section.dart';
+import '../widgets/result_section.dart';
 import '../../../../core/widgets/aura_empty_state.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
@@ -92,13 +92,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             SearchBarWidget(
               controller: _searchController,
               focusNode: _searchFocus,
-              onChanged: (val) {
-                // We rely on debounce or submit button, for instant search we could call viewmodel here
-                // but let's do it on submit or suggestions tap to prevent excessive DB calls, 
-                // unless we add a local debounce Timer in SearchScreen like before.
-                // Re-added debounce behavior for instant search:
-                _onInstantSearch(val);
-              },
+              onChanged: _onInstantSearch,
               onSubmitted: _onSearch,
               onClear: _onClear,
             ),

@@ -13,15 +13,15 @@ import '../../../../services/file_service.dart';
 import '../../../../services/thumbnail_service.dart';
 
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
-  final WorkspaceLocalDataSource localDataSource;
-  final FileService fileService;
-  final ThumbnailService thumbnailService;
 
   WorkspaceRepositoryImpl({
     required this.localDataSource,
     required this.fileService,
     required this.thumbnailService,
   });
+  final WorkspaceLocalDataSource localDataSource;
+  final FileService fileService;
+  final ThumbnailService thumbnailService;
 
   @override
   Future<Either<Failure, List<Workspace>>> getWorkspaces() async {
@@ -110,7 +110,7 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
       // Wait, the prompt says "Implement local document importing". 
       // I will assume the UI calls the usecase which delegates here.
       
-      return Left(const FileSystemFailure('Import logic handled in ViewModel for picker integration'));
+      return const Left(FileSystemFailure('Import logic handled in ViewModel for picker integration'));
     } catch (e) {
       return Left(FileSystemFailure(e.toString()));
     }
@@ -131,9 +131,9 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
         extension: meta.extension,
         mimeType: meta.mimeType,
         size: meta.size,
-        createdAt: meta.createdAt,
-        modifiedAt: meta.modifiedAt,
-        importedAt: DateTime.now(),
+        createdAt: meta.createdAt.millisecondsSinceEpoch,
+        modifiedAt: meta.modifiedAt.millisecondsSinceEpoch,
+        importedAt: DateTime.now().millisecondsSinceEpoch,
         thumbnailPath: thumbnailPath,
         contentHash: meta.contentHash,
         aiStage: 1, // Start at stage 1 (metadata only)

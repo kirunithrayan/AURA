@@ -4,31 +4,28 @@ import '../../../../core/widgets/aura_bottom_sheet.dart';
 enum FileSortOption { name, dateCreated, dateModified, size }
 
 class FileSortSheet extends StatelessWidget {
-  final FileSortOption currentSort;
-  final Function(FileSortOption) onSortChanged;
 
   const FileSortSheet({
     super.key,
     required this.currentSort,
     required this.onSortChanged,
   });
+  final FileSortOption currentSort;
+  final Function(FileSortOption) onSortChanged;
 
   static Future<FileSortOption?> show(
     BuildContext context, 
     FileSortOption currentSort,
-  ) {
-    return AuraBottomSheet.show<FileSortOption>(
+  ) => AuraBottomSheet.show<FileSortOption>(
       context: context,
       builder: (ctx) => FileSortSheet(
         currentSort: currentSort,
         onSortChanged: (sort) => Navigator.pop(ctx, sort),
       ),
     );
-  }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -46,14 +43,11 @@ class FileSortSheet extends StatelessWidget {
         const SizedBox(height: 16),
       ],
     );
-  }
 
-  Widget _buildListTile(BuildContext context, String title, FileSortOption option, IconData icon) {
-    return ListTile(
+  Widget _buildListTile(BuildContext context, String title, FileSortOption option, IconData icon) => ListTile(
       leading: Icon(icon),
       title: Text(title),
       trailing: currentSort == option ? const Icon(Icons.check, color: Colors.blue) : null,
       onTap: () => onSortChanged(option),
     );
-  }
 }

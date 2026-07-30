@@ -1,9 +1,9 @@
 /// Represents a token with its position in the source text and original form.
 class Token {
-  final String text;
-  final int position;
 
   const Token({required this.text, required this.position});
+  final String text;
+  final int position;
 }
 
 /// Contract for splitting raw text into positional tokens.

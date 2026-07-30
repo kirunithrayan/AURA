@@ -3,11 +3,6 @@ import '../query/query_processor.dart';
 
 /// Result of a matching operation on a single document's index.
 class MatchResult {
-  final String documentId;
-  final double score;
-  final List<int> matchPositions;
-  final List<String> matchedTokens;
-  final String matchReason;
 
   const MatchResult({
     required this.documentId,
@@ -16,6 +11,11 @@ class MatchResult {
     required this.matchedTokens,
     required this.matchReason,
   });
+  final String documentId;
+  final double score;
+  final List<int> matchPositions;
+  final List<String> matchedTokens;
+  final String matchReason;
 }
 
 /// Contract for matching a processed query against index entries.
@@ -31,12 +31,12 @@ abstract class AbstractMatchingStrategy {
 /// Default matching strategy supporting exact, prefix, multi-token, and phrase matching.
 /// Designed for future extension to fuzzy matching.
 class DefaultMatchingStrategy implements AbstractMatchingStrategy {
+
+  const DefaultMatchingStrategy();
   static const double _exactMatchWeight = 10.0;
   static const double _prefixMatchWeight = 5.0;
   static const double _titleFieldBoost = 3.0;
   static const double _frequencyWeight = 1.5;
-
-  const DefaultMatchingStrategy();
 
   @override
   MatchResult? match(

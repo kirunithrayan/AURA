@@ -3,10 +3,10 @@ import 'abstract_stop_word_filter.dart';
 /// Default English stop-word filter using a configurable word set.
 /// Designed for future localization by swapping in language-specific sets.
 class DefaultStopWordFilter implements AbstractStopWordFilter {
-  final Set<String> _stopWords;
 
   DefaultStopWordFilter({Set<String>? stopWords})
       : _stopWords = stopWords ?? _defaultEnglishStopWords;
+  final Set<String> _stopWords;
 
   @override
   bool shouldKeep(String normalizedToken) {

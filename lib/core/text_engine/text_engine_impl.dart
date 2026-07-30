@@ -7,12 +7,12 @@ import 'abstract_text_document_engine.dart';
 import 'parsers/parser_registry.dart';
 
 class TextEngineImpl implements AbstractTextDocumentEngine {
+
+  TextEngineImpl(this._cache);
   final DocumentCache _cache;
   TextDocument? _currentDocument;
   Map<String, dynamic> _metadata = {};
   double _scrollPosition = 0.0;
-
-  TextEngineImpl(this._cache);
 
   @override
   Future<TextDocument> openDocument(WorkspaceFile file) async {
@@ -46,19 +46,13 @@ class TextEngineImpl implements AbstractTextDocumentEngine {
   }
 
   @override
-  TextDocument? getDocument() {
-    return _currentDocument;
-  }
+  TextDocument? getDocument() => _currentDocument;
 
   @override
-  Map<String, dynamic> getMetadata() {
-    return _metadata;
-  }
+  Map<String, dynamic> getMetadata() => _metadata;
 
   @override
-  double getScrollPosition() {
-    return _scrollPosition;
-  }
+  double getScrollPosition() => _scrollPosition;
 
   @override
   void setScrollPosition(double position) {

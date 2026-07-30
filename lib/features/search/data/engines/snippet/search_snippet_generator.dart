@@ -2,10 +2,10 @@ import 'dart:math';
 
 /// Generates contextual snippets with highlighted match regions.
 class SearchSnippetGenerator {
-  final int _snippetLength;
 
   const SearchSnippetGenerator({int snippetLength = 150})
       : _snippetLength = snippetLength;
+  final int _snippetLength;
 
   /// Generates a contextual snippet from document content centered around the
   /// first match position with highlighted terms.

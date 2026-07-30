@@ -6,14 +6,14 @@ import '../../domain/entities/optimization/search_cache_configuration.dart';
 import '../../domain/cache/abstract_search_cache.dart';
 
 class SearchCache implements AbstractSearchCache {
+
+  SearchCache(this._config);
   final SearchCacheConfiguration _config;
   final LinkedHashMap<SearchCacheKey, _CacheEntry> _cache = LinkedHashMap<SearchCacheKey, _CacheEntry>();
   
   int _hits = 0;
   int _misses = 0;
   int _evictions = 0;
-
-  SearchCache(this._config);
 
   @override
   void put(SearchCacheKey key, List<SearchResult> results) {
@@ -58,20 +58,18 @@ class SearchCache implements AbstractSearchCache {
   }
 
   @override
-  SearchCacheStatistics getStatistics() {
-    return SearchCacheStatistics(
+  SearchCacheStatistics getStatistics() => SearchCacheStatistics(
       totalHits: _hits,
       totalMisses: _misses,
       currentSize: _cache.length,
       maxSize: _config.maxEntries,
       evictions: _evictions,
     );
-  }
 }
 
 class _CacheEntry {
-  final List<SearchResult> results;
-  final DateTime timestamp;
 
   const _CacheEntry({required this.results, required this.timestamp});
+  final List<SearchResult> results;
+  final DateTime timestamp;
 }

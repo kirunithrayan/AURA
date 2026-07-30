@@ -4,9 +4,9 @@ import '../database_helper.dart';
 /// A generic Data Access Object (DAO) helper providing standard CRUD utilities.
 /// Local data sources should extend this to eliminate SQL boilerplate.
 abstract class BaseDao<T> {
-  final DatabaseHelper dbHelper;
 
   BaseDao(this.dbHelper);
+  final DatabaseHelper dbHelper;
 
   /// The name of the database table this DAO manages.
   String get tableName;
@@ -58,7 +58,7 @@ abstract class BaseDao<T> {
       limit: limit,
       offset: offset,
     );
-    return results.map((map) => fromMap(map)).toList();
+    return results.map(fromMap).toList();
   }
 
   /// Updates an existing record matching the provided ID.

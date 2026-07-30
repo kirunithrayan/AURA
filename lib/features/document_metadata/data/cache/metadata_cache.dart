@@ -3,9 +3,7 @@ import '../../domain/entities/document_metadata.dart';
 class MetadataCache {
   final Map<String, DocumentMetadata> _cache = {};
 
-  DocumentMetadata? get(String id) {
-    return _cache[id];
-  }
+  DocumentMetadata? get(String id) => _cache[id];
 
   void put(String id, DocumentMetadata metadata) {
     _cache[id] = metadata;

@@ -1,19 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 class SearchStatistics extends Equatable {
-  final Duration searchDuration;
-  final int resultCount;
-  final bool cacheHit;
-  final String engineUsed;
-  final int documentsSearched;
-  final int candidateCount;
-  final Duration? rankingDuration;
-
-  // New orchestrator stats
-  final int enginesExecuted;
-  final Map<String, Duration> executionTimePerEngine;
-  final Duration mergeDuration;
-  final int duplicateCount;
 
   const SearchStatistics({
     required this.searchDuration,
@@ -28,6 +15,19 @@ class SearchStatistics extends Equatable {
     this.mergeDuration = Duration.zero,
     this.duplicateCount = 0,
   });
+  final Duration searchDuration;
+  final int resultCount;
+  final bool cacheHit;
+  final String engineUsed;
+  final int documentsSearched;
+  final int candidateCount;
+  final Duration? rankingDuration;
+
+  // New orchestrator stats
+  final int enginesExecuted;
+  final Map<String, Duration> executionTimePerEngine;
+  final Duration mergeDuration;
+  final int duplicateCount;
 
   @override
   List<Object?> get props => [

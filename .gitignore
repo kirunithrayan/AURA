@@ -3,6 +3,8 @@
 build/
 .pub/
 coverage/
+.flutter-plugins
+.flutter-plugins-dependencies
 
 # IDE & Editor
 .idea/

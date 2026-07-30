@@ -18,7 +18,7 @@ class BasicRankingEngine implements AbstractRankingEngine {
   static const int _recencyWindowDays = 30;
 
   @override
-  List<SearchResult> rank(SearchQuery query, List<SearchResult> candidates) {
+  Future<List<SearchResult>> rank(SearchQuery query, List<SearchResult> candidates) async {
     if (candidates.isEmpty) return candidates;
 
     // Apply boosted scoring
@@ -38,7 +38,7 @@ class BasicRankingEngine implements AbstractRankingEngine {
       // Recency boost (linear decay over window)
       final now = DateTime.now().millisecondsSinceEpoch;
       final docAge = now - result.metadata.modifiedAt;
-      final windowMs = _recencyWindowDays * 24 * 60 * 60 * 1000;
+      const windowMs = _recencyWindowDays * 24 * 60 * 60 * 1000;
       if (docAge < windowMs) {
         final recencyFactor = 1.0 - (docAge / windowMs);
         adjustedScore *= (1.0 + (recencyFactor * (_recencyMaxBoost - 1.0)));

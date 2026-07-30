@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class JumpToPageDialog extends StatefulWidget {
-  final int currentPage;
-  final int pageCount;
 
   const JumpToPageDialog({
     super.key,
     required this.currentPage,
     required this.pageCount,
   });
+  final int currentPage;
+  final int pageCount;
 
   @override
   State<JumpToPageDialog> createState() => _JumpToPageDialogState();
@@ -42,8 +42,7 @@ class _JumpToPageDialogState extends State<JumpToPageDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
+  Widget build(BuildContext context) => AlertDialog(
       title: const Text('Jump to Page'),
       content: TextField(
         controller: _controller,
@@ -65,5 +64,4 @@ class _JumpToPageDialogState extends State<JumpToPageDialog> {
         ),
       ],
     );
-  }
 }

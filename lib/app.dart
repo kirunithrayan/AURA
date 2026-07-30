@@ -7,8 +7,7 @@ class AuraApp extends StatelessWidget {
   const AuraApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
+  Widget build(BuildContext context) => MaterialApp.router(
       title: 'AURA',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
@@ -16,5 +15,4 @@ class AuraApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       routerConfig: AppRouter.router,
     );
-  }
 }

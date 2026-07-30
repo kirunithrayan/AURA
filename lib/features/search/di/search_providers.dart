@@ -5,14 +5,8 @@ import '../domain/services/search_history_service.dart';
 import '../domain/services/search_suggestion_service.dart';
 
 // Provides the fully constructed usecase via GetIt singletons
-final performSearchUseCaseProvider = Provider<PerformSearchUseCase>((ref) {
-  return sl<PerformSearchUseCase>();
-});
+final performSearchUseCaseProvider = Provider<PerformSearchUseCase>((ref) => sl<PerformSearchUseCase>());
 
-final searchHistoryServiceProvider = Provider<SearchHistoryService>((ref) {
-  return sl<SearchHistoryService>();
-});
+final searchHistoryServiceProvider = Provider<SearchHistoryService>((ref) => sl<SearchHistoryService>());
 
-final searchSuggestionServiceProvider = Provider<SearchSuggestionService>((ref) {
-  return sl<SearchSuggestionService>();
-});
+final searchSuggestionServiceProvider = Provider<SearchSuggestionService>((ref) => sl<SearchSuggestionService>());

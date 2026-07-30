@@ -4,7 +4,7 @@ import '../../../../core/di/riverpod_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/file_icon_widget.dart';
 import '../../domain/entities/document_metadata.dart';
-import '../../../../core/router/app_router.dart';
+import '../../../../core/router/app_routes.dart';
 
 class RecentDocumentsSection extends ConsumerStatefulWidget {
   const RecentDocumentsSection({super.key});
@@ -105,13 +105,12 @@ class _RecentDocumentsSectionState extends ConsumerState<RecentDocumentsSection>
     );
   }
 
-  Widget _buildRecentCard(BuildContext context, DocumentMetadata doc) {
-    return Semantics(
+  Widget _buildRecentCard(BuildContext context, DocumentMetadata doc) => Semantics(
       label: 'Recent document: ${doc.fileName}. Last opened: ${_formatDate(doc.lastOpenedAt)}',
       button: true,
       child: GestureDetector(
         onTap: () {
-          Navigator.pushNamed(context, AppRouter.documentViewer, arguments: doc.id);
+          Navigator.pushNamed(context, AppRoutes.documentViewer, arguments: doc.id);
         },
         child: Container(
           width: 120,
@@ -172,5 +171,4 @@ class _RecentDocumentsSectionState extends ConsumerState<RecentDocumentsSection>
         ),
       ),
     );
-  }
 }

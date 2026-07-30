@@ -3,11 +3,9 @@ import '../../../../core/error/failures.dart';
 import '../repositories/workspace_repository.dart';
 
 class PinDocument {
-  final WorkspaceRepository repository;
 
   PinDocument(this.repository);
+  final WorkspaceRepository repository;
 
-  Future<Either<Failure, void>> call(String fileId, String workspaceId) async {
-    return await repository.pinDocument(fileId, workspaceId);
-  }
+  Future<Either<Failure, void>> call(String fileId, String workspaceId) async => await repository.pinDocument(fileId, workspaceId);
 }

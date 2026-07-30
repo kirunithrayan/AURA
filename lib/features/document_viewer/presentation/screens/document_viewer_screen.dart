@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import '../widgets/base_viewer_screen.dart';
 import '../widgets/viewer_registry.dart';
 
 class DocumentViewerScreen extends ConsumerWidget {
-  final String documentId;
 
   const DocumentViewerScreen({
     super.key,
     required this.documentId,
   });
+  final String documentId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

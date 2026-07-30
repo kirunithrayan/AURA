@@ -46,7 +46,7 @@ class ThemePreviewScreen extends StatelessWidget {
                 _ColorBox(color: colorScheme.tertiary, name: 'Tertiary', textColor: colorScheme.onTertiary),
                 _ColorBox(color: colorScheme.error, name: 'Error', textColor: colorScheme.onError),
                 _ColorBox(color: colorScheme.surface, name: 'Surface', textColor: colorScheme.onSurface),
-                _ColorBox(color: colorScheme.surfaceVariant, name: 'Surface Variant', textColor: colorScheme.onSurfaceVariant),
+                _ColorBox(color: colorScheme.surfaceContainerHighest, name: 'Surface Container Highest', textColor: colorScheme.onSurfaceVariant),
               ],
             ),
 
@@ -114,19 +114,18 @@ class ThemePreviewScreen extends StatelessWidget {
 }
 
 class _ColorBox extends StatelessWidget {
-  final Color color;
-  final String name;
-  final Color textColor;
 
   const _ColorBox({
     required this.color,
     required this.name,
     required this.textColor,
   });
+  final Color color;
+  final String name;
+  final Color textColor;
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       width: 100,
       height: 100,
       decoration: BoxDecoration(
@@ -134,7 +133,7 @@ class _ColorBox extends StatelessWidget {
         borderRadius: BorderRadius.circular(UiConstants.radiusMedium),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: UiConstants.elevationLow,
             offset: const Offset(0, 2),
           ),
@@ -147,5 +146,4 @@ class _ColorBox extends StatelessWidget {
         style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: 12),
       ),
     );
-  }
 }

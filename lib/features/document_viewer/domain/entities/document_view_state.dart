@@ -1,11 +1,4 @@
 class DocumentViewState {
-  final int currentPage;
-  final int pageCount;
-  final double zoomLevel;
-  final double rotation;
-  final double scrollPosition;
-  final int? lastOpenedAt;
-  final bool isPasswordProtected;
 
   const DocumentViewState({
     this.currentPage = 1,
@@ -15,7 +8,18 @@ class DocumentViewState {
     this.scrollPosition = 0.0,
     this.lastOpenedAt,
     this.isPasswordProtected = false,
+    this.isSearchActive = false,
+    this.searchQuery = '',
   });
+  final int currentPage;
+  final int pageCount;
+  final double zoomLevel;
+  final double rotation;
+  final double scrollPosition;
+  final int? lastOpenedAt;
+  final bool isPasswordProtected;
+  final bool isSearchActive;
+  final String searchQuery;
 
   DocumentViewState copyWith({
     int? currentPage,
@@ -25,8 +29,9 @@ class DocumentViewState {
     double? scrollPosition,
     int? lastOpenedAt,
     bool? isPasswordProtected,
-  }) {
-    return DocumentViewState(
+    bool? isSearchActive,
+    String? searchQuery,
+  }) => DocumentViewState(
       currentPage: currentPage ?? this.currentPage,
       pageCount: pageCount ?? this.pageCount,
       zoomLevel: zoomLevel ?? this.zoomLevel,
@@ -34,6 +39,7 @@ class DocumentViewState {
       scrollPosition: scrollPosition ?? this.scrollPosition,
       lastOpenedAt: lastOpenedAt ?? this.lastOpenedAt,
       isPasswordProtected: isPasswordProtected ?? this.isPasswordProtected,
+      isSearchActive: isSearchActive ?? this.isSearchActive,
+      searchQuery: searchQuery ?? this.searchQuery,
     );
-  }
 }

@@ -17,15 +17,18 @@ dependencies:
   # Dependency Injection
   get_it: ^8.0.2
 
+  # Functional Programming
+  fpdart: ^1.1.1
+
   # Database
   sqflite_sqlcipher: ^3.1.0+1
   flutter_secure_storage: ^9.2.2
 
   # Background Processing
-  workmanager: ^0.5.2
+  workmanager: ^0.9.0
 
   # AI / ML
-  flutter_onnxruntime: ^0.5.0
+  flutter_onnxruntime: ^1.8.3
 
   # OCR
   google_mlkit_text_recognition: ^0.14.0
@@ -42,7 +45,7 @@ dependencies:
 
   # PDF
   pdfx: ^2.7.0
-  syncfusion_flutter_pdfviewer: ^24.2.3
+  syncfusion_flutter_pdfviewer: ^28.2.3
 
   # Image Viewing
   photo_view: ^0.15.0
@@ -66,8 +69,12 @@ dependencies:
 
   # Native APIs
   share_plus: ^7.2.1
-  url_launcher: ^10.3.7
+  url_launcher: ^6.3.2
+  dartz: ^0.10.1
+  google_generative_ai: ^0.4.7
+  flutter_markdown: ^0.7.7+1
 
+  intl: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -76,6 +83,7 @@ dev_dependencies:
   freezed: ^2.5.7
   json_serializable: ^6.8.0
   riverpod_generator: ^2.6.3
+  mockito: ^5.4.6
 
 flutter:
   uses-material-design: true
@@ -83,15 +91,3 @@ flutter:
   assets:
     - assets/models/
     - assets/icons/
-
-  fonts:
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/Inter-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/Inter-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/Inter-Bold.ttf
-          weight: 700

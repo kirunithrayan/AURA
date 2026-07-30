@@ -3,9 +3,6 @@ import 'package:intl/intl.dart';
 import '../../domain/entities/search_result.dart';
 
 class SearchResultCard extends StatelessWidget {
-  final SearchResult result;
-  final VoidCallback onTap;
-  final VoidCallback? onLongPress;
 
   const SearchResultCard({
     super.key,
@@ -13,6 +10,9 @@ class SearchResultCard extends StatelessWidget {
     required this.onTap,
     this.onLongPress,
   });
+  final SearchResult result;
+  final VoidCallback onTap;
+  final VoidCallback? onLongPress;
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +105,33 @@ class SearchResultCard extends StatelessWidget {
                   )).toList(),
                 )
               ],
+              
+              if (result.explanation != null && result.explanation!.explanation.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.tertiaryContainer.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.2)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.auto_awesome, size: 16, color: Theme.of(context).colorScheme.tertiary),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          result.explanation!.explanation,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onTertiaryContainer,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
 
               const SizedBox(height: 12),
               
@@ -113,7 +140,7 @@ class SearchResultCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Modified: ${dateFormat.format(meta.updatedAt)}',
+                    'Modified: ${dateFormat.format(DateTime.fromMillisecondsSinceEpoch(meta.modifiedAt))}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
                   ),
                   Text(
@@ -132,11 +159,11 @@ class SearchResultCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFileIcon(String extension) {
+  Widget _buildFileIcon(String? extension) {
     IconData iconData;
     Color color;
 
-    switch (extension.toLowerCase()) {
+    switch (extension?.toLowerCase()) {
       case 'pdf':
         iconData = Icons.picture_as_pdf;
         color = Colors.red;
@@ -162,7 +189,7 @@ class SearchResultCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Icon(iconData, color: color, size: 24),

@@ -31,17 +31,11 @@ class DefaultSearchEngineRegistry implements AbstractSearchEngineRegistry {
   }
 
   @override
-  List<SearchEngineDescriptor> getActiveEngines() {
-    return _engines.values.where((e) => e.status == SearchEngineStatus.enabled).toList();
-  }
+  List<SearchEngineDescriptor> getActiveEngines() => _engines.values.where((e) => e.status == SearchEngineStatus.enabled).toList();
 
   @override
-  List<SearchEngineDescriptor> getEnginesByCapability(SearchEngineCapability capability) {
-    return _engines.values.where((e) => e.capabilities.contains(capability)).toList();
-  }
+  List<SearchEngineDescriptor> getEnginesByCapability(SearchEngineCapability capability) => _engines.values.where((e) => e.capabilities.contains(capability)).toList();
 
   @override
-  SearchEngineDescriptor? getEngineById(String engineId) {
-    return _engines[engineId];
-  }
+  SearchEngineDescriptor? getEngineById(String engineId) => _engines[engineId];
 }

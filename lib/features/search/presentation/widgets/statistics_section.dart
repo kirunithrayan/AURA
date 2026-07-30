@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 
 class StatisticsSection extends StatelessWidget {
-  final int resultCount;
-  final Duration duration;
 
   const StatisticsSection({
     super.key,
     required this.resultCount,
     required this.duration,
   });
+  final int resultCount;
+  final Duration duration;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Text(
         'About $resultCount results (${duration.inMilliseconds / 1000.0} seconds)',
@@ -21,5 +20,4 @@ class StatisticsSection extends StatelessWidget {
         ),
       ),
     );
-  }
 }

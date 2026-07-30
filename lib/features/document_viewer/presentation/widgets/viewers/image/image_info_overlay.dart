@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../../../../core/theme/app_colors.dart';
-import '../../../../../workspace/domain/entities/workspace_file.dart';
+import 'package:aura/core/theme/app_colors.dart';
+import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 
 class ImageInfoOverlay extends StatelessWidget {
-  final WorkspaceFile file;
 
   const ImageInfoOverlay({
     super.key,
     required this.file,
   });
+  final WorkspaceFile file;
 
   String _formatSize(int? bytes) {
     if (bytes == null) return 'Unknown size';
@@ -18,16 +18,15 @@ class ImageInfoOverlay extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
+  Widget build(BuildContext context) => Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.85),
+        color: AppColors.surface.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -50,19 +49,16 @@ class ImageInfoOverlay extends StatelessWidget {
         ],
       ),
     );
-  }
 
-  Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
+  Widget _buildInfoRow(IconData icon, String text) => Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, size: 14, color: AppColors.textSecondary),
         const SizedBox(width: 6),
         Text(
           text,
-          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
         ),
       ],
     );
-  }
 }

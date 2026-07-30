@@ -2,13 +2,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../domain/entities/reading_preferences.dart';
 
 class ReadingPreferencesLocalDataSource {
+
+  ReadingPreferencesLocalDataSource(this._storage);
   final FlutterSecureStorage _storage;
   
   static const _keyFontSize = 'pref_font_size';
   static const _keyLineSpacing = 'pref_line_spacing';
   static const _keyReadingTheme = 'pref_reading_theme';
-
-  ReadingPreferencesLocalDataSource(this._storage);
 
   Future<ReadingPreferences> getPreferences() async {
     final fontSizeStr = await _storage.read(key: _keyFontSize);

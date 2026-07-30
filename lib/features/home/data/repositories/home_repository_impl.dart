@@ -7,9 +7,9 @@ import '../datasources/home_local_datasource.dart';
 import '../../../workspace/domain/entities/workspace_file.dart';
 
 class HomeRepositoryImpl implements HomeRepository {
-  final HomeLocalDataSource localDataSource;
 
   HomeRepositoryImpl({required this.localDataSource});
+  final HomeLocalDataSource localDataSource;
 
   @override
   Future<Either<Failure, DashboardStats>> getDashboardStats() async {

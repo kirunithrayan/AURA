@@ -1,5 +1,5 @@
 import 'viewer_command.dart';
-import '../../viewmodels/document_viewer_viewmodel.dart';
+import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 
 class RotateCommand implements ViewerCommand {
   @override

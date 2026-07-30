@@ -7,18 +7,17 @@ import '../../../../core/widgets/file_icon_widget.dart';
 import '../../domain/entities/workspace_file.dart';
 
 class FileGridTile extends StatelessWidget {
-  final WorkspaceFile file;
-  final VoidCallback onTap;
 
   const FileGridTile({
     super.key,
     required this.file,
     required this.onTap,
   });
+  final WorkspaceFile file;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return AuraCard(
+  Widget build(BuildContext context) => AuraCard(
       onTap: onTap,
       padding: EdgeInsets.zero,
       child: Column(
@@ -26,7 +25,7 @@ class FileGridTile extends StatelessWidget {
         children: [
           Expanded(
             child: Container(
-              color: context.theme.colorScheme.surfaceVariant.withOpacity(0.5),
+              color: context.theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               child: _buildPreview(context),
             ),
           ),
@@ -56,7 +55,6 @@ class FileGridTile extends StatelessWidget {
         ],
       ),
     );
-  }
 
   Widget _buildPreview(BuildContext context) {
     if (file.thumbnailPath != null && File(file.thumbnailPath!).existsSync()) {
