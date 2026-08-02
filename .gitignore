@@ -13,6 +13,18 @@ coverage/
 *.iws
 *.ipr
 
+# Secrets & Signing
+# AURA holds the Gemini API key in the Android Keystore at runtime, so no key
+# belongs in the repo. These patterns exist to keep it that way.
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+key.properties
+google-services.json
+secrets.properties
+
 # Logs & Temporary Files
 *.log
 *.tmp
