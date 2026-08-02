@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 // Core
 import '../database/database_helper.dart';
@@ -147,6 +148,8 @@ import '../../features/ai/rag/domain/services/prompt_builder_service.dart';
 import '../../features/ai/rag/data/services/prompt_builder_service_impl.dart';
 import '../../features/ai/rag/domain/services/rag_service.dart';
 import '../../features/ai/rag/data/services/rag_service_impl.dart';
+import '../../features/ai/rag/domain/services/ai_key_store.dart';
+import '../../features/ai/rag/data/services/secure_ai_key_store.dart';
 
 // Knowledge Graph
 import '../../features/ai/knowledge_graph/domain/repositories/knowledge_graph_repository.dart';
@@ -492,12 +495,20 @@ Future<void> initInjection() async {
   // ---------------------------------------------------------------------------
   // 7. RAG & Ask Documents (Phase 6.4)
   // ---------------------------------------------------------------------------
+  // The API key is supplied by the user at runtime and read from secure
+  // storage at the point of use (see AskAuraViewModel). It is intentionally
+  // not baked in at compile time, so a released APK ships no credential.
+  sl.registerLazySingleton<AiKeyStore>(
+    () => SecureAiKeyStore(const FlutterSecureStorage()),
+  );
+
+  // Default settings only. The apiKey field is populated per-request from
+  // [AiKeyStore]; an empty key here means "not yet configured".
   sl.registerLazySingleton<AiConfig>(
-    // Note: In production, reading the API key from flutter_dotenv or secure storage is recommended.
-    // For now, pulling from environment as requested/assumed.
     () => const AiConfig(
-      apiKey: String.fromEnvironment('GEMINI_API_KEY'),
+      apiKey: '',
       providerName: 'gemini',
+      modelName: 'gemini-2.5-flash',
     ),
   );
 

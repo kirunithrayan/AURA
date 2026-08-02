@@ -4,6 +4,51 @@ All notable changes to the AURA project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.6.0] - 2026-08-02 (Accuracy Release)
+
+A correction release. The previous tag was labelled v1.0.0 and documented several
+placeholder components as complete features. This release removes those claims,
+replaces placeholder behaviour that was masking real failures, and moves the
+Gemini API key to runtime secure storage. Full detail in
+[RELEASE_NOTES_v0.6.0.md](RELEASE_NOTES_v0.6.0.md).
+
+### Fixed
+- **Create Workspace** saved nothing — the Save button's `onPressed` was an empty
+  callback. Now wired to the viewmodel with validation and error handling.
+- **`OnnxEmbeddingService`** returned synthetic vectors from `text.hashCode`,
+  scoring ~0.75 similarity between unrelated documents and feeding noise into
+  hybrid ranking. It now throws `EmbeddingModelUnavailableException`, so semantic
+  search returns nothing and hybrid search degrades cleanly to keyword-only.
+- **`AiProviderFactoryImpl`** silently returned `StubLocalProvider` when the
+  Gemini key was missing, so Ask AURA answered with placeholder text that read
+  like a model response. It now throws `MissingApiKeyException`.
+
+### Added
+- `AiKeyStore` / `SecureAiKeyStore` — Gemini API key stored in the Android
+  Keystore, entered via **Settings → AI Engine Configuration**, read at point of
+  use. Replaces the compile-time `String.fromEnvironment` key.
+- `AiKeyDialog` for entering, replacing, and removing the key.
+- Explicit data-handling notice in Settings: Ask AURA transmits excerpts to
+  Google.
+- `LICENSE` (MIT) — previously linked from the README but absent.
+
+### Changed
+- Version corrected from 1.0.0 to 0.6.0.
+- `README.md` rewritten with an explicit Working / Not working yet breakdown and
+  a roadmap.
+- `PROJECT_STATS.md` now reports measured figures; the prior version understated
+  file count by roughly 30%.
+- `StubLocalProvider` documented as a test fixture, reachable only via an
+  explicit `providerName: 'stub'`.
+
+### Removed
+- `dartz` dependency — the project carried both `dartz` and `fpdart` for the same
+  `Either` type. Five files migrated to `fpdart`.
+- `RELEASE_NOTES_v1.0.0.md` and `GITHUB_RELEASE.md`, whose claims did not survive
+  verification (a built APK that did not exist, "31/31 passing" while 2 failed,
+  "0 compilation errors" against 6).
+- Three untracked scratch files from an automated debugging session.
+
 ## [v0.5.0] - 2026-07-25 (Search Platform Release)
 
 This release marks the completion of the AURA offline knowledge management foundation and search platform, preparing the system for the upcoming Phase 6 (AI Intelligence Platform).

@@ -1,29 +1,56 @@
 # Project Statistics
 
-AURA v0.5.0 represents a significant engineering effort to build a scalable offline architecture. Below are the core project statistics at the time of the v0.5.0 release:
+Measured at the v0.6.0 tag. Regenerate with the commands noted below rather than
+editing by hand.
 
 ## Codebase Size
-- **Total Dart Files:** ~281
-- **Total Lines of Code (LOC):** ~14,630
+
+| Metric | Value |
+| :--- | ---: |
+| Dart files (total) | 382 |
+| Dart files (excluding generated `.g.dart` / `.freezed.dart`) | 367 |
+| Lines of Dart (total) | 21,871 |
+| Lines of Dart (excluding generated) | 19,475 |
+
+```bash
+find lib -name '*.dart' ! -name '*.g.dart' ! -name '*.freezed.dart' | wc -l
+```
+
+## Quality Gates
+
+| Metric | Value |
+| :--- | ---: |
+| Analyzer errors | 0 |
+| Analyzer warnings | 14 |
+| Analyzer info-level lints | 15 |
+| Tests passing | 31 / 31 |
+| Test files | 12 |
+| Lines of test code | 884 |
+| Approximate line coverage | ~3% |
+
+Coverage is low and concentrated in search ranking, document chunking, and text
+preprocessing. Widget and integration tests are a known gap tracked in
+[TECH_DEBT.md](TECH_DEBT.md).
 
 ## Architecture Components
-- **Architecture Layers:** 5 (Presentation, Domain, Data, Core, Infrastructure)
-- **Dependency Injection Registrations:** 61 (via GetIt)
 
-## Domain & Data Layer
-- **Repositories:** 12
-- **Use Cases:** 1 (Core Search Orchestrator)
-- **Services:** 20
-- **Entities:** 13
-- **Models (DTOs):** 16
-- **Database Tables:** 9
+| Component | Count |
+| :--- | ---: |
+| GetIt registrations | 88 |
+| Screens | 15 |
+| ViewModels | 12 |
+| Database tables | 9 |
 
-## Search & Processing
-- **Search Engines:** 5 (Implementations & Abstracts)
-- **Parser Implementations:** 5
-- **Domain Events:** 26
-- **Domain Failures:** 18
+## Implementation Status
 
-## Presentation Layer
-- **Total Widgets:** 47
-- **ViewModels:** 7
+Not every registered component is functional. The following are placeholders
+that throw `UnimplementedError` or return fixed values, and are counted above
+only as scaffolding:
+
+- `StubVectorStore`, `StubChunkingService`, `StubInferenceEngine`,
+  `StubPromptBuilder`, `StubEmbeddingEngine`
+- `BatteryService`, `ThermalService`, `MemoryService`
+- `OnnxEmbeddingService` (throws `EmbeddingModelUnavailableException` until a
+  model and tokenizer are added)
+
+See the Current Status table in [README.md](README.md) for the full breakdown.

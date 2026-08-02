@@ -1,18 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/services/rag_service.dart';
+import '../../domain/services/ai_key_store.dart';
 import '../../domain/entities/ai_config.dart';
 import '../../domain/entities/conversation.dart';
+import '../../domain/errors/ai_errors.dart';
 import 'ask_aura_state.dart';
 import '../../../../../core/di/injection_container.dart';
 
-final askAuraViewModelProvider = StateNotifierProvider<AskAuraViewModel, AskAuraState>((ref) => AskAuraViewModel(sl<RAGService>(), sl<AiConfig>()));
+final askAuraViewModelProvider = StateNotifierProvider<AskAuraViewModel, AskAuraState>(
+  (ref) => AskAuraViewModel(sl<RAGService>(), sl<AiConfig>(), sl<AiKeyStore>()),
+);
 
 class AskAuraViewModel extends StateNotifier<AskAuraState> {
 
-  AskAuraViewModel(this._ragService, this._aiConfig) : super(const AskAuraState());
+  AskAuraViewModel(this._ragService, this._defaults, this._keyStore) : super(const AskAuraState());
   final RAGService _ragService;
-  final AiConfig _aiConfig;
+  final AiConfig _defaults;
+  final AiKeyStore _keyStore;
   final _uuid = const Uuid();
 
   void initConversation(String workspaceId) {
@@ -54,8 +59,23 @@ class AskAuraViewModel extends StateNotifier<AskAuraState> {
     );
 
     try {
-      final stream = _ragService.streamAskDocument(query, _aiConfig);
-      
+      // Read the user-supplied key at the point of use. A missing key is a
+      // configuration error surfaced to the user, not a silent fallback.
+      final apiKey = await _keyStore.readApiKey();
+      if (apiKey == null) {
+        throw const MissingApiKeyException('gemini');
+      }
+
+      final config = AiConfig(
+        apiKey: apiKey,
+        providerName: _defaults.providerName,
+        modelName: _defaults.modelName,
+        temperature: _defaults.temperature,
+        similarityThreshold: _defaults.similarityThreshold,
+      );
+
+      final stream = _ragService.streamAskDocument(query, config);
+
       await for (final response in stream) {
         state = state.copyWith(
           status: AskAuraStatus.streaming,

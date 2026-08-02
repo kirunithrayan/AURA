@@ -3,6 +3,12 @@ import '../../domain/providers/ai_provider.dart';
 import '../../domain/entities/ai_config.dart';
 import '../../domain/entities/ai_stream_event.dart';
 
+/// Returns canned text instead of calling a model.
+///
+/// **Test fixture only.** This is reachable exclusively via an explicit
+/// `providerName: 'stub'` config. It must never be wired as a fallback for a
+/// real provider — a missing API key raises [MissingApiKeyException] instead,
+/// so the failure is visible rather than disguised as a model response.
 class StubLocalProvider implements AiProvider {
 
   StubLocalProvider(this.config);

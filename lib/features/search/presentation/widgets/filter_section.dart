@@ -25,7 +25,7 @@ class FilterSection extends StatelessWidget {
           _buildFilterChip(
             context,
             label: 'Favorites',
-            selected: currentFilter.favoritesOnly ?? false,
+            selected: currentFilter.favoritesOnly,
             onSelected: (val) {
               onFilterChanged(currentFilter.copyWith(favoritesOnly: val));
             },
@@ -34,7 +34,7 @@ class FilterSection extends StatelessWidget {
           _buildFilterChip(
             context,
             label: 'Pinned',
-            selected: currentFilter.pinnedOnly ?? false,
+            selected: currentFilter.pinnedOnly,
             onSelected: (val) {
               onFilterChanged(currentFilter.copyWith(pinnedOnly: val));
             },

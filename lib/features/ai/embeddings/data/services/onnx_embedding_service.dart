@@ -1,54 +1,83 @@
+import 'package:flutter/services.dart' show rootBundle;
 import '../../domain/services/embedding_service.dart';
 
-/// Implementation of [EmbeddingService] using ONNX Runtime.
+/// Thrown when semantic embedding is requested but no model is available.
+class EmbeddingModelUnavailableException implements Exception {
+  const EmbeddingModelUnavailableException(this.reason);
+
+  final String reason;
+
+  @override
+  String toString() => 'Embedding model unavailable: $reason';
+}
+
+/// [EmbeddingService] intended to run a sentence-transformer model on device
+/// via ONNX Runtime.
+///
+/// ## Status: not yet functional
+///
+/// This service is deliberately non-operational. Two pieces are missing:
+///
+///   1. **The model file.** `assets/models/all-MiniLM-L6-v2.onnx` is not
+///      present in the repository.
+///   2. **A tokenizer.** MiniLM expects WordPiece `input_ids`, `attention_mask`
+///      and `token_type_ids`. Dart has no HuggingFace tokenizer port, so one
+///      must be written against the model's `vocab.txt` before inference can
+///      run.
+///
+/// Until both exist, every call throws [EmbeddingModelUnavailableException].
+/// This is intentional. An earlier revision returned synthetic vectors derived
+/// from `text.hashCode`; because every component was non-negative and followed
+/// the same ramp, any two unrelated documents scored ~0.75 cosine similarity —
+/// above the 0.55 relevance threshold — so semantic search matched everything
+/// and silently poisoned hybrid ranking with noise. Failing loudly is correct:
+/// [SemanticSearchEngine] catches this and returns no results, so hybrid search
+/// degrades cleanly to keyword-only.
+///
+/// To activate: add the model and vocab to `assets/models/`, implement the
+/// tokenizer, then replace [generateEmbedding] with a real `session.run()`.
 class OnnxEmbeddingService implements EmbeddingService {
-  
+
   OnnxEmbeddingService({this.modelPath = 'assets/models/all-MiniLM-L6-v2.onnx'});
-  Object? _session;
-  Object? _env;
-  bool _isInitialized = false;
+
   final String modelPath;
+
+  bool _initialized = false;
+  bool _modelPresent = false;
+
+  /// Whether a usable model is loaded. Always `false` until the model file and
+  /// tokenizer described in the class docs are added.
+  bool get isAvailable => false;
 
   @override
   Future<void> initialize() async {
-    if (_isInitialized) return;
-    
+    if (_initialized) return;
+
     try {
-      // _env = OrtEnv.instance;
-      // await _env?.init();
-      
-      // final sessionOptions = OrtSessionOptions();
-      // final rawAssetFile = await rootBundle.load(modelPath);
-      // final bytes = rawAssetFile.buffer.asUint8List();
-      // _session = OrtSession.fromBuffer(bytes, sessionOptions);
-      _isInitialized = true;
-    } catch (e) {
-      // Handle model loading failure
-      throw Exception('Failed to load ONNX embedding model: $e');
+      await rootBundle.load(modelPath);
+      _modelPresent = true;
+    } catch (_) {
+      _modelPresent = false;
     }
+
+    _initialized = true;
   }
 
   @override
   Future<List<double>> generateEmbedding(String text) async {
-    if (!_isInitialized || _session == null) {
-      await initialize();
-    }
-    
-    // NOTE: In a real implementation, text must be tokenized before passing to the ONNX model.
-    // Assuming we have a tokenizer that creates input_ids, attention_mask, token_type_ids.
-    // For the sake of this architectural implementation without a full Dart port of HuggingFace tokenizers,
-    // we use a simplified stub/simulation logic.
-    // If the flutter_onnxruntime usage is strict, we'd build OrtValue tensors here.
-    
-    // Simulate generation for compilation and architectural completeness
-    // Replace this block with actual OrtValue creation and session.run() when a tokenizer is available.
-    return await _simulateEmbedding(text);
+    await initialize();
+
+    throw EmbeddingModelUnavailableException(
+      _modelPresent
+          ? 'Model found at $modelPath, but no WordPiece tokenizer is '
+              'implemented, so it cannot be run.'
+          : 'No model at $modelPath. On-device embeddings are not yet enabled.',
+    );
   }
 
   @override
   Future<List<List<double>>> generateEmbeddingsBatch(List<String> texts) async {
-    // Basic iterative implementation, can be optimized with batched tensors in ONNX
-    final List<List<double>> results = [];
+    final results = <List<double>>[];
     for (final text in texts) {
       results.add(await generateEmbedding(text));
     }
@@ -57,20 +86,7 @@ class OnnxEmbeddingService implements EmbeddingService {
 
   @override
   Future<void> dispose() async {
-    _session = null;
-    _env = null;
-    _isInitialized = false;
-  }
-  
-  // Helper to simulate the vector output for the architectural pipeline
-  Future<List<double>> _simulateEmbedding(String text) async {
-    // Sleep briefly to simulate computation
-    await Future.delayed(const Duration(milliseconds: 10));
-    
-    // Generate a pseudo-random deterministically sized vector based on text length
-    // For MiniLM-L6-v2, dimension is 384
-    final random = text.hashCode;
-    final List<double> vector = List.generate(384, (index) => (random % (index + 1)) / 384.0);
-    return vector;
+    _initialized = false;
+    _modelPresent = false;
   }
 }

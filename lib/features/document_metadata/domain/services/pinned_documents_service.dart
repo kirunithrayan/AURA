@@ -1,4 +1,4 @@
-import 'package:dartz/dartz.dart';
+import 'package:fpdart/fpdart.dart';
 import '../../../../core/database/database_helper.dart';
 import '../../../../core/constants/db_constants.dart';
 import '../../../../core/error/failures.dart';

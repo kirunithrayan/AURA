@@ -1,11 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/aura_app_bar.dart';
+import '../../../ai/rag/domain/services/ai_key_store.dart';
+import '../widgets/ai_key_dialog.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  final AiKeyStore _keyStore = sl<AiKeyStore>();
+  bool _hasApiKey = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshKeyStatus();
+  }
+
+  Future<void> _refreshKeyStatus() async {
+    final has = await _keyStore.hasApiKey();
+    if (mounted) setState(() => _hasApiKey = has);
+  }
+
+  Future<void> _openKeyDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => AiKeyDialog(keyStore: _keyStore),
+    );
+    await _refreshKeyStatus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Version 1.0.0 (RC1) • Local-First AI',
+                          'Version 0.6.0 • Local storage, cloud AI',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
@@ -82,24 +112,37 @@ class SettingsScreen extends StatelessWidget {
           const ListTile(
             leading: Icon(Icons.storage_outlined),
             title: Text('Local Repository Storage'),
-            subtitle: Text('Encrypted SQLite & Vector Index'),
+            subtitle: Text('Encrypted SQLite (SQLCipher)'),
             trailing: Icon(Icons.check_circle, color: Colors.green, size: 20),
           ),
           ListTile(
             leading: const Icon(Icons.psychology_outlined),
             title: const Text('AI Engine Configuration'),
-            subtitle: const Text('Gemini API + Local Stub Fallback'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('AI Engine active in local hybrid mode.')),
-              );
-            },
+            subtitle: Text(
+              _hasApiKey
+                  ? 'Google Gemini • API key configured'
+                  : 'Google Gemini • no API key set — Ask AURA is disabled',
+            ),
+            trailing: Icon(
+              _hasApiKey ? Icons.check_circle : Icons.error_outline,
+              color: _hasApiKey ? Colors.green : theme.colorScheme.error,
+              size: 20,
+            ),
+            onTap: _openKeyDialog,
+          ),
+          const ListTile(
+            leading: Icon(Icons.cloud_outlined),
+            title: Text('Data Handling'),
+            subtitle: Text(
+              'Documents and search stay on device. Ask AURA sends the '
+              'selected excerpts to Google Gemini.',
+            ),
+            isThreeLine: true,
           ),
           const Divider(),
           AppSpacing.v16,
 
-          // Developer Options Section (Refinement #2)
+          // Developer Options Section
           Text(
             'Developer Options',
             style: theme.textTheme.labelLarge?.copyWith(
@@ -136,7 +179,7 @@ class SettingsScreen extends StatelessWidget {
           const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text('AURA Architecture'),
-            subtitle: Text('Clean Architecture • MVVM • Riverpod • Local-First'),
+            subtitle: Text('Clean Architecture • MVVM • Riverpod'),
           ),
         ],
       ),

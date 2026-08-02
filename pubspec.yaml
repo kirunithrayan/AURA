@@ -1,7 +1,7 @@
 name: aura
 description: "AURA — Adaptive Unified Repository Assistant. AI-powered Knowledge Workspace for Android."
 publish_to: 'none'
-version: 1.0.0+1
+version: 0.6.0+1
 
 environment:
   sdk: ^3.5.0
@@ -70,7 +70,6 @@ dependencies:
   # Native APIs
   share_plus: ^7.2.1
   url_launcher: ^6.3.2
-  dartz: ^0.10.1
   google_generative_ai: ^0.4.7
   flutter_markdown: ^0.7.7+1
 

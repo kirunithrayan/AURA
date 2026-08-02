@@ -99,22 +99,18 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
+  /// Not supported on this path.
+  ///
+  /// File import requires a `PlatformFile` from the platform file picker, which
+  /// cannot be reconstructed from a bare path string. The picker runs in the
+  /// presentation layer, which copies the file via [FileService] and then calls
+  /// [persistImportedFile] with the resulting metadata.
   @override
-  Future<Either<Failure, WorkspaceFile>> importFile(String workspaceId, String sourcePath) async {
-    try {
-      // In a real flow, sourcePath is a PlatformFile passed through the viewmodel,
-      // but to match the repository interface, we handle it if needed. 
-      // Actually, since the FileService now requires a PlatformFile, 
-      // we assume sourcePath is handled at the usecase level or we adjust the interface.
-      // We will leave this stubbed as the instruction is just "Copy files into application storage... extract metadata... store in SQLite"
-      // Wait, the prompt says "Implement local document importing". 
-      // I will assume the UI calls the usecase which delegates here.
-      
-      return const Left(FileSystemFailure('Import logic handled in ViewModel for picker integration'));
-    } catch (e) {
-      return Left(FileSystemFailure(e.toString()));
-    }
-  }
+  Future<Either<Failure, WorkspaceFile>> importFile(String workspaceId, String sourcePath) async =>
+      const Left(FileSystemFailure(
+        'importFile(path) is not supported. Use the file picker flow, which '
+        'copies the file and calls persistImportedFile().',
+      ));
 
   /// Internal helper to persist a picked and copied file to SQLite.
   /// Called by the ViewModel after using FileService to copy the file.

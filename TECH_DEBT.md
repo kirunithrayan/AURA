@@ -1,23 +1,68 @@
 # AURA Technical Debt & Deferred Work
 
-This document tracks intentionally deferred features and known technical debt for future phases.
+Known gaps, placeholders, and deferred work. Entries here are things the code
+does **not** do — the README's Current Status table is the user-facing summary.
 
-## 1. Architectural Debt
+## 1. Non-functional components
 
-*   **File Copying Overhead**: Currently, importing files copies them entirely into application storage. For large files, this is inefficient. Future phases should support URI referencing or scoped storage access where possible.
-*   **In-Memory Caching**: `MetadataCache` currently holds objects indefinitely. It needs an LRU (Least Recently Used) eviction policy to prevent memory leaks when managing thousands of documents.
+These are registered in DI and appear in the architecture, but do not work. They
+exist so the interfaces are stable; none of them should be counted as a feature.
 
-## 2. Deferred Features (Future Phases)
-
-| Feature | Planned Phase | Reason for Deferral |
+| Component | Behaviour | To make real |
 | :--- | :--- | :--- |
-| **Hybrid Search (Keyword + Semantic)** | Phase 5 | Requires local embedding engine and vector database integration, which is a major architectural addition. |
-| **Document Search (Ctrl+F)** | Phase 5 | Depends on the full-text indexing system planned for Phase 5 to avoid blocking the main thread on large documents. |
-| **AI Summarization & Insights** | Phase 6 | Requires stable integration with local LLMs (Llama/Mistral) via the AI abstraction layer. |
-| **Knowledge Graph Visualization** | Phase 7 | Complex UI/UX rendering requirements (force-directed graphs) that distract from core viewer stability. |
-| **Adaptive Background Scheduler** | Phase 8 | Requires complex WorkManager and battery/thermal monitoring logic. |
+| `OnnxEmbeddingService` | Throws `EmbeddingModelUnavailableException` | Bundle `all-MiniLM-L6-v2.onnx` + `vocab.txt`; write a Dart WordPiece tokenizer; replace the throw with `session.run()` |
+| `SemanticSearchEngine` | Returns `[]` (embedding failure is caught) | Depends on the above |
+| `StubVectorStore` | Throws `UnimplementedError` | Persist vectors to SQLite with an ANN or brute-force cosine index |
+| `StubChunkingService` | Throws `UnimplementedError` | `DocumentChunkingService` already works — wire it in and delete the stub |
+| `StubInferenceEngine` | Throws `UnimplementedError` | Requires on-device LLM runtime |
+| `StubPromptBuilder` | Throws `UnimplementedError` | `PromptBuilderServiceImpl` already works — wire it in and delete the stub |
+| `BatteryService` | Returns `0.85` / `true` | `battery_plus` |
+| `ThermalService` | Returns `false` | Platform channel to `PowerManager.getCurrentThermalStatus()` |
+| `MemoryService` | Returns `true` | Platform channel to `ActivityManager.MemoryInfo` |
+| Knowledge graph | UI scaffold only | Entity extraction + relationship modelling |
 
-## 3. Minor Known Issues
+> Two of these — the chunking service and prompt builder — have working
+> implementations sitting alongside the stub. Wiring them is a small change and
+> should be the first cleanup.
 
-*   **PDF Password Protection**: The PDF viewer currently detects password-protected files but simply shows an "Unsupported" error state. UI for password entry needs to be built.
-*   **DOCX Formatting**: The DOCX parser extracts raw text and headings but loses complex formatting (tables, inline images). A full DOCX rendering engine is deferred indefinitely.
+## 2. Architectural debt
+
+- **File copying overhead.** Import copies files wholesale into app storage.
+  For large files this wastes space; URI referencing or scoped storage would be
+  better.
+- **Unbounded metadata cache.** `MetadataCache` holds objects indefinitely with
+  no LRU eviction. This will leak across thousands of documents.
+- **Not offline.** The only working generation path is Google Gemini. The
+  "offline-first" goal is not met until on-device inference lands (roadmap v0.8).
+- **`importFile(String path)` is unsupported** on the repository interface — the
+  picker flow calls `persistImportedFile` instead. The interface should be
+  changed to match reality rather than keeping a method that always fails.
+
+## 3. Testing debt
+
+- Coverage is roughly **3% by line count** (884 test lines against 19,475 source
+  lines).
+- **No widget tests and no integration tests.** The Create Workspace no-op bug
+  survived to a tagged release because nothing exercised the UI.
+- Existing tests cover search ranking, chunking, text preprocessing, and cosine
+  similarity — all pure functions. Nothing covers repositories, viewmodels, or
+  database code.
+
+## 4. Dependency debt
+
+- **`syncfusion_flutter_pdfviewer`** is under the Syncfusion Community License,
+  not MIT. It is the only PDF viewer in use; `pdfx` is also present but only for
+  thumbnails. Consolidating on `pdfx` would remove the licensing asymmetry, at
+  the cost of rewriting `PdfEngineWrapper`.
+- **`workmanager`** uses a deprecated `isInDebugMode` parameter.
+- 69 packages have newer versions blocked by current constraints.
+
+## 5. Minor known issues
+
+- **PDF password protection**: detected, but shows an "Unsupported" state
+  instead of a password prompt.
+- **DOCX formatting**: the parser extracts text and headings but drops tables and
+  inline images.
+- **14 analyzer warnings** remain, mostly unused private fields and two
+  `invalid_use_of_protected_member` uses of Riverpod's `state` in
+  `action_commands.dart`.

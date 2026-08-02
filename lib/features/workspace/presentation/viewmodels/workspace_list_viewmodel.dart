@@ -4,6 +4,7 @@ import '../../domain/entities/workspace.dart';
 import '../../domain/usecases/get_workspaces.dart';
 import '../../domain/usecases/delete_workspace.dart';
 import '../../domain/usecases/update_workspace.dart';
+import '../../domain/usecases/create_workspace.dart';
 
 part 'workspace_list_viewmodel.g.dart';
 
@@ -34,17 +35,13 @@ class WorkspaceListState {
 
 @riverpod
 class WorkspaceListViewModel extends _$WorkspaceListViewModel {
-  late final GetWorkspaces _getWorkspaces;
-  late final DeleteWorkspace _deleteWorkspace;
-  late final UpdateWorkspace _updateWorkspace;
+  GetWorkspaces get _getWorkspaces => GetWorkspaces(ref.read(workspaceRepositoryProvider));
+  DeleteWorkspace get _deleteWorkspace => DeleteWorkspace(ref.read(workspaceRepositoryProvider));
+  UpdateWorkspace get _updateWorkspace => UpdateWorkspace(ref.read(workspaceRepositoryProvider));
+  CreateWorkspace get _createWorkspace => CreateWorkspace(ref.read(workspaceRepositoryProvider));
 
   @override
   FutureOr<WorkspaceListState> build() async {
-    final repo = ref.watch(workspaceRepositoryProvider);
-    _getWorkspaces = GetWorkspaces(repo);
-    _deleteWorkspace = DeleteWorkspace(repo);
-    _updateWorkspace = UpdateWorkspace(repo);
-
     return _fetchWorkspaces();
   }
 
@@ -118,6 +115,42 @@ class WorkspaceListViewModel extends _$WorkspaceListViewModel {
         state = AsyncValue.data(current.copyWith(
           workspaces: _sortWorkspaces(updatedList, current.sortOption)
         ));
+      },
+    );
+  }
+
+  Future<bool> addWorkspace({
+    required String name,
+    String description = '',
+    String icon = 'folder',
+  }) async {
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final newWorkspace = Workspace(
+      id: now.toString(),
+      name: name,
+      description: description,
+      icon: icon,
+      createdAt: now,
+      updatedAt: now,
+      fileCount: 0,
+      totalSize: 0,
+      isPinned: false,
+    );
+
+    final result = await _createWorkspace(newWorkspace);
+    return result.fold(
+      (failure) => false,
+      (savedWorkspace) {
+        if (state.hasValue && state.value != null) {
+          final current = state.value!;
+          final updatedList = [savedWorkspace, ...current.workspaces];
+          state = AsyncValue.data(current.copyWith(
+            workspaces: _sortWorkspaces(updatedList, current.sortOption),
+          ));
+        } else {
+          ref.invalidateSelf();
+        }
+        return true;
       },
     );
   }
