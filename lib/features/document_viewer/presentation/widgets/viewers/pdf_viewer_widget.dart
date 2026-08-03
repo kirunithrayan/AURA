@@ -6,7 +6,6 @@ import 'package:aura/features/document_viewer/presentation/viewmodels/document_v
 import 'viewer_lifecycle.dart';
 import 'pdf/abstract_pdf_controller.dart';
 import 'pdf/pdf_engine_wrapper.dart';
-import 'pdf/jump_to_page_dialog.dart';
 
 class PdfViewerWidget extends ConsumerStatefulWidget {
 
@@ -46,20 +45,6 @@ class _PdfViewerWidgetState extends ConsumerState<PdfViewerWidget> implements Vi
   @override
   void onViewerClosed() {
     ref.read(documentViewerViewModelProvider(widget.file.id).notifier).saveViewerState();
-  }
-
-  void _showJumpToPageDialog(BuildContext context, int currentPage, int pageCount) async {
-    final selectedPage = await showDialog<int>(
-      context: context,
-      builder: (context) => JumpToPageDialog(
-        currentPage: currentPage,
-        pageCount: pageCount,
-      ),
-    );
-
-    if (selectedPage != null && selectedPage != currentPage) {
-      ref.read(documentViewerViewModelProvider(widget.file.id).notifier).updatePageState(selectedPage, pageCount);
-    }
   }
 
   @override

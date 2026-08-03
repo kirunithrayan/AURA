@@ -1,14 +1,10 @@
 import '../../domain/entities/search_query.dart';
 import '../../domain/entities/optimization/normalized_search_query.dart';
 import '../../domain/services/search_query_normalizer.dart';
-import '../../../../core/text_engine/abstract_text_document_engine.dart';
-// Note: We use AbstractTextDocumentEngine just to ensure we share standard tokenization logic if needed, 
-// though typical normalization is simpler here.
 
 class SearchQueryNormalizerImpl implements SearchQueryNormalizer {
 
-  SearchQueryNormalizerImpl(this._textEngine);
-  final AbstractTextDocumentEngine _textEngine;
+  const SearchQueryNormalizerImpl();
 
   @override
   NormalizedSearchQuery normalize(SearchQuery query) {

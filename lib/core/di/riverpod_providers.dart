@@ -9,9 +9,6 @@ import '../../features/document_metadata/domain/services/recent_documents_servic
 import '../../features/document_metadata/domain/services/favorite_documents_service.dart';
 import '../../features/document_metadata/domain/services/pinned_documents_service.dart';
 
-// AI Foundation (Phase 6)
-export '../../features/ai/presentation/providers/ai_providers.dart';
-
 // Repositories
 import '../../features/home/domain/repositories/home_repository.dart';
 import '../../features/workspace/domain/repositories/workspace_repository.dart';
@@ -32,8 +29,6 @@ final documentMetadataServiceProvider = Provider<DocumentMetadataService>((ref) 
 final recentDocumentsServiceProvider = Provider<RecentDocumentsService>((ref) => sl<RecentDocumentsService>());
 final favoriteDocumentsServiceProvider = Provider<FavoriteDocumentsService>((ref) => sl<FavoriteDocumentsService>());
 final pinnedDocumentsServiceProvider = Provider<PinnedDocumentsService>((ref) => sl<PinnedDocumentsService>());
-
-// --- AI Interfaces (Exported from ai_providers.dart) ---
 
 // --- Repositories ---
 final homeRepositoryProvider = Provider<HomeRepository>((ref) => sl<HomeRepository>());

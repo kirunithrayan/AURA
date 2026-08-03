@@ -12,20 +12,6 @@ import '../../services/thermal_service.dart';
 import '../../services/memory_service.dart';
 import '../../services/workmanager_service.dart';
 
-// AI Foundation (Phase 6)
-import '../../features/ai/domain/engines/abstract_embedding_engine.dart';
-import '../../features/ai/domain/engines/abstract_inference_engine.dart';
-import '../../features/ai/domain/services/abstract_chunking_service.dart';
-import '../../features/ai/domain/services/abstract_prompt_builder.dart';
-import '../../features/ai/domain/services/abstract_vector_store.dart';
-import '../../features/ai/domain/registry/abstract_ai_service_registry.dart';
-import '../../features/ai/data/stubs/stub_embedding_engine.dart';
-import '../../features/ai/data/stubs/stub_inference_engine.dart';
-import '../../features/ai/data/stubs/stub_chunking_service.dart';
-import '../../features/ai/data/stubs/stub_prompt_builder.dart';
-import '../../features/ai/data/stubs/stub_vector_store.dart';
-import '../../features/ai/data/registry/ai_service_registry_impl.dart';
-
 // AI Embeddings Engine (Phase 6.2)
 import '../../features/ai/embeddings/domain/services/text_preprocessor.dart';
 import '../../features/ai/embeddings/domain/services/document_chunking_service.dart';
@@ -209,34 +195,7 @@ Future<void> initInjection() async {
   );
 
   // ---------------------------------------------------------------------------
-  // 3. AI Interfaces & Engines (Phase 6 Foundation)
-  // ---------------------------------------------------------------------------
-  sl.registerLazySingleton<AbstractEmbeddingEngine>(
-    () => const StubEmbeddingEngine(),
-  );
-
-  sl.registerLazySingleton<AbstractInferenceEngine>(
-    () => const StubInferenceEngine(),
-  );
-
-  sl.registerLazySingleton<AbstractChunkingService>(
-    () => const StubChunkingService(),
-  );
-
-  sl.registerLazySingleton<AbstractPromptBuilder>(
-    () => const StubPromptBuilder(),
-  );
-
-  sl.registerLazySingleton<AbstractVectorStore>(
-    () => const StubVectorStore(),
-  );
-
-  sl.registerLazySingleton<AbstractAIServiceRegistry>(
-    AIServiceRegistryImpl.new,
-  );
-
-  // ---------------------------------------------------------------------------
-  // 3b. AI Embeddings Engine (Phase 6.2)
+  // 3. AI Embeddings Engine (Phase 6.2)
   // ---------------------------------------------------------------------------
   sl.registerLazySingleton<TextPreprocessor>(() => const TextPreprocessor());
   
@@ -481,7 +440,7 @@ Future<void> initInjection() async {
   sl.registerLazySingleton(() => GetDocumentForViewing(sl()));
 
   sl.registerLazySingleton<SearchQueryNormalizer>(
-    () => SearchQueryNormalizerImpl(sl()),
+    () => const SearchQueryNormalizerImpl(),
   );
 
   sl.registerLazySingleton(() => PerformSearchUseCase(

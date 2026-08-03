@@ -1,16 +1,19 @@
 # Project Statistics
 
-Measured at the v0.6.0 tag. Regenerate with the commands noted below rather than
-editing by hand.
+Measured on 2026-08-03, after v0.6.0. Regenerate with the commands noted below
+rather than editing by hand.
 
 ## Codebase Size
 
 | Metric | Value |
 | :--- | ---: |
-| Dart files (total) | 382 |
-| Dart files (excluding generated `.g.dart` / `.freezed.dart`) | 367 |
-| Lines of Dart (total) | 21,871 |
-| Lines of Dart (excluding generated) | 19,475 |
+| Dart files (total) | 360 |
+| Dart files (excluding generated `.g.dart` / `.freezed.dart`) | 351 |
+| Lines of Dart (total) | 20,474 |
+| Lines of Dart (excluding generated) | 19,096 |
+
+Down from 382 files / 21,871 lines at v0.6.0: an unused `Abstract*` AI
+abstraction layer with no consumers was deleted (see [TECH_DEBT.md](TECH_DEBT.md)).
 
 ```bash
 find lib -name '*.dart' ! -name '*.g.dart' ! -name '*.freezed.dart' | wc -l
@@ -21,8 +24,8 @@ find lib -name '*.dart' ! -name '*.g.dart' ! -name '*.freezed.dart' | wc -l
 | Metric | Value |
 | :--- | ---: |
 | Analyzer errors | 0 |
-| Analyzer warnings | 14 |
-| Analyzer info-level lints | 15 |
+| Analyzer warnings | 0 |
+| Analyzer info-level lints | 14 |
 | Tests passing | 31 / 31 |
 | Test files | 12 |
 | Lines of test code | 884 |
@@ -36,7 +39,7 @@ preprocessing. Widget and integration tests are a known gap tracked in
 
 | Component | Count |
 | :--- | ---: |
-| GetIt registrations | 88 |
+| GetIt registrations | 82 |
 | Screens | 15 |
 | ViewModels | 12 |
 | Database tables | 9 |
@@ -47,8 +50,6 @@ Not every registered component is functional. The following are placeholders
 that throw `UnimplementedError` or return fixed values, and are counted above
 only as scaffolding:
 
-- `StubVectorStore`, `StubChunkingService`, `StubInferenceEngine`,
-  `StubPromptBuilder`, `StubEmbeddingEngine`
 - `BatteryService`, `ThermalService`, `MemoryService`
 - `OnnxEmbeddingService` (throws `EmbeddingModelUnavailableException` until a
   model and tokenizer are added)

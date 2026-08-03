@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:aura/core/widgets/aura_empty_state.dart';
@@ -19,23 +18,16 @@ class ImageViewerWidget extends ConsumerStatefulWidget {
 
 class _ImageViewerWidgetState extends ConsumerState<ImageViewerWidget> implements ViewerLifecycle {
   late final AbstractImageController _imageController;
-  final bool _showOverlay = true;
-  Timer? _hideTimer;
 
   @override
   void initState() {
     super.initState();
     _imageController = ImageEngineControllerImpl();
     onViewerOpened();
-    _startHideTimer();
   }
-
-  void _startHideTimer() {}
-  void _onInteract() {}
 
   @override
   void dispose() {
-    _hideTimer?.cancel();
     onViewerClosed();
     _imageController.close();
     super.dispose();
@@ -57,15 +49,6 @@ class _ImageViewerWidgetState extends ConsumerState<ImageViewerWidget> implement
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(documentViewerViewModelProvider(widget.file.id), (previous, next) {
-      if (previous?.value?.viewState.rotation != next.value?.viewState.rotation) {
-        // Force rebuild or let ImageEngineWrapper handle it
-        // The rotation is passed via state.viewState.rotation down to ImageEngineWrapper.
-        // Wait, ImageEngineWrapper takes initialRotation, so it doesn't dynamically update unless
-        // it listens to state or rebuilds with didUpdateWidget. We can just rely on the build triggering.
-      }
-    });
-
     final stateAsync = ref.watch(documentViewerViewModelProvider(widget.file.id));
 
     return stateAsync.when(

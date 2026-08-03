@@ -50,7 +50,7 @@ class ViewerBottomToolbar extends ConsumerWidget {
                 pageCount: state.viewState.pageCount,
               ),
             );
-            if (page != null) {
+            if (page != null && context.mounted) {
               _execute(ref, context, ViewerCapability.pageNavigation, page);
             }
           },

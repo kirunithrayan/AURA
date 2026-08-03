@@ -12,18 +12,21 @@ exist so the interfaces are stable; none of them should be counted as a feature.
 | :--- | :--- | :--- |
 | `OnnxEmbeddingService` | Throws `EmbeddingModelUnavailableException` | Bundle `all-MiniLM-L6-v2.onnx` + `vocab.txt`; write a Dart WordPiece tokenizer; replace the throw with `session.run()` |
 | `SemanticSearchEngine` | Returns `[]` (embedding failure is caught) | Depends on the above |
-| `StubVectorStore` | Throws `UnimplementedError` | Persist vectors to SQLite with an ANN or brute-force cosine index |
-| `StubChunkingService` | Throws `UnimplementedError` | `DocumentChunkingService` already works — wire it in and delete the stub |
-| `StubInferenceEngine` | Throws `UnimplementedError` | Requires on-device LLM runtime |
-| `StubPromptBuilder` | Throws `UnimplementedError` | `PromptBuilderServiceImpl` already works — wire it in and delete the stub |
+| Vector persistence | Not implemented | Persist vectors to SQLite with an ANN or brute-force cosine index |
+| On-device inference | Not implemented | Requires an on-device LLM runtime |
 | `BatteryService` | Returns `0.85` / `true` | `battery_plus` |
 | `ThermalService` | Returns `false` | Platform channel to `PowerManager.getCurrentThermalStatus()` |
 | `MemoryService` | Returns `true` | Platform channel to `ActivityManager.MemoryInfo` |
 | Knowledge graph | UI scaffold only | Entity extraction + relationship modelling |
 
-> Two of these — the chunking service and prompt builder — have working
-> implementations sitting alongside the stub. Wiring them is a small change and
-> should be the first cleanup.
+> **Resolved 2026-08-03.** An unused `Abstract*` AI layer (embedding engine,
+> inference engine, chunking service, prompt builder, vector store, plus an
+> `AIServiceRegistry` and its Riverpod providers) was registered in DI but had
+> **no consumers anywhere in the codebase**. Chunking and prompt building were
+> already handled by `DocumentChunkingService` and `PromptBuilderServiceImpl`,
+> which are wired and tested. The dead layer was deleted rather than wired,
+> since adapting it would have meant writing translation code so unused code
+> could call working code.
 
 ## 2. Architectural debt
 

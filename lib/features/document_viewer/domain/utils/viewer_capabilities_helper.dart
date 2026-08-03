@@ -33,7 +33,6 @@ extension ViewerTypeCapabilities on ViewerType {
           ViewerCapability.keyboardShortcuts,
         };
       case ViewerType.unsupported:
-      default:
         return {
           ViewerCapability.share,
           ViewerCapability.openExternally,

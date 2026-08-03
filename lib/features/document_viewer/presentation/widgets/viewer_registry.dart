@@ -19,7 +19,6 @@ class ViewerRegistry {
       case ViewerType.docx:
         return TextViewerWidget(file: file);
       case ViewerType.unsupported:
-      default:
         return UnsupportedViewerPlaceholder(file: file);
     }
   }

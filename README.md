@@ -39,7 +39,7 @@ API key — ask questions about them.
 | **Ask AURA (RAG)** | Retrieval and prompt assembly are implemented, but generation requires a **Google Gemini API key** supplied by the user. Without one, the feature reports the missing key rather than answering. |
 | **Device telemetry** | `BatteryService`, `ThermalService`, and `MemoryService` return fixed values. The adaptive scheduler that would consume them is not built. |
 | **Knowledge graph** | UI scaffold only. |
-| **Several AI interfaces** | `StubVectorStore`, `StubChunkingService`, `StubInferenceEngine`, and `StubPromptBuilder` are registered placeholders that throw `UnimplementedError`. |
+| **Vector persistence** | Embeddings are not stored; there is no vector index yet. Blocked on on-device embeddings. |
 
 ### Privacy and data handling
 

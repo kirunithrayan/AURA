@@ -1,4 +1,3 @@
-import 'package:uuid/uuid.dart';
 
 import '../entities/document_chunk.dart';
 import '../entities/indexed_document_chunk.dart';
@@ -29,7 +28,6 @@ class DocumentIndexingService {
   final DocumentChunkingService _chunkingService;
   final EmbeddingService _embeddingService;
   final EmbeddingRepository _repository;
-  final _uuid = const Uuid();
 
   /// Indexes a document's extracted text.
   /// 

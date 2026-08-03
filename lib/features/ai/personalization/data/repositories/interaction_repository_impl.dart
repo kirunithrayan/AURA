@@ -1,5 +1,4 @@
 import 'package:sqflite_sqlcipher/sqflite.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../../core/constants/db_constants.dart';
 import '../../../../../core/database/database_helper.dart';
 import '../../domain/entities/conversation_summary.dart';
@@ -11,7 +10,6 @@ class InteractionRepositoryImpl implements InteractionRepository {
 
   InteractionRepositoryImpl(this._dbHelper);
   final DatabaseHelper _dbHelper;
-  final Uuid _uuid = const Uuid();
 
   @override
   Future<void> saveDocumentInteraction(DocumentInteraction interaction) async {

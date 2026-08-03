@@ -9,7 +9,7 @@ class ShareCommand implements ViewerCommand {
 
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {
-    final file = notifier.state.value?.file;
+    final file = notifier.currentState?.file;
     if (file != null) {
       await shareService.shareDocument(file);
     }
@@ -23,7 +23,7 @@ class OpenExternallyCommand implements ViewerCommand {
 
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {
-    final file = notifier.state.value?.file;
+    final file = notifier.currentState?.file;
     if (file != null) {
       await shareService.openExternally(file);
     }
@@ -37,7 +37,7 @@ class CopyDocumentPathCommand implements ViewerCommand {
 
   @override
   Future<void> execute(DocumentViewerViewModel notifier, [dynamic payload]) async {
-    final file = notifier.state.value?.file;
+    final file = notifier.currentState?.file;
     if (file != null) {
       await shareService.copyDocumentPath(file);
     }
