@@ -22,6 +22,10 @@ import '../../features/ai/embeddings/data/repositories/embedding_repository_impl
 import '../../features/ai/embeddings/domain/services/cosine_similarity_service.dart';
 import '../../features/ai/embeddings/domain/services/document_indexing_service.dart';
 
+// Features - Onboarding
+import '../../features/onboarding/domain/services/onboarding_store.dart';
+import '../../features/onboarding/data/services/secure_onboarding_store.dart';
+
 // Features - Home
 import '../../features/home/data/datasources/home_local_datasource.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
@@ -174,6 +178,12 @@ Future<void> initInjection() async {
   sl.registerLazySingleton<ThermalService>(ThermalService.new);
   sl.registerLazySingleton<MemoryService>(MemoryService.new);
   sl.registerLazySingleton<WorkManagerService>(WorkManagerService.new);
+
+  // Onboarding first-launch gate. Uses the same platform secure storage as the
+  // AI key store; read once by SplashScreen to pick the start destination.
+  sl.registerLazySingleton<OnboardingStore>(
+    () => SecureOnboardingStore(const FlutterSecureStorage()),
+  );
 
   // Document Metadata Cache and Services
   sl.registerLazySingleton<MetadataCache>(MetadataCache.new);

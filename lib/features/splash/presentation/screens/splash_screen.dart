@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/di/injection_container.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../onboarding/domain/services/onboarding_store.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,15 +12,36 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  /// How long the branded splash stays on screen, unchanged from before.
+  static const Duration _minimumVisibleDuration = Duration(seconds: 2);
+
+  final OnboardingStore _onboardingStore = sl<OnboardingStore>();
+
   @override
   void initState() {
     super.initState();
-    // Simulate initialization delay, then navigate to Onboarding or Home
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        context.goNamed(AppRoutes.onboarding);
-      }
-    });
+    _resolveStartDestination();
+  }
+
+  /// Picks the first real screen: onboarding on first launch, home afterwards.
+  ///
+  /// The storage read is started *before* the splash delay is awaited, so the
+  /// two overlap and the check costs no additional startup time.
+  Future<void> _resolveStartDestination() async {
+    // The error handler is attached immediately, before the delay is awaited.
+    // That keeps a rejected read from surfacing as an unhandled async error,
+    // and guarantees we always reach the navigation below: being stranded on
+    // the splash screen forever is the one failure the user cannot recover
+    // from without force-quitting.
+    final Future<bool> onboardingComplete = _onboardingStore
+        .isOnboardingComplete()
+        .catchError((Object _) => false);
+
+    await Future<void>.delayed(_minimumVisibleDuration);
+    final bool isComplete = await onboardingComplete;
+
+    if (!mounted) return;
+    context.goNamed(isComplete ? AppRoutes.home : AppRoutes.onboarding);
   }
 
   @override
