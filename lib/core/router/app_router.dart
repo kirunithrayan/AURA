@@ -9,6 +9,8 @@ import '../../features/workspace/presentation/screens/workspace_detail_screen.da
 import '../../features/workspace/presentation/screens/create_workspace_screen.dart';
 import '../../features/document_viewer/presentation/screens/document_viewer_screen.dart';
 import '../../features/ai_insights/presentation/screens/ai_insights_screen.dart';
+import '../../features/ai/rag/presentation/screens/ask_aura_screen.dart';
+import '../../features/ai/knowledge_graph/presentation/screens/knowledge_graph_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 
@@ -67,6 +69,22 @@ class AppRouter {
         name: AppRoutes.aiInsights,
         builder: (context, state) => AiInsightsScreen(
           documentId: state.pathParameters['id']!,
+        ),
+      ),
+
+      GoRoute(
+        path: '/ask/:workspaceId',
+        name: AppRoutes.askAura,
+        builder: (context, state) => AskAuraScreen(
+          workspaceId: state.pathParameters['workspaceId']!,
+        ),
+      ),
+
+      GoRoute(
+        path: '/graph/:workspaceId',
+        name: AppRoutes.knowledgeGraph,
+        builder: (context, state) => KnowledgeGraphScreen(
+          workspaceId: state.pathParameters['workspaceId']!,
         ),
       ),
 

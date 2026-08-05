@@ -10,6 +10,7 @@ class AppRoutes {
   static const String documentViewer = 'documentViewer';
   static const String aiInsights = 'aiInsights';
   static const String knowledgeGraph = 'knowledgeGraph';
+  static const String askAura = 'askAura';
   static const String search = 'search';
   static const String settings = 'settings';
   static const String diagnostics = 'diagnostics';

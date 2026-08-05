@@ -33,6 +33,14 @@ class WorkspaceDetailScreen extends ConsumerWidget {
         title: stateAsync.value?.workspace?.name ?? 'Workspace',
         actions: [
           IconButton(
+            icon: const Icon(Icons.auto_awesome),
+            tooltip: 'Ask AURA',
+            onPressed: () => context.pushNamed(
+              AppRoutes.askAura,
+              pathParameters: {'workspaceId': workspaceId},
+            ),
+          ),
+          IconButton(
             icon: const Icon(Icons.hub),
             tooltip: 'Knowledge Graph',
             onPressed: () => context.pushNamed(
@@ -144,7 +152,11 @@ class WorkspaceDetailScreen extends ConsumerWidget {
                             AppRoutes.documentViewer,
                             pathParameters: {'id': file.id},
                           ),
-                          onPin: isPinned 
+                          onInsights: () => context.pushNamed(
+                            AppRoutes.aiInsights,
+                            pathParameters: {'id': file.id},
+                          ),
+                          onPin: isPinned
                               ? () => notifier.unpinFile(file.id)
                               : () => notifier.pinFile(file.id),
                         );

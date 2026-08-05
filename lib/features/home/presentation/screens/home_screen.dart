@@ -97,6 +97,10 @@ class HomeScreen extends ConsumerWidget {
                               AppRoutes.documentViewer,
                               pathParameters: {'id': file.id},
                             ),
+                            onInsights: () => context.pushNamed(
+                              AppRoutes.aiInsights,
+                              pathParameters: {'id': file.id},
+                            ),
                           );
                         },
                         childCount: state.recentDocuments.length,

@@ -14,12 +14,14 @@ class FileListTile extends StatelessWidget {
     this.isPinned = false,
     this.onPinToggle,
     this.onPin,
+    this.onInsights,
   });
   final WorkspaceFile file;
   final VoidCallback onTap;
   final bool isPinned;
   final VoidCallback? onPinToggle;
   final VoidCallback? onPin;
+  final VoidCallback? onInsights;
 
   @override
   Widget build(BuildContext context) {
@@ -51,6 +53,12 @@ class FileListTile extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (onInsights != null)
+            IconButton(
+              icon: const Icon(Icons.insights),
+              tooltip: 'AI Insights',
+              onPressed: onInsights,
+            ),
           IconButton(
             icon: Icon(
               isPinned ? Icons.push_pin : Icons.push_pin_outlined,
