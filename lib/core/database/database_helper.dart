@@ -20,6 +20,8 @@ import 'tables/graph_layouts_table.dart';
 import 'tables/document_interactions_table.dart';
 import 'tables/search_interactions_table.dart';
 import 'tables/conversation_summaries_table.dart';
+import 'tables/search_indexes_table.dart';
+import 'tables/search_index_entries_table.dart';
 
 /// Singleton class for managing the SQLite (SQLCipher) database connection.
 class DatabaseHelper {
@@ -81,7 +83,9 @@ class DatabaseHelper {
     batch.execute(DocumentInteractionsTable.createTableQuery);
     batch.execute(SearchInteractionsTable.createTableQuery);
     batch.execute(ConversationSummariesTable.createTableQuery);
-    
+    batch.execute(SearchIndexesTable.createTableQuery);
+    batch.execute(SearchIndexEntriesTable.createTableQuery);
+
     // Performance indexes
     batch.execute('CREATE INDEX IF NOT EXISTS idx_workspace_files_last_opened ON ${DbConstants.workspaceFilesTable} (last_opened_at)');
     batch.execute('CREATE INDEX IF NOT EXISTS idx_workspace_files_favorite ON ${DbConstants.workspaceFilesTable} (is_favorite)');
@@ -91,7 +95,10 @@ class DatabaseHelper {
     batch.execute('CREATE INDEX IF NOT EXISTS idx_knowledge_nodes_workspace ON ${DbConstants.knowledgeNodesTable} (workspace_id)');
     batch.execute('CREATE INDEX IF NOT EXISTS idx_knowledge_edges_source_target ON ${DbConstants.knowledgeEdgesTable} (source_id, target_id)');
     batch.execute('CREATE INDEX IF NOT EXISTS idx_document_interactions_doc ON ${DbConstants.documentInteractionsTable} (document_id)');
-    
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_search_index_entries_document ON ${DbConstants.searchIndexEntriesTable} (document_id)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_search_index_entries_token ON ${DbConstants.searchIndexEntriesTable} (normalized_token)');
+    batch.execute('CREATE INDEX IF NOT EXISTS idx_search_indexes_workspace ON ${DbConstants.searchIndexesTable} (workspace_id)');
+
     await batch.commit();
   }
 

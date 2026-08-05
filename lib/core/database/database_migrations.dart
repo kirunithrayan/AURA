@@ -6,6 +6,8 @@ import 'tables/knowledge_edges_table.dart';
 import 'tables/document_interactions_table.dart';
 import 'tables/search_interactions_table.dart';
 import 'tables/conversation_summaries_table.dart';
+import 'tables/search_indexes_table.dart';
+import 'tables/search_index_entries_table.dart';
 
 /// Handles database migrations between versions.
 class DatabaseMigrations {
@@ -61,6 +63,17 @@ class DatabaseMigrations {
       await db.execute('CREATE INDEX IF NOT EXISTS idx_knowledge_nodes_workspace ON ${DbConstants.knowledgeNodesTable} (workspace_id)');
       await db.execute('CREATE INDEX IF NOT EXISTS idx_knowledge_edges_source_target ON ${DbConstants.knowledgeEdgesTable} (source_id, target_id)');
       await db.execute('CREATE INDEX IF NOT EXISTS idx_document_interactions_doc ON ${DbConstants.documentInteractionsTable} (document_id)');
+    }
+    if (oldVersion < 11) {
+      // The search index tables were never part of the schema. The DDL existed
+      // only in an ensureTables() helper that nothing ever called, so every
+      // index read and write failed with "no such table: search_indexes" and
+      // keyword search returned zero results on every install.
+      await db.execute(SearchIndexesTable.createTableQuery);
+      await db.execute(SearchIndexEntriesTable.createTableQuery);
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_search_index_entries_document ON ${DbConstants.searchIndexEntriesTable} (document_id)');
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_search_index_entries_token ON ${DbConstants.searchIndexEntriesTable} (normalized_token)');
+      await db.execute('CREATE INDEX IF NOT EXISTS idx_search_indexes_workspace ON ${DbConstants.searchIndexesTable} (workspace_id)');
     }
   }
 }
