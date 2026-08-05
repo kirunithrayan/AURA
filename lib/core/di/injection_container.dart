@@ -322,7 +322,7 @@ Future<void> initInjection() async {
   );
 
   sl.registerLazySingleton<AbstractSearchEngine>(
-    () => KeywordSearchEngine(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => KeywordSearchEngine(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
     instanceName: 'keyword_engine',
   );
 

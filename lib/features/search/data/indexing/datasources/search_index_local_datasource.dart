@@ -1,4 +1,5 @@
 import 'package:sqflite_sqlcipher/sqflite.dart';
+import '../../../../../core/constants/db_constants.dart';
 import '../../../../../core/database/database_helper.dart';
 import '../../../domain/entities/indexing/search_index.dart';
 import '../../../domain/entities/indexing/search_index_entry.dart';
@@ -9,42 +10,12 @@ class SearchIndexLocalDatasource {
   SearchIndexLocalDatasource(this._dbHelper);
   final DatabaseHelper _dbHelper;
 
-  static const String _indexTable = 'search_indexes';
-  static const String _entryTable = 'search_index_entries';
-
-  /// Ensures the indexing tables exist.
-  Future<void> ensureTables() async {
-    final db = await _dbHelper.database;
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS $_indexTable (
-        document_id TEXT PRIMARY KEY,
-        workspace_id TEXT NOT NULL,
-        document_type TEXT NOT NULL,
-        indexed_at INTEGER NOT NULL,
-        word_count INTEGER NOT NULL,
-        checksum TEXT NOT NULL,
-        parser_version TEXT NOT NULL
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS $_entryTable (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        document_id TEXT NOT NULL,
-        normalized_token TEXT NOT NULL,
-        original_token TEXT NOT NULL,
-        frequency INTEGER NOT NULL,
-        positions TEXT NOT NULL,
-        field TEXT NOT NULL,
-        FOREIGN KEY (document_id) REFERENCES $_indexTable(document_id) ON DELETE CASCADE
-      )
-    ''');
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_entry_document ON $_entryTable (document_id)',
-    );
-    await db.execute(
-      'CREATE INDEX IF NOT EXISTS idx_entry_token ON $_entryTable (normalized_token)',
-    );
-  }
+  // Schema lives in SearchIndexesTable / SearchIndexEntriesTable and is created
+  // by DatabaseHelper._onCreate and the v11 migration. Do not create tables
+  // here: a local ensureTables() that nothing called is what let these two
+  // tables go missing from the schema entirely.
+  static const String _indexTable = DbConstants.searchIndexesTable;
+  static const String _entryTable = DbConstants.searchIndexEntriesTable;
 
   Future<void> saveIndex(SearchIndex index) async {
     final db = await _dbHelper.database;

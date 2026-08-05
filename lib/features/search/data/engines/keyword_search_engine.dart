@@ -4,6 +4,8 @@ import '../../domain/entities/search_result.dart';
 import '../../domain/repositories/search_repository.dart';
 import '../indexing/cache/search_index_cache.dart';
 import '../indexing/repositories/search_index_repository.dart';
+import '../indexing/search_index_service.dart';
+import '../../../document_metadata/domain/entities/document_metadata.dart';
 import 'query/query_processor.dart';
 import 'matching/matching_strategy.dart';
 import 'snippet/search_snippet_generator.dart';
@@ -17,7 +19,8 @@ import '../../domain/entities/search_log_context.dart';
 /// Pipeline:
 ///   1. Process the query (tokenize, normalize, filter stop words)
 ///   2. Fetch candidate document metadata from repository
-///   3. For each candidate, retrieve its search index
+///   3. For each candidate, retrieve its search index, building it on demand
+///      if none has been persisted yet
 ///   4. Run the matching strategy against the index entries
 ///   5. Generate snippets for matched documents
 ///   6. Return unranked candidate SearchResults
@@ -32,6 +35,7 @@ class KeywordSearchEngine implements AbstractSearchEngine {
     this._snippetGenerator,
     this._textEngine,
     this._logger,
+    this._indexService,
   );
   final SearchRepository _repository;
   final SearchIndexRepository _indexRepository;
@@ -41,9 +45,23 @@ class KeywordSearchEngine implements AbstractSearchEngine {
   final SearchSnippetGenerator _snippetGenerator;
   final AbstractTextDocumentEngine _textEngine;
   final SearchLogger _logger;
+  final SearchIndexService _indexService;
 
   @override
   String get engineType => 'keyword';
+
+  /// Search stores document metadata; the text engine and the indexer both
+  /// take a [WorkspaceFile]. This adapts one to the other.
+  WorkspaceFile _toWorkspaceFile(DocumentMetadata metadata) => WorkspaceFile(
+        id: metadata.id,
+        workspaceId: metadata.workspaceId,
+        fileName: metadata.fileName,
+        filePath: metadata.filePath,
+        extension: metadata.fileExtension,
+        createdAt: metadata.createdAt,
+        modifiedAt: metadata.modifiedAt,
+        importedAt: metadata.importedAt,
+      );
 
   @override
   Future<List<SearchResult>> search(SearchQuery query) async {
@@ -76,8 +94,27 @@ class KeywordSearchEngine implements AbstractSearchEngine {
         index ??= await _indexRepository.getIndex(metadata.id);
 
         if (index == null) {
-          // No index exists — skip this document gracefully
-          continue;
+          // Index on demand. A document imported before indexing was wired
+          // into the import flow, or whose index build previously failed,
+          // would otherwise stay permanently unsearchable. indexDocument
+          // persists and caches the result, so this cost is paid once.
+          try {
+            index = await _indexService.indexDocument(_toWorkspaceFile(metadata));
+          } catch (e) {
+            _logger.logWithContext(
+              SearchLogContext(
+                operation: 'LazyIndex',
+                success: false,
+                workspaceId: metadata.workspaceId,
+                searchEngine: engineType,
+              ),
+              errorMessage: e.toString(),
+              extraData: {'fileId': metadata.id},
+            );
+          }
+
+          // Unparseable or missing on disk — skip this document gracefully.
+          if (index == null) continue;
         }
 
         // Cache for next lookup
@@ -100,17 +137,7 @@ class KeywordSearchEngine implements AbstractSearchEngine {
         if (matchResult.matchPositions.isNotEmpty) {
           // Try to get raw content for snippet generation
           try {
-            final file = WorkspaceFile(
-              id: metadata.id,
-              workspaceId: metadata.workspaceId,
-              fileName: metadata.fileName,
-              filePath: metadata.filePath,
-              extension: metadata.fileExtension,
-              createdAt: metadata.createdAt,
-              modifiedAt: metadata.modifiedAt,
-              importedAt: metadata.importedAt,
-            );
-            final textDoc = await _textEngine.openDocument(file);
+            final textDoc = await _textEngine.openDocument(_toWorkspaceFile(metadata));
             final snippetResult = _snippetGenerator.generate(
               content: textDoc.content,
               matchedTokens: matchResult.matchedTokens,

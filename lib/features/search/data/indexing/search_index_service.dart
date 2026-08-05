@@ -100,7 +100,10 @@ class SearchIndexService {
         error: e.toString(),
       ));
       _logger.logFailure(file.id, e.toString());
-      return null;
+      // Rethrow rather than returning null. Swallowing here made import report
+      // success while every index write was failing, and pinned the batch
+      // failedCount at 0. Both callers already catch and handle.
+      rethrow;
     }
   }
 
