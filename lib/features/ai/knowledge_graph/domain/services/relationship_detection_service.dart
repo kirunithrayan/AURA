@@ -1,19 +1,23 @@
-import 'package:uuid/uuid.dart';
-
 import '../entities/knowledge_edge.dart';
 import '../entities/knowledge_node.dart';
 import '../entities/relationship_type.dart';
 
 /// Detects relationships between knowledge nodes.
 class RelationshipDetectionService {
-  final _uuid = const Uuid();
+  /// Stable identity for an edge, derived from the pair it connects.
+  ///
+  /// Same reason as the derived concept id: the graph is rebuilt on every
+  /// import, and a random id would add a parallel duplicate edge each time
+  /// instead of replacing the one already stored.
+  static String edgeId(String kind, String sourceId, String targetId) =>
+      '$kind:$sourceId:$targetId';
 
   /// Creates edges between a document node and its extracted concept nodes.
   List<KnowledgeEdge> detectDocumentToConceptRelationships({
     required KnowledgeNode documentNode,
     required List<KnowledgeNode> conceptNodes,
   }) => conceptNodes.map((concept) => KnowledgeEdge(
-        id: _uuid.v4(),
+        id: edgeId('mentions', documentNode.id, concept.id),
         sourceId: documentNode.id,
         targetId: concept.id,
         relationshipType: RelationshipType.mentions,
@@ -50,11 +54,17 @@ class RelationshipDetectionService {
           final jaccard = unionSize > 0 ? intersection.length / unionSize : 0.0;
           
           if (jaccard > 0.1) { // Threshold for relatedness
+            // Similarity is symmetric, and getNodesForWorkspace has no
+            // ORDER BY, so the same pair can arrive in either order between
+            // rebuilds. Order the pair before storing it so the row is the
+            // same row every time rather than a mirrored duplicate.
+            final first = doc1.id.compareTo(doc2.id) <= 0 ? doc1.id : doc2.id;
+            final second = doc1.id.compareTo(doc2.id) <= 0 ? doc2.id : doc1.id;
             newEdges.add(
               KnowledgeEdge(
-                id: _uuid.v4(),
-                sourceId: doc1.id,
-                targetId: doc2.id,
+                id: edgeId('similar', first, second),
+                sourceId: first,
+                targetId: second,
                 relationshipType: RelationshipType.semanticSimilarity,
                 weight: jaccard,
                 createdAt: DateTime.now().millisecondsSinceEpoch,

@@ -7,6 +7,9 @@ import '../../domain/usecases/pin_document.dart';
 import '../../domain/usecases/unpin_document.dart';
 import '../../domain/usecases/import_files.dart';
 import '../../../../services/file_service.dart';
+import '../../../../core/di/injection_container.dart';
+import '../../../search/domain/services/batch_indexing_service.dart';
+import '../../../ai/knowledge_graph/domain/services/knowledge_graph_builder.dart';
 
 part 'workspace_detail_viewmodel.g.dart';
 
@@ -149,11 +152,38 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
         return;
       }
 
+      final imported = <WorkspaceFile>[];
       for (final picked in pickedFiles) {
         final meta = await _fileService.importFileToAppStorage(picked);
-        await _importFile(workspaceId, meta);
+        final result = await _importFile(workspaceId, meta);
+        result.fold((_) {}, imported.add);
       }
-      
+
+      // Build the search index for what was just imported. Without this a
+      // document is invisible to search: KeywordSearchEngine skips every
+      // candidate that has no persisted SearchIndex, so an unindexed
+      // document can never match a query. Indexing runs in the background,
+      // and KeywordSearchEngine indexes on demand if a query arrives first.
+      if (imported.isNotEmpty) {
+        await sl<BatchIndexingService>().enqueueBatch(imported);
+
+        // Extend the knowledge graph with what was just imported. The graph is
+        // also built lazily the first time an empty one is opened, which covers
+        // documents imported before this ran; this keeps an already-populated
+        // graph current without waiting for that screen.
+        //
+        // A graph failure must not fail the import: the files are on disk and
+        // in the database by this point, and the graph is a derived view.
+        try {
+          await sl<KnowledgeGraphBuilder>().buildGraph(
+            workspaceId: workspaceId,
+            modifiedDocumentIds: imported.map((f) => f.id).toList(),
+          );
+        } catch (_) {
+          // Left for the graph screen's own rebuild to retry.
+        }
+      }
+
       state = AsyncValue.data(await _fetchData(workspaceId));
     } catch (e, st) {
       state = AsyncValue.error(e, st);

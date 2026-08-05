@@ -525,7 +525,7 @@ Future<void> initInjection() async {
   );
 
   sl.registerLazySingleton<KnowledgeGraphBuilder>(
-    () => KnowledgeGraphBuilder(sl(), sl(), sl(), sl()),
+    () => KnowledgeGraphBuilder(sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerLazySingleton<RelatedDocumentsService>(

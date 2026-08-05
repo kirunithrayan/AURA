@@ -5,6 +5,7 @@ import '../../../../../core/di/injection_container.dart';
 import '../../domain/entities/knowledge_edge.dart';
 import '../../domain/entities/knowledge_node.dart';
 import '../../domain/repositories/knowledge_graph_repository.dart';
+import '../../domain/services/knowledge_graph_builder.dart';
 
 /// State for the Knowledge Graph UI.
 class KnowledgeGraphState extends Equatable {
@@ -42,18 +43,31 @@ class KnowledgeGraphState extends Equatable {
 
 class KnowledgeGraphViewModel extends StateNotifier<KnowledgeGraphState> {
 
-  KnowledgeGraphViewModel(this._repository, this._workspaceId)
+  KnowledgeGraphViewModel(this._repository, this._builder, this._workspaceId)
       : super(const KnowledgeGraphState()) {
     _loadGraph();
   }
   final KnowledgeGraphRepository _repository;
+  final KnowledgeGraphBuilder _builder;
   final String _workspaceId;
 
   Future<void> _loadGraph() async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final nodes = await _repository.getNodesForWorkspace(_workspaceId);
-      final edges = await _repository.getEdgesForWorkspace(_workspaceId);
+      var nodes = await _repository.getNodesForWorkspace(_workspaceId);
+      var edges = await _repository.getEdgesForWorkspace(_workspaceId);
+
+      // Nothing stored yet, so build it once and read back. Import also builds
+      // the graph, but only for documents imported after that was wired; this
+      // is what gives a workspace filled earlier a graph at all. Building is
+      // idempotent, so the worst case on a genuinely empty workspace is one
+      // cheap no-op call.
+      if (nodes.isEmpty) {
+        await _builder.buildGraph(workspaceId: _workspaceId);
+        nodes = await _repository.getNodesForWorkspace(_workspaceId);
+        edges = await _repository.getEdgesForWorkspace(_workspaceId);
+      }
+
       state = state.copyWith(
         isLoading: false,
         nodes: nodes,
@@ -71,5 +85,6 @@ class KnowledgeGraphViewModel extends StateNotifier<KnowledgeGraphState> {
 
 final knowledgeGraphViewModelProvider = StateNotifierProvider.family<KnowledgeGraphViewModel, KnowledgeGraphState, String>((ref, workspaceId) {
   final repository = sl<KnowledgeGraphRepository>();
-  return KnowledgeGraphViewModel(repository, workspaceId);
+  final builder = sl<KnowledgeGraphBuilder>();
+  return KnowledgeGraphViewModel(repository, builder, workspaceId);
 });

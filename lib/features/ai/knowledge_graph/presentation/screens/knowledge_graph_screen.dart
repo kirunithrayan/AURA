@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:graphview/GraphView.dart';
 
+import '../../../../../core/widgets/aura_empty_state.dart';
 import '../../domain/entities/knowledge_node.dart';
 import '../../domain/entities/node_type.dart';
 import '../viewmodels/knowledge_graph_viewmodel.dart';
@@ -66,6 +67,21 @@ class _KnowledgeGraphScreenState extends ConsumerState<KnowledgeGraphScreen> {
     if (state.error != null) {
       return Scaffold(
         body: Center(child: Text('Error: ${state.error}')),
+      );
+    }
+
+    // GraphView's layout algorithm calls reduce() over the node list, which
+    // throws on an empty graph. Show the empty state instead of laying out.
+    if (state.nodes.isEmpty) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Knowledge Graph'),
+        ),
+        body: const AuraEmptyState(
+          icon: Icons.hub_outlined,
+          title: 'No connections yet',
+          message: 'The knowledge graph builds as documents are analysed.',
+        ),
       );
     }
 

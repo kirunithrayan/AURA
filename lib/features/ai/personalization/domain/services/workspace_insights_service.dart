@@ -1,5 +1,6 @@
 import '../../../../workspace/domain/repositories/workspace_repository.dart';
 import '../../../../workspace/domain/entities/workspace_file.dart';
+import '../../../knowledge_graph/domain/entities/node_type.dart';
 import '../../../knowledge_graph/domain/repositories/knowledge_graph_repository.dart';
 import '../repositories/interaction_repository.dart';
 import '../entities/workspace_insight.dart';
@@ -29,8 +30,10 @@ class WorkspaceInsightsService {
     int totalReadingTimeMs = 0;
     int viewedFilesCount = 0;
     
-    // Sort concepts by frequency and confidence
-    final sortedNodes = List.of(nodes)
+    // Sort concepts by frequency and confidence.
+    // Document nodes live in the same table and would otherwise rank into
+    // "Top Concepts" as file names, so keep concepts only.
+    final sortedNodes = nodes.where((n) => n.type == NodeType.concept).toList()
       ..sort((a, b) => b.frequency.compareTo(a.frequency));
     final mostStudiedConcepts = sortedNodes.take(5).map((e) => e.label).toList();
 
