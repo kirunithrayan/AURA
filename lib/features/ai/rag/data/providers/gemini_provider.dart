@@ -11,7 +11,7 @@ class GeminiProvider implements AiProvider {
       throw ArgumentError('API Key must be provided for GeminiProvider');
     }
     _model = GenerativeModel(
-      model: config.modelName.isEmpty ? 'gemini-1.5-pro' : config.modelName,
+      model: config.modelName.isEmpty ? 'gemini-3.6-flash' : config.modelName,
       apiKey: config.apiKey,
       generationConfig: GenerationConfig(
         temperature: config.temperature,

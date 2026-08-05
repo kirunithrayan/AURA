@@ -69,19 +69,72 @@ class _AskAuraScreenState extends ConsumerState<AskAuraScreen> {
       return const Center(child: Text('Ask me anything about your documents!'));
     }
 
+    final hasTrailingBubble = state.status == AskAuraStatus.streaming ||
+        state.status == AskAuraStatus.loading ||
+        state.status == AskAuraStatus.error;
+
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(16.0),
-      itemCount: messages.length + (state.status == AskAuraStatus.streaming || state.status == AskAuraStatus.loading ? 1 : 0),
+      itemCount: messages.length + (hasTrailingBubble ? 1 : 0),
       itemBuilder: (context, index) {
         if (index == messages.length) {
-          // This is the active streaming bubble
-          return _buildStreamingBubble(state);
+          // Active streaming bubble, or the failure that ended the turn.
+          return state.status == AskAuraStatus.error
+              ? _buildErrorBubble(state)
+              : _buildStreamingBubble(state);
         }
 
         final msg = messages[index];
         return _buildMessageBubble(msg, state);
       },
+    );
+  }
+
+  /// Renders a failed turn.
+  ///
+  /// Without this the error status produced no widget at all: the user saw
+  /// their own question and nothing else, so a missing API key or a rejected
+  /// key was indistinguishable from the app hanging.
+  Widget _buildErrorBubble(AskAuraState state) {
+    final theme = Theme.of(context);
+    final message = state.errorMessage?.trim();
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16.0),
+        padding: const EdgeInsets.all(12.0),
+        constraints:
+            BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.errorContainer,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: theme.colorScheme.error),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.error_outline,
+              size: 20,
+              color: theme.colorScheme.onErrorContainer,
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                message == null || message.isEmpty
+                    ? "Something went wrong and AURA couldn't answer."
+                    : message,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onErrorContainer,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

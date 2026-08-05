@@ -5,7 +5,7 @@ class AiConfig extends Equatable {
   const AiConfig({
     required this.apiKey,
     this.providerName = 'gemini',
-    this.modelName = 'gemini-1.5-pro',
+    this.modelName = 'gemini-3.6-flash',
     this.temperature = 0.2,
     this.similarityThreshold = 0.6,
   });

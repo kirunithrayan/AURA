@@ -133,7 +133,7 @@ import '../../features/ai/rag/domain/entities/ai_config.dart';
 import '../../features/ai/rag/domain/providers/ai_provider_factory.dart';
 import '../../features/ai/rag/data/providers/ai_provider_factory_impl.dart';
 import '../../features/ai/rag/domain/services/context_builder_service.dart';
-import '../../features/ai/rag/data/services/context_builder_service_impl.dart';
+import '../../features/ai/rag/data/services/keyword_context_builder_service.dart';
 import '../../features/ai/rag/domain/services/prompt_builder_service.dart';
 import '../../features/ai/rag/data/services/prompt_builder_service_impl.dart';
 import '../../features/ai/rag/domain/services/rag_service.dart';
@@ -477,7 +477,7 @@ Future<void> initInjection() async {
     () => const AiConfig(
       apiKey: '',
       providerName: 'gemini',
-      modelName: 'gemini-2.5-flash',
+      modelName: 'gemini-3.6-flash',
     ),
   );
 
@@ -485,17 +485,24 @@ Future<void> initInjection() async {
     AiProviderFactoryImpl.new,
   );
 
+  // Context comes from keyword retrieval, not embeddings. The embeddings
+  // store is never populated (on-device embeddings are not implemented), so
+  // ContextBuilderServiceImpl returned an empty context for every query and
+  // the RAG pipeline short-circuited before it ever reached Gemini.
   sl.registerLazySingleton<ContextBuilderService>(
-    () => ContextBuilderServiceImpl(sl()),
+    () => const KeywordContextBuilderService(),
   );
 
   sl.registerLazySingleton<PromptBuilderService>(
     PromptBuilderServiceImpl.new,
   );
 
+  // Retrieval for RAG runs on the keyword engine for the same reason:
+  // SemanticSearchEngine needs a query embedding, and OnnxEmbeddingService
+  // throws on every call, so it always returned no results.
   sl.registerLazySingleton<RAGService>(
     () => RAGServiceImpl(
-      sl(instanceName: 'semantic_engine'),
+      sl(instanceName: 'keyword_engine'),
       sl(),
       sl(),
       sl(),
