@@ -13,8 +13,10 @@ class DbConstants {
   static const String embeddingsTable = 'embeddings';
   static const String tagsTable = 'tags';
   static const String searchHistoryTable = 'search_history';
-  static const String recentDocumentsTable = 'recent_documents';
-  static const String pinnedDocumentsTable = 'pinned_documents';
+  // recent_documents and pinned_documents were never in the schema. Recency
+  // lives in workspace_files.last_opened_at / open_count and pin state in
+  // workspace_files.is_pinned, so neither table is needed. Do not reintroduce
+  // these constants without adding a table definition and a migration.
   static const String schedulerQueueTable = 'scheduler_queue';
   static const String aiJobsTable = 'ai_jobs';
   static const String knowledgeNodesTable = 'knowledge_nodes';

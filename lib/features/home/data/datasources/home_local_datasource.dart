@@ -59,11 +59,14 @@ class HomeLocalDataSourceImpl implements HomeLocalDataSource {
   Future<List<WorkspaceFileModel>> getGlobalPinnedDocuments() async {
     try {
       final db = await dbHelper.database;
-      final results = await db.rawQuery('''
-        SELECT wf.* FROM ${DbConstants.workspaceFilesTable} wf
-        INNER JOIN ${DbConstants.pinnedDocumentsTable} pd ON wf.id = pd.file_id
-        ORDER BY pd.pinned_at DESC
-      ''');
+      // Reads workspace_files.is_pinned directly. This used to join a
+      // `pinned_documents` table that the schema never created, so the home
+      // screen's pinned row threw "no such table" on every load.
+      final results = await db.query(
+        DbConstants.workspaceFilesTable,
+        where: 'is_pinned = 1',
+        orderBy: 'created_at DESC',
+      );
       return results.map(WorkspaceFileModel.fromMap).toList();
     } catch (e) {
       throw DatabaseException('Failed to fetch global pinned documents: $e');

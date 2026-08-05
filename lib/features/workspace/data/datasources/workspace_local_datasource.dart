@@ -3,7 +3,6 @@ import '../../../../core/constants/db_constants.dart';
 import '../../../../core/error/exceptions.dart';
 import '../models/workspace_model.dart';
 import '../models/workspace_file_model.dart';
-import 'package:sqflite_sqlcipher/sqflite.dart' hide DatabaseException;
 
 abstract class WorkspaceLocalDataSource {
   Future<List<WorkspaceModel>> getWorkspaces();
@@ -202,17 +201,27 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
     }
   }
 
+  // Pin state lives in workspace_files.is_pinned, the same column
+  // PinnedDocumentsService reads and writes. These three methods used to go
+  // through a separate `pinned_documents` join table that was never created in
+  // the schema, so every pin, unpin and pinned-list load threw "no such table".
+  // Keeping one column as the single source of truth also stops the workspace
+  // screen and the metadata service from disagreeing about what is pinned.
+  //
+  // workspaceId stays in the signatures (callers pass it) and is used to scope
+  // the write, so a file can never be re-pinned through the wrong workspace.
+
   @override
   Future<List<WorkspaceFileModel>> getPinnedDocuments(String workspaceId) async {
     try {
       final db = await dbHelper.database;
-      final results = await db.rawQuery('''
-        SELECT wf.* FROM ${DbConstants.workspaceFilesTable} wf
-        INNER JOIN ${DbConstants.pinnedDocumentsTable} pd ON wf.id = pd.file_id
-        WHERE pd.workspace_id = ?
-        ORDER BY pd.pinned_at DESC
-      ''', [workspaceId]);
-      
+      final results = await db.query(
+        DbConstants.workspaceFilesTable,
+        where: 'is_pinned = 1 AND workspace_id = ?',
+        whereArgs: [workspaceId],
+        orderBy: 'created_at DESC',
+      );
+
       return results.map(WorkspaceFileModel.fromMap).toList();
     } catch (e) {
       throw DatabaseException('Failed to get pinned documents: $e');
@@ -222,19 +231,7 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
   @override
   Future<void> pinDocument(String fileId, String workspaceId) async {
     try {
-      final db = await dbHelper.database;
-      final Map<String, dynamic> data = {
-        'id': '${fileId}_$workspaceId',
-        'file_id': fileId,
-        'workspace_id': workspaceId,
-        'pinned_at': DateTime.now().millisecondsSinceEpoch,
-      };
-      
-      await db.insert(
-        DbConstants.pinnedDocumentsTable, 
-        data,
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      await _setPinned(fileId, workspaceId, true);
     } catch (e) {
       throw DatabaseException('Failed to pin document: $e');
     }
@@ -243,14 +240,22 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
   @override
   Future<void> unpinDocument(String fileId, String workspaceId) async {
     try {
-      final db = await dbHelper.database;
-      await db.delete(
-        DbConstants.pinnedDocumentsTable,
-        where: 'file_id = ? AND workspace_id = ?',
-        whereArgs: [fileId, workspaceId],
-      );
+      await _setPinned(fileId, workspaceId, false);
     } catch (e) {
       throw DatabaseException('Failed to unpin document: $e');
+    }
+  }
+
+  Future<void> _setPinned(String fileId, String workspaceId, bool pinned) async {
+    final db = await dbHelper.database;
+    final rows = await db.update(
+      DbConstants.workspaceFilesTable,
+      {'is_pinned': pinned ? 1 : 0},
+      where: 'id = ? AND workspace_id = ?',
+      whereArgs: [fileId, workspaceId],
+    );
+    if (rows == 0) {
+      throw DatabaseException('File $fileId not found in workspace $workspaceId');
     }
   }
 }
