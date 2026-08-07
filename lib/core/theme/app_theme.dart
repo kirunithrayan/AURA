@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 import '../constants/ui_constants.dart';
+import '../design_system/design_tokens.dart';
 
 /// The main theme configuration for AURA.
 class AppTheme {
@@ -10,6 +11,9 @@ class AppTheme {
   /// Light Theme Data
   static ThemeData get lightTheme => ThemeData(
       useMaterial3: true,
+      // Design Token Foundation (Step 1). Additive: registered so tokens are
+      // resolvable via context; existing colorScheme/textTheme are unchanged.
+      extensions: const <ThemeExtension<dynamic>>[AuraTokens.light],
       colorScheme: const ColorScheme(
         brightness: Brightness.light,
         primary: AppColors.primary,
@@ -60,6 +64,9 @@ class AppTheme {
   /// Dark Theme Data
   static ThemeData get darkTheme => ThemeData(
       useMaterial3: true,
+      // Design Token Foundation (Step 1). Additive: registered so tokens are
+      // resolvable via context; existing colorScheme/textTheme are unchanged.
+      extensions: const <ThemeExtension<dynamic>>[AuraTokens.dark],
       colorScheme: const ColorScheme(
         brightness: Brightness.dark,
         primary: AppColors.primaryContainer, // Lighter primary for dark mode

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../design_system/design_tokens.dart';
+
 /// Extension methods for [BuildContext] to simplify access to theme and media query data.
 extension ContextExtensions on BuildContext {
   /// Quick access to the [ThemeData].
@@ -10,6 +12,11 @@ extension ContextExtensions on BuildContext {
 
   /// Quick access to the [ColorScheme].
   ColorScheme get colorScheme => theme.colorScheme;
+
+  /// Quick access to the AURA Design Token Foundation for the active theme.
+  ///
+  /// Registered by [AppTheme] in both light and dark, so this is always present.
+  AuraTokens get tokens => theme.extension<AuraTokens>()!;
 
   /// Quick access to [MediaQueryData].
   MediaQueryData get mediaQuery => MediaQuery.of(this);
