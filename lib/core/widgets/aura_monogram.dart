@@ -72,9 +72,17 @@ class AuraMonogram extends StatelessWidget {
           color: courseColor.withValues(alpha: AuraOpacity.tint),
           borderRadius: BorderRadius.circular(AuraRadius.md),
         ),
-        child: Text(
-          _initials,
-          style: AuraTypography.titleSm.copyWith(color: courseColor),
+        // The monogram is a fixed-size identity chip, so at large text scales
+        // the initials are scaled down to fit rather than clipped (Design
+        // System definition of done: 200% text scale without clipping). No
+        // information is lost: the monogram is decorative here, and the course
+        // name always accompanies it. A no-op at normal text scale.
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            _initials,
+            style: AuraTypography.titleSm.copyWith(color: courseColor),
+          ),
         ),
       ),
     );

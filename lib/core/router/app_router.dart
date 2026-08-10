@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 import '../../features/onboarding/presentation/screens/onboarding_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
-import '../../features/workspace/presentation/screens/workspace_list_screen.dart';
 import '../../features/workspace/presentation/screens/workspace_detail_screen.dart';
 import '../../features/workspace/presentation/screens/create_workspace_screen.dart';
 import '../../features/document_viewer/presentation/screens/document_viewer_screen.dart';
@@ -39,11 +38,6 @@ class AppRouter {
         path: '/home',
         name: AppRoutes.home,
         builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: '/workspaces',
-        name: AppRoutes.workspaces,
-        builder: (context, state) => const WorkspaceListScreen(),
       ),
       GoRoute(
         path: '/workspaces/create',

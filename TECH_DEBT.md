@@ -69,3 +69,26 @@ exist so the interfaces are stable; none of them should be counted as a feature.
 - **14 analyzer warnings** remain, mostly unused private fields and two
   `invalid_use_of_protected_member` uses of Riverpod's `state` in
   `action_commands.dart`.
+
+## 6. UI migration debt (Step 6)
+
+- **Library app-bar actions are a temporary compatibility exception.** Direction B
+  does not authorise Global Search, Create Workspace, or Settings as Library
+  app-bar actions; the blueprint's only app-bar mapping is
+  `ImportFab -> AuraIconButton in app bar`, which belongs to the Course screen.
+  They were retained because the old Home screen held the only entry points to
+  those routes. Revisit in Step 7, where Search and Settings are migrated.
+- **Continue Reading is omitted** from the Library under the blueprint's §7.4
+  fallback: `lastViewedPage` / `lastScrollPosition` exist in the schema but
+  nothing writes them, so durable reading-position persistence does not exist.
+  The section returns once that persistence lands.
+- **Course colors are derived, not stored.** `auraCourseColorForWorkspaceId`
+  maps a workspace's stable id onto one of the eight design-system course
+  colors. `Workspace.color` (legacy nullable ARGB) is unused and there is no
+  authoritative course-color policy; replacing that one function is the whole
+  migration when a policy exists.
+- **`workspace_grid.dart` and `workspace_card.dart` are now unreferenced**
+  following the retirement of `workspace_list_screen.dart`. They are left for
+  the Step 9 legacy sweep.
+- **`HomeScreen` retains its class and file name** while presenting the Library,
+  to avoid router and test churn mid-migration.
