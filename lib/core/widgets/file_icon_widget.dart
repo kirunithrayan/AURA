@@ -3,6 +3,9 @@ import '../constants/ui_constants.dart';
 import '../extensions/context_extensions.dart';
 
 /// A widget that displays the appropriate icon for a given file extension.
+///
+/// Design System: file glyphs are monochrome (`content.tertiary`). Colored
+/// file-type badges are prohibited — only the glyph shape distinguishes type.
 class FileIconWidget extends StatelessWidget {
 
   const FileIconWidget({
@@ -15,56 +18,38 @@ class FileIconWidget extends StatelessWidget {
   final double size;
   final Color? color;
 
-  @override
-  Widget build(BuildContext context) {
-    IconData iconData;
-    Color iconColor;
-
-    final ext = extension.toLowerCase().replaceAll('.', '');
-
+  IconData _iconFor(String ext) {
     switch (ext) {
       case 'pdf':
-        iconData = Icons.picture_as_pdf;
-        iconColor = Colors.red;
-        break;
+        return Icons.picture_as_pdf;
       case 'doc':
       case 'docx':
-        iconData = Icons.description;
-        iconColor = Colors.blue;
-        break;
+        return Icons.description;
       case 'txt':
       case 'md':
-        iconData = Icons.article;
-        iconColor = Colors.grey;
-        break;
+        return Icons.article;
       case 'jpg':
       case 'jpeg':
       case 'png':
       case 'webp':
       case 'gif':
-        iconData = Icons.image;
-        iconColor = Colors.green;
-        break;
+        return Icons.image;
       case 'ppt':
       case 'pptx':
-        iconData = Icons.slideshow;
-        iconColor = Colors.orange;
-        break;
+        return Icons.slideshow;
       case 'xls':
       case 'xlsx':
       case 'csv':
-        iconData = Icons.table_chart;
-        iconColor = Colors.green[700]!;
-        break;
+        return Icons.table_chart;
       default:
-        iconData = Icons.insert_drive_file;
-        iconColor = context.theme.colorScheme.outline;
+        return Icons.insert_drive_file;
     }
-
-    return Icon(
-      iconData,
-      size: size,
-      color: color ?? iconColor,
-    );
   }
+
+  @override
+  Widget build(BuildContext context) => Icon(
+        _iconFor(extension.toLowerCase().replaceAll('.', '')),
+        size: size,
+        color: color ?? context.tokens.colors.contentTertiary,
+      );
 }

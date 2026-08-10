@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import '../constants/ui_constants.dart';
+import '../design_system/design_tokens.dart';
 import '../extensions/context_extensions.dart';
 
 /// A utility to show standard styled bottom sheets in AURA.
+///
+/// Design System: sheets use the overlay surface with `radius.lg` top corners.
 class AuraBottomSheet {
   AuraBottomSheet._();
 
@@ -16,9 +18,9 @@ class AuraBottomSheet {
       backgroundColor: Colors.transparent,
       builder: (BuildContext ctx) => Container(
           decoration: BoxDecoration(
-            color: ctx.theme.colorScheme.surface,
+            color: ctx.tokens.colors.surfaceOverlay,
             borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(UiConstants.radiusXLarge),
+              top: Radius.circular(AuraRadius.lg),
             ),
           ),
           padding: EdgeInsets.only(
@@ -27,16 +29,16 @@ class AuraBottomSheet {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const SizedBox(height: 12),
+              const SizedBox(height: AuraSpacing.s12),
               Container(
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: ctx.theme.colorScheme.outline.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(2),
+                  color: ctx.tokens.colors.divider,
+                  borderRadius: BorderRadius.circular(AuraRadius.full),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AuraSpacing.s16),
               Flexible(child: builder(ctx)),
             ],
           ),

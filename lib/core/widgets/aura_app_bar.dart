@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design_system/design_tokens.dart';
 import '../extensions/context_extensions.dart';
 
 /// A custom AppBar for AURA that applies consistent styling.
@@ -20,8 +21,9 @@ class AuraAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) => AppBar(
       title: Text(
         title,
-        style: context.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w600,
+        // Design System §4.2 AppBar: title in the interface title-large tier.
+        style: AuraTypography.titleLg.copyWith(
+          color: context.tokens.colors.contentPrimary,
         ),
       ),
       centerTitle: centerTitle,

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import '../design_system/design_tokens.dart';
 import '../extensions/context_extensions.dart';
 
 /// A custom chip widget used for tags and filters in AURA.
+///
+/// Design System: chips are outlined at rest and take a subtle-action fill when
+/// selected.
 class AuraChip extends StatelessWidget {
 
   const AuraChip({
@@ -22,24 +26,22 @@ class AuraChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chipColor = color ?? context.theme.colorScheme.primary;
+    final AuraColors colors = context.tokens.colors;
+    final Color accent = color ?? colors.actionPrimary;
 
     return ActionChip(
       label: Text(label),
-      avatar: icon != null ? Icon(icon, size: 16) : null,
+      avatar: icon != null ? Icon(icon, size: AuraIconTokens.sizeSm) : null,
       onPressed: onTap,
-      backgroundColor: isSelected 
-          ? chipColor 
-          : chipColor.withValues(alpha: 0.1),
-      labelStyle: TextStyle(
-        color: isSelected 
-            ? context.theme.colorScheme.onPrimary 
-            : chipColor,
-        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+      backgroundColor: isSelected ? colors.actionSubtle : Colors.transparent,
+      labelStyle: AuraTypography.label.copyWith(
+        color: isSelected ? accent : colors.contentPrimary,
       ),
-      side: BorderSide.none,
+      side: isSelected
+          ? BorderSide.none
+          : BorderSide(color: colors.borderDefault, width: AuraBorders.hairline),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
+        borderRadius: BorderRadius.circular(AuraRadius.sm),
       ),
     );
   }
