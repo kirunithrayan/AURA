@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/widgets/aura_app_bar.dart';
-import '../../../../core/widgets/aura_loading.dart';
-import '../../../../core/widgets/aura_empty_state.dart';
-import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/design_system/design_tokens.dart';
 import '../../../../core/extensions/context_extensions.dart';
-import '../../../../core/utils/date_formatter.dart';
 import '../../../../core/router/app_routes.dart';
+import '../../../../core/utils/date_formatter.dart';
+import '../../../../core/widgets/aura_app_bar.dart';
+import '../../../../core/widgets/aura_button.dart';
+import '../../../../core/widgets/aura_document_tile.dart';
+import '../../../../core/widgets/aura_empty_state.dart';
+import '../../../../core/widgets/aura_icon_button.dart';
+import '../../../../core/widgets/aura_loading.dart';
+import '../../../../core/widgets/aura_section_header.dart';
+import '../../../../core/widgets/aura_sheet.dart';
+import '../../domain/entities/workspace_file.dart';
 import '../viewmodels/workspace_detail_viewmodel.dart';
-import '../widgets/pinned_documents_section.dart';
-import '../widgets/file_list_tile.dart';
-import '../widgets/import_fab.dart';
+import '../widgets/document_actions_sheet.dart';
 import '../../../ai/personalization/presentation/widgets/recommendations_section.dart';
-import '../../../ai/personalization/presentation/widgets/workspace_insights_dashboard.dart';
+import '../../../home/presentation/adapters/library_adapters.dart';
 
+/// The Course screen.
+///
+/// Composition order is preserved from the pre-migration screen:
+/// header/description, Pinned, Recommendations, Documents.
 class WorkspaceDetailScreen extends ConsumerWidget {
 
   const WorkspaceDetailScreen({
@@ -23,6 +31,64 @@ class WorkspaceDetailScreen extends ConsumerWidget {
   });
   final String workspaceId;
 
+  Future<void> _openSortSheet(
+    BuildContext context,
+    WorkspaceDetailViewModel notifier,
+  ) =>
+      AuraSheet.show<void>(
+        context: context,
+        title: 'Sort documents',
+        variant: AuraSheetVariant.sort,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: AuraSpacing.componentGap),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              for (final (DocumentSortOption option, String label) in const <(
+                DocumentSortOption,
+                String
+              )>[
+                (DocumentSortOption.date, 'Sort by Date'),
+                (DocumentSortOption.name, 'Sort by Name'),
+                (DocumentSortOption.size, 'Sort by Size'),
+              ])
+                AuraButton(
+                  label: label,
+                  variant: AuraButtonVariant.text,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    notifier.setSortOption(option);
+                  },
+                ),
+            ],
+          ),
+        ),
+      );
+
+  Widget _documentTile(
+    BuildContext context,
+    WorkspaceDetailViewModel notifier,
+    WorkspaceFile file, {
+    required bool isPinned,
+  }) =>
+      AuraDocumentTile(
+        title: file.fileName,
+        fileType: auraFileTypeForExtension(file.extension),
+        onTap: () => context.pushNamed(
+          AppRoutes.documentViewer,
+          pathParameters: <String, String>{'id': file.id},
+        ),
+        onMoreActions: () => showDocumentActionsSheet(
+          context: context,
+          fileName: file.fileName,
+          isPinned: isPinned,
+          onTogglePin: () => isPinned
+              ? notifier.unpinFile(file.id)
+              : notifier.pinFile(file.id),
+        ),
+      );
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final stateAsync = ref.watch(workspaceDetailViewModelProvider(workspaceId));
@@ -30,35 +96,28 @@ class WorkspaceDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AuraAppBar(
+        variant: AuraAppBarVariant.nested,
         title: stateAsync.value?.workspace?.name ?? 'Workspace',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.auto_awesome),
+        actions: <Widget>[
+          AuraIconButton(
+            icon: Icons.auto_awesome,
             tooltip: 'Ask AURA',
             onPressed: () => context.pushNamed(
               AppRoutes.askAura,
-              pathParameters: {'workspaceId': workspaceId},
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.hub),
-            tooltip: 'Knowledge Graph',
-            onPressed: () => context.pushNamed(
-              AppRoutes.knowledgeGraph,
-              pathParameters: {'workspaceId': workspaceId},
+              pathParameters: <String, String>{'workspaceId': workspaceId},
             ),
           ),
           if (stateAsync.hasValue && stateAsync.value != null && stateAsync.value!.allFiles.isNotEmpty)
-            PopupMenuButton<DocumentSortOption>(
-              icon: const Icon(Icons.sort),
-              tooltip: 'Sort Documents',
-              onSelected: notifier.setSortOption,
-              itemBuilder: (context) => const [
-                PopupMenuItem(value: DocumentSortOption.date, child: Text('Sort by Date')),
-                PopupMenuItem(value: DocumentSortOption.name, child: Text('Sort by Name')),
-                PopupMenuItem(value: DocumentSortOption.size, child: Text('Sort by Size')),
-              ],
+            AuraIconButton(
+              icon: Icons.sort,
+              tooltip: 'Sort documents',
+              onPressed: () => _openSortSheet(context, notifier),
             ),
+          AuraIconButton(
+            icon: Icons.add,
+            tooltip: 'Import documents',
+            onPressed: notifier.importFiles,
+          ),
         ],
       ),
       body: stateAsync.when(
@@ -71,94 +130,110 @@ class WorkspaceDetailScreen extends ConsumerWidget {
               if (state.workspace != null)
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: AppSpacing.edgeInsetsAll16,
+                    padding: const EdgeInsets.all(AuraSpacing.screenMargin),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (state.workspace!.description != null && state.workspace!.description!.isNotEmpty) ...[
                           Text(
                             state.workspace!.description!,
-                            style: context.textTheme.bodyMedium?.copyWith(
-                              color: context.theme.colorScheme.onSurfaceVariant,
+                            style: AuraTypography.body.copyWith(
+                              color: context.tokens.colors.contentSecondary,
                             ),
                           ),
-                          AppSpacing.v8,
+                          const SizedBox(height: AuraSpacing.gapTight),
                         ],
                         Text(
                           'Created ${DateFormatter.timeAgo(state.workspace!.createdAt)}',
-                          style: context.textTheme.labelSmall?.copyWith(
-                            color: context.theme.colorScheme.outline,
+                          style: AuraTypography.caption.copyWith(
+                            color: context.tokens.colors.contentTertiary,
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                
+
               if (hasNoDocuments)
                 const SliverFillRemaining(
                   child: AuraEmptyState(
-                    icon: Icons.note_add,
-                    title: 'Workspace is empty',
-                    message: 'Tap the + button to import documents into this workspace.',
+                    title: 'Course is empty',
+                    message: 'Use Import to add documents to this course.',
                   ),
                 )
               else ...[
-                // Pinned Documents Section
+                // Pinned Documents
                 if (state.pinnedFiles.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: PinnedDocumentsSection(
-                      files: state.pinnedFiles,
-                      onFileTap: (file) => context.pushNamed(
-                        AppRoutes.documentViewer,
-                        pathParameters: {'id': file.id},
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AuraSpacing.screenMargin,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          if (index == 0) {
+                            return const Padding(
+                              padding: EdgeInsets.only(
+                                bottom: AuraSpacing.componentGap,
+                              ),
+                              child: AuraSectionHeader(title: 'Pinned'),
+                            );
+                          }
+                          final file = state.pinnedFiles[index - 1];
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AuraSpacing.componentGap,
+                            ),
+                            child: _documentTile(
+                              context,
+                              notifier,
+                              file,
+                              isPinned: true,
+                            ),
+                          );
+                        },
+                        childCount: state.pinnedFiles.length + 1,
                       ),
-                      onUnpin: (file) => notifier.unpinFile(file.id),
                     ),
                   ),
-                
+
                 SliverToBoxAdapter(
                   child: RecommendationsSection(workspaceId: workspaceId),
                 ),
-                SliverToBoxAdapter(
-                  child: WorkspaceInsightsDashboard(workspaceId: workspaceId),
-                ),
-                
-                // All Documents Header
-                SliverToBoxAdapter(
+
+                // Documents
+                const SliverToBoxAdapter(
                   child: Padding(
-                    padding: AppSpacing.edgeInsetsAll16,
-                    child: Text(
-                      'All Documents (${state.allFiles.length})',
-                      style: context.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    padding: EdgeInsets.fromLTRB(
+                      AuraSpacing.screenMargin,
+                      AuraSpacing.sectionGap,
+                      AuraSpacing.screenMargin,
+                      AuraSpacing.componentGap,
                     ),
+                    child: AuraSectionHeader(title: 'Documents'),
                   ),
                 ),
 
-                // All Documents List
                 SliverPadding(
-                  padding: AppSpacing.edgeInsetsH16.copyWith(bottom: 80), // Padding for FAB
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AuraSpacing.screenMargin,
+                  ).copyWith(bottom: AuraSpacing.s64),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final file = state.allFiles[index];
                         final isPinned = state.pinnedFiles.any((pf) => pf.id == file.id);
-                        
-                        return FileListTile(
-                          file: file,
-                          onTap: () => context.pushNamed(
-                            AppRoutes.documentViewer,
-                            pathParameters: {'id': file.id},
+
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: AuraSpacing.componentGap,
                           ),
-                          onInsights: () => context.pushNamed(
-                            AppRoutes.aiInsights,
-                            pathParameters: {'id': file.id},
+                          child: _documentTile(
+                            context,
+                            notifier,
+                            file,
+                            isPinned: isPinned,
                           ),
-                          onPin: isPinned
-                              ? () => notifier.unpinFile(file.id)
-                              : () => notifier.pinFile(file.id),
                         );
                       },
                       childCount: state.allFiles.length,
@@ -171,9 +246,6 @@ class WorkspaceDetailScreen extends ConsumerWidget {
         },
         loading: () => const AuraLoading(),
         error: (err, _) => Center(child: Text('Error: $err')),
-      ),
-      floatingActionButton: ImportFab(
-        onImport: notifier.importFiles,
       ),
     );
   }

@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../../core/theme/app_spacing.dart';
+import '../../../../../core/design_system/design_tokens.dart';
 import '../../../../../core/extensions/context_extensions.dart';
 import '../../../../../core/router/app_routes.dart';
+import '../../../../../core/widgets/aura_section_header.dart';
 import '../../domain/entities/recommendation.dart';
 import '../../domain/entities/recommendation_type.dart';
 import '../viewmodels/recommendations_viewmodel.dart';
 
+/// Restyled to design tokens in Step 7. Behavior, data source, provider, and
+/// recommendation logic are unchanged. Type glyphs are monochrome: the type is
+/// already named in text on every card, so colour is not carrying meaning.
 class RecommendationsSection extends ConsumerWidget {
 
   const RecommendationsSection({super.key, required this.workspaceId});
@@ -25,19 +29,21 @@ class RecommendationsSection extends ConsumerWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: AppSpacing.edgeInsetsH16.copyWith(top: 16, bottom: 8),
-              child: Text(
-                'Recommended for You',
-                style: context.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(
+                AuraSpacing.screenMargin,
+                AuraSpacing.sectionGap,
+                AuraSpacing.screenMargin,
+                AuraSpacing.componentGap,
               ),
+              child: AuraSectionHeader(title: 'Recommended for You'),
             ),
             SizedBox(
               height: 140,
               child: ListView.builder(
-                padding: AppSpacing.edgeInsetsH16,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AuraSpacing.screenMargin,
+                ),
                 scrollDirection: Axis.horizontal,
                 itemCount: recommendations.length,
                 itemBuilder: (context, index) {
@@ -60,94 +66,95 @@ class _RecommendationCard extends StatelessWidget {
   const _RecommendationCard({required this.recommendation});
   final Recommendation recommendation;
 
+  IconData get _icon => switch (recommendation.type) {
+        RecommendationType.continueReading => Icons.menu_book,
+        RecommendationType.recentlyViewed => Icons.history,
+        RecommendationType.aiRecommended => Icons.auto_awesome,
+        RecommendationType.related => Icons.link,
+        RecommendationType.trendingInWorkspace => Icons.trending_up,
+      };
+
+  String get _typeLabel => switch (recommendation.type) {
+        RecommendationType.continueReading => 'Continue Reading',
+        RecommendationType.recentlyViewed => 'Recently Viewed',
+        RecommendationType.aiRecommended => 'AI Recommended',
+        RecommendationType.related => 'Related Content',
+        RecommendationType.trendingInWorkspace => 'Trending',
+      };
+
   @override
   Widget build(BuildContext context) {
-    IconData icon;
-    Color color;
+    final AuraColors colors = context.tokens.colors;
 
-    switch (recommendation.type) {
-      case RecommendationType.continueReading:
-        icon = Icons.menu_book;
-        color = Colors.blue;
-        break;
-      case RecommendationType.recentlyViewed:
-        icon = Icons.history;
-        color = Colors.orange;
-        break;
-      case RecommendationType.aiRecommended:
-        icon = Icons.auto_awesome;
-        color = Colors.purple;
-        break;
-      case RecommendationType.related:
-        icon = Icons.link;
-        color = Colors.teal;
-        break;
-      case RecommendationType.trendingInWorkspace:
-        icon = Icons.trending_up;
-        color = Colors.red;
-        break;
-    }
-
-    return Card(
-      margin: const EdgeInsets.only(right: 12),
-      child: InkWell(
-        onTap: () {
-          context.pushNamed(
+    return Padding(
+      padding: const EdgeInsets.only(right: AuraSpacing.componentGap),
+      child: Material(
+        color: colors.surfaceRaised,
+        borderRadius: BorderRadius.circular(AuraRadius.md),
+        child: InkWell(
+          onTap: () => context.pushNamed(
             AppRoutes.documentViewer,
             pathParameters: {'id': recommendation.document.metadata.id},
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          width: 200,
-          padding: AppSpacing.edgeInsetsAll12,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          ),
+          borderRadius: BorderRadius.circular(AuraRadius.md),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AuraRadius.md),
+              border: Border.all(
+                color: colors.borderDefault,
+                width: AuraBorders.hairline,
+              ),
+            ),
+            child: Container(
+              width: 200,
+              padding: const EdgeInsets.all(AuraSpacing.componentPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(icon, size: 16, color: color),
-                  AppSpacing.h8,
-                  Expanded(
-                    child: Text(
-                      _getTypeLabel(recommendation.type),
-                      style: context.textTheme.labelSmall?.copyWith(color: color),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  Row(
+                    children: [
+                      Icon(
+                        _icon,
+                        size: AuraIconTokens.sizeSm,
+                        color: colors.contentTertiary,
+                      ),
+                      const SizedBox(width: AuraSpacing.gapTight),
+                      Expanded(
+                        child: Text(
+                          _typeLabel,
+                          style: AuraTypography.caption.copyWith(
+                            color: colors.contentSecondary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AuraSpacing.gapTight),
+                  Text(
+                    recommendation.document.metadata.fileName,
+                    style: AuraTypography.titleSm.copyWith(
+                      color: colors.contentPrimary,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+                  Text(
+                    recommendation.explanation,
+                    style: AuraTypography.caption.copyWith(
+                      color: colors.contentSecondary,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-              AppSpacing.v8,
-              Text(
-                recommendation.document.metadata.fileName,
-                style: context.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Spacer(),
-              Text(
-                recommendation.explanation,
-                style: context.textTheme.bodySmall?.copyWith(
-                  color: context.theme.colorScheme.onSurfaceVariant,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
-  }
-
-  String _getTypeLabel(RecommendationType type) {
-    switch (type) {
-      case RecommendationType.continueReading: return 'Continue Reading';
-      case RecommendationType.recentlyViewed: return 'Recently Viewed';
-      case RecommendationType.aiRecommended: return 'AI Recommended';
-      case RecommendationType.related: return 'Related Content';
-      case RecommendationType.trendingInWorkspace: return 'Trending';
-    }
   }
 }

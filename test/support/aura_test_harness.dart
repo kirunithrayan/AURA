@@ -1,5 +1,6 @@
 import 'package:aura/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Reusable widget/golden testing harness for the AURA UI migration.
@@ -25,14 +26,18 @@ const Locale kAuraTestLocale = Locale('en', 'US');
 ///
 /// Does NOT load fonts, so existing widget tests can adopt this without any
 /// change to their text metrics. Font loading is scoped to the golden harness.
+/// [overrides] are Riverpod provider overrides for screens that read providers.
+/// When empty (the default) no `ProviderScope` is inserted, so existing tests
+/// and their goldens are completely unaffected.
 Widget wrapForTest(
   Widget child, {
   Brightness brightness = Brightness.light,
   double textScale = 1.0,
+  List<Override> overrides = const <Override>[],
 }) {
   final ThemeData theme =
       brightness == Brightness.dark ? AppTheme.darkTheme : AppTheme.lightTheme;
-  return MaterialApp(
+  final Widget app = MaterialApp(
     debugShowCheckedModeBanner: false,
     locale: kAuraTestLocale,
     supportedLocales: const <Locale>[kAuraTestLocale],
@@ -45,6 +50,10 @@ Widget wrapForTest(
     ),
     home: child,
   );
+  if (overrides.isEmpty) {
+    return app;
+  }
+  return ProviderScope(overrides: overrides, child: app);
 }
 
 /// Pumps [child] for a standard (non-golden) widget test.
@@ -67,6 +76,7 @@ Future<void> pumpGolden(
   Size size = kAuraGoldenSize,
   double pixelRatio = kAuraGoldenPixelRatio,
   double textScale = 1.0,
+  List<Override> overrides = const <Override>[],
 }) async {
   tester.view.physicalSize = Size(size.width * pixelRatio, size.height * pixelRatio);
   tester.view.devicePixelRatio = pixelRatio;
@@ -74,7 +84,12 @@ Future<void> pumpGolden(
   addTearDown(tester.view.resetDevicePixelRatio);
 
   await tester.pumpWidget(
-    wrapForTest(child, brightness: brightness, textScale: textScale),
+    wrapForTest(
+      child,
+      brightness: brightness,
+      textScale: textScale,
+      overrides: overrides,
+    ),
   );
   await tester.pumpAndSettle();
 }

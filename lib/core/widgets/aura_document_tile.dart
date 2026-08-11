@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../design_system/design_tokens.dart';
 import '../extensions/context_extensions.dart';
+import 'aura_icon_button.dart';
 
 /// Document-tile variants. The Blueprint establishes four variants but does not
 /// name them; these names are an implementation proposal.
@@ -16,10 +17,11 @@ enum AuraFileType { pdf, doc, txt, image, unknown }
 /// Monochrome glyph, two-line title (grows at large text scales rather than
 /// truncating further), no file size and no counts.
 ///
-/// Inline per-item actions (pin, insights, ...) are intentionally absent: the
-/// Design System's one-node / no-nested-interactive rule conflicts with the
-/// legacy inline actions, and that interaction model is an unresolved design
-/// decision. Screens keep using the legacy tiles until it is settled.
+/// Per-item actions are reached through an optional trailing overflow control:
+/// pass [onMoreActions] and the caller opens an `AuraSheet` action surface.
+/// When it is null (the default) no trailing control is rendered and the tile
+/// is exactly as it was before, so surfaces with no actions are unaffected.
+/// There is no persistent pin or state badge on the tile.
 class AuraDocumentTile extends StatelessWidget {
   const AuraDocumentTile({
     super.key,
@@ -30,6 +32,7 @@ class AuraDocumentTile extends StatelessWidget {
     this.subtitle,
     this.onLongPress,
     this.selected = false,
+    this.onMoreActions,
   });
 
   final String title;
@@ -39,6 +42,10 @@ class AuraDocumentTile extends StatelessWidget {
   final String? subtitle;
   final VoidCallback? onLongPress;
   final bool selected;
+
+  /// Opens the document's action surface. Null renders no trailing control.
+  /// Ignored by [AuraDocumentTileVariant.gridCell], which has no trailing slot.
+  final VoidCallback? onMoreActions;
 
   IconData get _glyph => switch (fileType) {
         AuraFileType.pdf => Icons.picture_as_pdf_outlined,
@@ -109,10 +116,64 @@ class AuraDocumentTile extends StatelessWidget {
             ],
           );
 
+    final String composedLabel = sub == null ? title : '$title, $sub';
+    // gridCell has no trailing slot, so it ignores the overflow control.
+    final bool showMore = onMoreActions != null && !_isGrid;
+
+    if (showMore) {
+      // Two semantic nodes: the tile ("Open X") and the overflow button.
+      return Semantics(
+        explicitChildNodes: true,
+        child: Material(
+          color: selected ? colors.selectionBackground : colors.surfaceRaised,
+          borderRadius: BorderRadius.circular(AuraRadius.md),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AuraRadius.md),
+              border: Border.all(
+                color: selected ? colors.actionPrimary : colors.borderDefault,
+                width: AuraBorders.hairline,
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Semantics(
+                    button: true,
+                    selected: selected,
+                    label: 'Open $composedLabel',
+                    child: InkWell(
+                      onTap: onTap,
+                      onLongPress: onLongPress,
+                      borderRadius: BorderRadius.circular(AuraRadius.md),
+                      child: Padding(
+                        padding: const EdgeInsets.all(
+                          AuraSpacing.componentPadding,
+                        ),
+                        child: ExcludeSemantics(child: content),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: AuraSpacing.gapTight),
+                  child: AuraIconButton(
+                    icon: Icons.more_vert,
+                    tooltip: 'More actions for $title',
+                    onPressed: onMoreActions,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Semantics(
       button: true,
       selected: selected,
-      label: sub == null ? title : '$title, $sub',
+      label: composedLabel,
       child: Material(
         color: selected ? colors.selectionBackground : colors.surfaceRaised,
         borderRadius: BorderRadius.circular(AuraRadius.md),

@@ -5,14 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../viewmodels/search_viewmodel.dart';
 import '../viewmodels/search_suggestions_provider.dart';
-import '../../domain/entities/search_filter.dart';
 
-import '../widgets/search_bar_widget.dart';
-import '../widgets/suggestion_section.dart';
-import '../widgets/filter_section.dart';
-import '../widgets/statistics_section.dart';
+import '../widgets/aura_suggestion_list.dart';
 import '../widgets/result_section.dart';
+import '../../../../core/design_system/design_tokens.dart';
+import '../../../../core/widgets/aura_app_bar.dart';
 import '../../../../core/widgets/aura_empty_state.dart';
+import '../../../../core/widgets/aura_search_field.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -25,20 +24,30 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocus = FocusNode();
   String _currentQuery = '';
-  SearchFilter _currentFilter = const SearchFilter();
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchInputChanged);
+    // The body chooses between suggestions and results using
+    // `_searchFocus.hasFocus`, so focus changes have to rebuild the screen.
+    _searchFocus.addListener(_onFocusChanged);
   }
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _searchController.removeListener(_onSearchInputChanged);
+    _searchFocus.removeListener(_onFocusChanged);
     _searchController.dispose();
     _searchFocus.dispose();
     super.dispose();
+  }
+
+  void _onFocusChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _onSearchInputChanged() {
@@ -64,13 +73,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     _searchFocus.requestFocus();
   }
 
-  void _onFilterChanged(SearchFilter filter) {
-    setState(() {
-      _currentFilter = filter;
-    });
-    ref.read(searchViewModelProvider.notifier).updateFilter(filter);
-  }
-
   @override
   Widget build(BuildContext context) {
     final searchState = ref.watch(searchViewModelProvider);
@@ -85,29 +87,44 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     });
 
     return Scaffold(
+      appBar: const AuraAppBar(
+        variant: AuraAppBarVariant.nested,
+        title: 'Search',
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // Search Bar Section
-            SearchBarWidget(
-              controller: _searchController,
-              focusNode: _searchFocus,
-              onChanged: _onInstantSearch,
-              onSubmitted: _onSearch,
-              onClear: _onClear,
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AuraSpacing.screenMargin,
+                vertical: AuraSpacing.gapTight,
+              ),
+              child: AuraSearchField(
+                controller: _searchController,
+                focusNode: _searchFocus,
+                hintText: 'Search workspaces...',
+                onChanged: _onInstantSearch,
+                onSubmitted: _onSearch,
+                onClear: _onClear,
+              ),
             ),
-
-            // Filter Section
-            FilterSection(
-              currentFilter: _currentFilter,
-              onFilterChanged: _onFilterChanged,
-            ),
-
-            const Divider(height: 1),
 
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
+                // Suggestions are shrink-wrapped, so they must start beneath
+                // the search field rather than float in the middle of the body.
+                // AnimatedSwitcher exposes no `alignment`; this is its default
+                // layout builder with the stack aligned to the top.
+                layoutBuilder: (Widget? currentChild,
+                        List<Widget> previousChildren) =>
+                    Stack(
+                  alignment: Alignment.topCenter,
+                  children: <Widget>[
+                    ...previousChildren,
+                    if (currentChild != null) currentChild,
+                  ],
+                ),
                 child: _buildBodyContent(searchState, suggestionsState),
               ),
             ),
@@ -135,11 +152,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     // If focused and no search results loading, show suggestions
     if (_searchFocus.hasFocus && _searchController.text.isEmpty && !searchState.isLoading && (searchState.value?.isEmpty ?? true)) {
       return suggestionsState.when(
-        data: (suggestions) => SuggestionSection(
+        data: (suggestions) => AuraSuggestionList(
           suggestions: suggestions.cast(),
-          onSuggestionTap: (text) {
-            _searchController.text = text;
-            _onSearch(text);
+          onSelected: (suggestion) {
+            _searchController.text = suggestion.text;
+            _onSearch(suggestion.text);
           },
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -152,36 +169,21 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         if (results.isEmpty && _searchController.text.isNotEmpty) {
           return const Center(
             child: AuraEmptyState(
-              icon: Icons.search_off,
               title: 'No results found',
-              message: 'Try different keywords or filters.',
+              message: 'Try different keywords.',
             ),
           );
         }
         if (results.isEmpty) {
           return const Center(
             child: AuraEmptyState(
-              icon: Icons.search,
               title: 'Global Search',
               message: 'Type to start searching across your workspaces.',
             ),
           );
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            StatisticsSection(
-              resultCount: results.length,
-              // For demonstration, duration is mocked here since it's not exposed by state directly.
-              // We could expose it by changing SearchViewModel state. 
-              duration: const Duration(milliseconds: 450), 
-            ),
-            Expanded(
-              child: ResultSection(results: results.cast()),
-            ),
-          ],
-        );
+        return ResultSection(results: results.cast());
       },
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (err, _) => Center(child: Text('Error: $err')),

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/design_system/design_tokens.dart';
 import '../../../../core/di/injection_container.dart';
+import '../../../../core/extensions/context_extensions.dart';
 import '../../../../core/router/app_routes.dart';
-import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/widgets/aura_app_bar.dart';
+import '../../../../core/widgets/aura_section_header.dart';
 import '../../../ai/rag/domain/services/ai_key_store.dart';
 import '../widgets/ai_key_dialog.dart';
 
+/// Settings, migrated 1:1 to design tokens in Step 7.
+///
+/// Every section and row is preserved; nothing was added or removed. The Gemini
+/// API-key flow and its dialog are unchanged.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -39,56 +45,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final AuraColors colors = context.tokens.colors;
 
     return Scaffold(
       appBar: const AuraAppBar(
+        variant: AuraAppBarVariant.nested,
         title: 'Settings',
       ),
       body: ListView(
-        padding: AppSpacing.edgeInsetsAll16,
+        padding: const EdgeInsets.all(AuraSpacing.screenMargin),
         children: [
           // Header Card
-          Card(
-            elevation: 0,
-            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(
-                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: colors.surfaceRaised,
+              borderRadius: BorderRadius.circular(AuraRadius.md),
+              border: Border.all(
+                color: colors.borderDefault,
+                width: AuraBorders.hairline,
               ),
             ),
             child: Padding(
-              padding: AppSpacing.edgeInsetsAll16,
+              padding: const EdgeInsets.all(AuraSpacing.componentPadding),
               child: Row(
                 children: [
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: AuraSpacing.s48,
+                    height: AuraSpacing.s48,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer,
-                      shape: BoxShape.circle,
+                      color: colors.actionSubtle,
+                      borderRadius: BorderRadius.circular(AuraRadius.md),
                     ),
                     child: Icon(
                       Icons.auto_awesome,
-                      color: theme.colorScheme.onPrimaryContainer,
+                      size: AuraIconTokens.sizeMd,
+                      color: colors.actionPrimary,
                     ),
                   ),
-                  AppSpacing.h16,
+                  const SizedBox(width: AuraSpacing.componentPadding),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'AURA Workspace',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: AuraTypography.titleSm.copyWith(
+                            color: colors.contentPrimary,
                           ),
                         ),
                         Text(
                           'Version 0.6.0 • Local storage, cloud AI',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                          style: AuraTypography.caption.copyWith(
+                            color: colors.contentSecondary,
                           ),
                         ),
                       ],
@@ -98,90 +107,150 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
           ),
-          AppSpacing.v24,
+          const SizedBox(height: AuraSpacing.sectionGap),
 
           // General Settings
-          Text(
-            'General',
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
+          const AuraSectionHeader(title: 'General'),
+          const SizedBox(height: AuraSpacing.gapTight),
+          _SettingsRow(
+            icon: Icons.storage_outlined,
+            title: 'Local Repository Storage',
+            subtitle: 'Encrypted SQLite (SQLCipher)',
+            trailing: Icon(
+              Icons.check_circle,
+              color: colors.statusSuccess,
+              size: AuraIconTokens.sizeSm,
             ),
           ),
-          AppSpacing.v8,
-          const ListTile(
-            leading: Icon(Icons.storage_outlined),
-            title: Text('Local Repository Storage'),
-            subtitle: Text('Encrypted SQLite (SQLCipher)'),
-            trailing: Icon(Icons.check_circle, color: Colors.green, size: 20),
-          ),
-          ListTile(
-            leading: const Icon(Icons.psychology_outlined),
-            title: const Text('AI Engine Configuration'),
-            subtitle: Text(
-              _hasApiKey
-                  ? 'Google Gemini • API key configured'
-                  : 'Google Gemini • no API key set — Ask AURA is disabled',
-            ),
+          _SettingsRow(
+            icon: Icons.psychology_outlined,
+            title: 'AI Engine Configuration',
+            subtitle: _hasApiKey
+                ? 'Google Gemini • API key configured'
+                : 'Google Gemini • no API key set — Ask AURA is disabled',
             trailing: Icon(
               _hasApiKey ? Icons.check_circle : Icons.error_outline,
-              color: _hasApiKey ? Colors.green : theme.colorScheme.error,
-              size: 20,
+              color: _hasApiKey ? colors.statusSuccess : colors.statusError,
+              size: AuraIconTokens.sizeSm,
             ),
             onTap: _openKeyDialog,
           ),
-          const ListTile(
-            leading: Icon(Icons.cloud_outlined),
-            title: Text('Data Handling'),
-            subtitle: Text(
-              'Documents and search stay on device. Ask AURA sends the '
-              'selected excerpts to Google Gemini.',
-            ),
-            isThreeLine: true,
+          const _SettingsRow(
+            icon: Icons.cloud_outlined,
+            title: 'Data Handling',
+            subtitle:
+                'Documents and search stay on device. Ask AURA sends the '
+                'selected excerpts to Google Gemini.',
           ),
-          const Divider(),
-          AppSpacing.v16,
+          const SizedBox(height: AuraSpacing.sectionGap),
 
           // Developer Options Section
-          Text(
-            'Developer Options',
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
+          const AuraSectionHeader(title: 'Developer Options'),
+          const SizedBox(height: AuraSpacing.gapTight),
+          _SettingsRow(
+            icon: Icons.developer_board,
+            title: 'Performance Diagnostics',
+            subtitle: 'Inspect index counts, search latency & cache metrics',
+            trailing: Icon(
+              Icons.chevron_right,
+              color: colors.contentTertiary,
+              size: AuraIconTokens.sizeSm,
             ),
-          ),
-          AppSpacing.v8,
-          ListTile(
-            leading: const Icon(Icons.developer_board),
-            title: const Text('Performance Diagnostics'),
-            subtitle: const Text('Inspect index counts, search latency & cache metrics'),
-            trailing: const Icon(Icons.chevron_right),
             onTap: () => context.pushNamed(AppRoutes.diagnostics),
           ),
-          const ListTile(
-            leading: Icon(Icons.security),
-            title: Text('Database Encryption Status'),
-            subtitle: Text('SQLCipher AES-256 Key Initialized'),
-            trailing: Icon(Icons.lock, color: Colors.green, size: 20),
-          ),
-          const Divider(),
-          AppSpacing.v16,
-
-          // About Section
-          Text(
-            'About',
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
+          _SettingsRow(
+            icon: Icons.security,
+            title: 'Database Encryption Status',
+            subtitle: 'SQLCipher AES-256 Key Initialized',
+            trailing: Icon(
+              Icons.lock,
+              color: colors.statusSuccess,
+              size: AuraIconTokens.sizeSm,
             ),
           ),
-          AppSpacing.v8,
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('AURA Architecture'),
-            subtitle: Text('Clean Architecture • MVVM • Riverpod'),
+          const SizedBox(height: AuraSpacing.sectionGap),
+
+          // About Section
+          const AuraSectionHeader(title: 'About'),
+          const SizedBox(height: AuraSpacing.gapTight),
+          const _SettingsRow(
+            icon: Icons.info_outline,
+            title: 'AURA Architecture',
+            subtitle: 'Clean Architecture • MVVM • Riverpod',
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A single settings row. Grows with the text scale rather than clipping.
+class _SettingsRow extends StatelessWidget {
+  const _SettingsRow({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    this.trailing,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Widget? trailing;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final AuraColors colors = context.tokens.colors;
+    final Widget? trailingWidget = trailing;
+
+    final Widget row = Container(
+      constraints: const BoxConstraints(minHeight: AuraLayout.touchTargetMin),
+      padding: const EdgeInsets.symmetric(vertical: AuraSpacing.componentGap),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Icon(icon, size: AuraIconTokens.sizeMd, color: colors.contentSecondary),
+          const SizedBox(width: AuraSpacing.componentPadding),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: AuraTypography.body.copyWith(color: colors.contentPrimary),
+                ),
+                const SizedBox(height: AuraSpacing.gapMicro),
+                Text(
+                  subtitle,
+                  style: AuraTypography.caption
+                      .copyWith(color: colors.contentSecondary),
+                ),
+              ],
+            ),
+          ),
+          if (trailingWidget != null) ...<Widget>[
+            const SizedBox(width: AuraSpacing.componentGap),
+            Padding(
+              padding: const EdgeInsets.only(top: AuraSpacing.gapMicro),
+              child: trailingWidget,
+            ),
+          ],
+        ],
+      ),
+    );
+
+    if (onTap == null) {
+      return row;
+    }
+    return Semantics(
+      button: true,
+      label: '$title, $subtitle',
+      child: InkWell(
+        onTap: onTap,
+        child: ExcludeSemantics(child: row),
       ),
     );
   }
