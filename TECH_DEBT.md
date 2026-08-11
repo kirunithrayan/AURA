@@ -78,10 +78,20 @@ exist so the interfaces are stable; none of them should be counted as a feature.
   `ImportFab -> AuraIconButton in app bar`, which belongs to the Course screen.
   They were retained because the old Home screen held the only entry points to
   those routes. Revisit in Step 7, where Search and Settings are migrated.
-- **Continue Reading is omitted** from the Library under the blueprint's §7.4
-  fallback: `lastViewedPage` / `lastScrollPosition` exist in the schema but
-  nothing writes them, so durable reading-position persistence does not exist.
-  The section returns once that persistence lands.
+- **Continue Reading is omitted** from the Library as a Step 6 presentation
+  decision, taken under the blueprint's §7.4 fallback ("Step 6 ships with
+  Continue omitted and the section restored later").
+
+  > **Correction (recorded 2026-08).** The original justification claimed
+  > reading-position persistence did not exist. That is wrong: it exists and
+  > works — `saveViewerState()` → `updateViewerState()` →
+  > `updateFileViewerState()` persists `lastViewedPage` / `lastScrollPosition`
+  > to `workspace_files`, and `DocumentViewerViewModel` restores from those
+  > fields (used by the PDF/text/image viewers). The dependency is available.
+  > Bringing Continue Reading to the Library is therefore now only a
+  > presentation task (a query for most-recent in-progress documents plus the
+  > section UI), not a persistence one. It remains deferred by choice, not by a
+  > missing dependency.
 - **Course colors are derived, not stored.** `auraCourseColorForWorkspaceId`
   maps a workspace's stable id onto one of the eight design-system course
   colors. `Workspace.color` (legacy nullable ARGB) is unused and there is no

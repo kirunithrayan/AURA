@@ -15,13 +15,15 @@ import '../../../../core/widgets/aura_section_header.dart';
 ///
 /// Composition (Direction B): app bar, then Courses, then Recent.
 ///
-/// Continue Reading is intentionally absent. The Design System places it first
-/// as the Library's primary element, but it requires durable per-document
-/// reading-position persistence, which does not exist: `lastViewedPage` and
-/// `lastScrollPosition` are present in the schema but nothing ever writes them.
-/// The migration blueprint's §7.4 fallback is explicit — "Step 6 ships with
-/// Continue omitted and the section restored later" — so the section is
-/// deferred until that persistence exists rather than faked here.
+/// Continue Reading is intentionally absent as a Step 6 presentation decision,
+/// taken under the migration blueprint's §7.4 fallback ("Step 6 ships with
+/// Continue omitted and the section restored later").
+///
+/// Note: reading-position persistence does exist — the viewer writes
+/// `lastViewedPage` / `lastScrollPosition` via saveViewerState() and restores
+/// from them. The section is therefore deferred by choice (it still needs a
+/// most-recent-in-progress query and its UI), not because the dependency is
+/// missing.
 class LibraryView extends StatelessWidget {
   const LibraryView({
     super.key,
