@@ -6,7 +6,7 @@ import '../extensions/context_extensions.dart';
 /// Sheet variants. Declared for the Design System's variant-based sheet model;
 /// they carry no bespoke behavior yet (deferred), so no fake functionality is
 /// implied. Names are an implementation proposal.
-enum AuraSheetVariant { standard, sort, settings, metadata }
+enum AuraSheetVariant { standard, sort, settings, metadata, explain }
 
 /// The AURA bottom sheet for secondary flows.
 ///

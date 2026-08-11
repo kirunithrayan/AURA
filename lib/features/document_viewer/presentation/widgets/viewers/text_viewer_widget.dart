@@ -6,6 +6,7 @@ import '../../../domain/entities/reading_preferences.dart';
 import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
 import '../base_viewer_screen.dart';
 import 'viewer_lifecycle.dart';
+import '../../../../ai/rag/presentation/widgets/explain_sheet.dart';
 
 class TextViewerWidget extends ConsumerStatefulWidget {
 
@@ -110,6 +111,7 @@ class _TextViewerWidgetState extends ConsumerState<TextViewerWidget> implements 
                     height: prefs.lineSpacing,
                     color: _getTextColor(prefs.readingTheme),
                   ),
+                  contextMenuBuilder: _buildSelectionMenu,
                 ),
               ),
             ),
@@ -118,6 +120,40 @@ class _TextViewerWidgetState extends ConsumerState<TextViewerWidget> implements 
       },
       loading: () => const BaseViewerScreen(title: 'Loading', isLoading: true, child: SizedBox.shrink()),
       error: (e, st) => BaseViewerScreen(title: 'Error', error: e.toString(), child: const SizedBox.shrink()),
+    );
+  }
+
+  /// Appends "Explain with AURA" to the platform selection toolbar, leaving
+  /// every existing action (copy, select all, share, ...) in place.
+  Widget _buildSelectionMenu(
+    BuildContext context,
+    EditableTextState editableTextState,
+  ) {
+    final List<ContextMenuButtonItem> items =
+        List<ContextMenuButtonItem>.from(editableTextState.contextMenuButtonItems);
+
+    final TextEditingValue value = editableTextState.textEditingValue;
+    final TextSelection selection = value.selection;
+
+    if (selection.isValid && !selection.isCollapsed) {
+      items.add(
+        ContextMenuButtonItem(
+          label: 'Explain with AURA',
+          onPressed: () {
+            final String selected = selection.textInside(value.text);
+            editableTextState.hideToolbar();
+            if (selected.trim().isEmpty) {
+              return;
+            }
+            showExplainSheet(context: context, selection: selected);
+          },
+        ),
+      );
+    }
+
+    return AdaptiveTextSelectionToolbar.buttonItems(
+      anchors: editableTextState.contextMenuAnchors,
+      buttonItems: items,
     );
   }
 }
