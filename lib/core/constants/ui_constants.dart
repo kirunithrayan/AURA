@@ -21,11 +21,6 @@ class UiConstants {
   static const double elevationMedium = 4.0;
   static const double elevationHigh = 8.0;
 
-  // Glassmorphism
-  static const double glassOpacity = 0.1;
-  static const double glassBlur = 20.0;
-  static const double glassBorderOpacity = 0.2;
-
   // Grid
   static const int workspaceGridCrossAxisCount = 2;
   static const double workspaceGridChildAspectRatio = 1.1;

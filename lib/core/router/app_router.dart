@@ -7,9 +7,7 @@ import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/workspace/presentation/screens/workspace_detail_screen.dart';
 import '../../features/workspace/presentation/screens/create_workspace_screen.dart';
 import '../../features/document_viewer/presentation/screens/document_viewer_screen.dart';
-import '../../features/ai_insights/presentation/screens/ai_insights_screen.dart';
 import '../../features/ai/rag/presentation/screens/ask_aura_screen.dart';
-import '../../features/ai/knowledge_graph/presentation/screens/knowledge_graph_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 
@@ -58,13 +56,8 @@ class AppRouter {
           documentId: state.pathParameters['id']!,
         ),
       ),
-      GoRoute(
-        path: '/insights/:id',
-        name: AppRoutes.aiInsights,
-        builder: (context, state) => AiInsightsScreen(
-          documentId: state.pathParameters['id']!,
-        ),
-      ),
+      // AI Insights is deferred from v1.0 and therefore unrouted. The screen
+      // and its code remain on disk so re-enabling it is a routing change.
 
       GoRoute(
         path: '/ask/:workspaceId',
@@ -74,13 +67,9 @@ class AppRouter {
         ),
       ),
 
-      GoRoute(
-        path: '/graph/:workspaceId',
-        name: AppRoutes.knowledgeGraph,
-        builder: (context, state) => KnowledgeGraphScreen(
-          workspaceId: state.pathParameters['workspaceId']!,
-        ),
-      ),
+      // Knowledge Graph is deferred from v1.0 and therefore unrouted. The
+      // screen and its code remain on disk so re-enabling it is a routing
+      // change.
 
       GoRoute(
         path: '/search',

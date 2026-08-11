@@ -49,16 +49,6 @@ class AppColors {
   static const Color outlineLight = Color(0xFF79747E);
   static const Color outlineDark = Color(0xFF938F99);
 
-  // Graph Colors
-  static const Color nodeSemantic = Color(0xFF6750A4); // Primary
-  static const Color nodeTag = Color(0xFF006A60); // Secondary
-  static const Color nodeTopic = Color(0xFF7D5260); // Tertiary
-  static const Color nodeDuplicate = Color(0xFFB3261E); // Error
-
-  // Glassmorphism Base
-  static const Color glassLight = Color(0x1AFFFFFF);
-  static const Color glassDark = Color(0x1A000000);
-
   // Compatibility aliases
   static const Color background = backgroundLight;
   static const Color surface = surfaceLight;
