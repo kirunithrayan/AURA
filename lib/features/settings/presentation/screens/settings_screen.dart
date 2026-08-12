@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../core/design_system/design_tokens.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/extensions/context_extensions.dart';
-import '../../../../core/router/app_routes.dart';
 import '../../../../core/widgets/aura_app_bar.dart';
 import '../../../../core/widgets/aura_section_header.dart';
 import '../../../ai/rag/domain/services/ai_key_store.dart';
 import '../widgets/ai_key_dialog.dart';
 
-/// Settings, migrated 1:1 to design tokens in Step 7.
+/// Settings, migrated 1:1 to design tokens in Step 7. The Gemini API-key flow
+/// and its dialog are unchanged.
 ///
-/// Every section and row is preserved; nothing was added or removed. The Gemini
-/// API-key flow and its dialog are unchanged.
+/// The Performance Diagnostics row was later removed when Diagnostics was
+/// unrouted (deferred from v1.0, not user-facing); all other rows are unchanged.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -147,17 +146,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Developer Options Section
           const AuraSectionHeader(title: 'Developer Options'),
           const SizedBox(height: AuraSpacing.gapTight),
-          _SettingsRow(
-            icon: Icons.developer_board,
-            title: 'Performance Diagnostics',
-            subtitle: 'Inspect index counts, search latency & cache metrics',
-            trailing: Icon(
-              Icons.chevron_right,
-              color: colors.contentTertiary,
-              size: AuraIconTokens.sizeSm,
-            ),
-            onTap: () => context.pushNamed(AppRoutes.diagnostics),
-          ),
           _SettingsRow(
             icon: Icons.security,
             title: 'Database Encryption Status',

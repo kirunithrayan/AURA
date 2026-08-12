@@ -11,7 +11,6 @@ import '../../features/ai/rag/presentation/screens/ask_aura_screen.dart';
 import '../../features/search/presentation/screens/search_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 
-import '../../features/diagnostics/presentation/screens/diagnostics_screen.dart';
 
 /// The central GoRouter configuration for AURA.
 class AppRouter {
@@ -81,11 +80,9 @@ class AppRouter {
         name: AppRoutes.settings,
         builder: (context, state) => const SettingsScreen(),
       ),
-      GoRoute(
-        path: '/diagnostics',
-        name: AppRoutes.diagnostics,
-        builder: (context, state) => const DiagnosticsScreen(),
-      ),
+      // Diagnostics is deferred from v1.0 (not user-facing) and therefore
+      // unrouted. The screen and its code remain on disk so re-enabling it is a
+      // routing change.
     ],
   );
 }

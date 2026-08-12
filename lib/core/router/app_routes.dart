@@ -12,5 +12,4 @@ class AppRoutes {
   static const String askAura = 'askAura';
   static const String search = 'search';
   static const String settings = 'settings';
-  static const String diagnostics = 'diagnostics';
 }
