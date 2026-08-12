@@ -45,6 +45,7 @@ class ViewerBottomToolbar extends ConsumerWidget {
     if (capabilities.contains(ViewerCapability.pageNavigation)) {
       controls.add(IconButton(
         icon: icon(Icons.arrow_upward),
+        tooltip: 'Previous page',
         color: colors.contentSecondary,
         disabledColor: colors.contentDisabled,
         onPressed: state.viewState.currentPage > 1
@@ -79,6 +80,7 @@ class ViewerBottomToolbar extends ConsumerWidget {
       );
       controls.add(IconButton(
         icon: icon(Icons.arrow_downward),
+        tooltip: 'Next page',
         color: colors.contentSecondary,
         disabledColor: colors.contentDisabled,
         onPressed: state.viewState.currentPage < state.viewState.pageCount
@@ -90,11 +92,13 @@ class ViewerBottomToolbar extends ConsumerWidget {
     if (capabilities.contains(ViewerCapability.zoom)) {
       controls.add(IconButton(
         icon: icon(Icons.remove_circle_outline),
+        tooltip: 'Zoom out',
         color: colors.contentSecondary,
         onPressed: () => _execute(ref, context, ViewerCapability.zoom, 'out'),
       ));
       controls.add(IconButton(
         icon: icon(Icons.add_circle_outline),
+        tooltip: 'Zoom in',
         color: colors.contentSecondary,
         onPressed: () => _execute(ref, context, ViewerCapability.zoom, 'in'),
       ));
@@ -103,11 +107,13 @@ class ViewerBottomToolbar extends ConsumerWidget {
     if (capabilities.contains(ViewerCapability.rotate)) {
       controls.add(IconButton(
         icon: icon(Icons.rotate_left),
+        tooltip: 'Rotate left',
         color: colors.contentSecondary,
         onPressed: () => _execute(ref, context, ViewerCapability.rotate, 'left'),
       ));
       controls.add(IconButton(
         icon: icon(Icons.rotate_right),
+        tooltip: 'Rotate right',
         color: colors.contentSecondary,
         onPressed: () => _execute(ref, context, ViewerCapability.rotate, 'right'),
       ));
@@ -116,6 +122,7 @@ class ViewerBottomToolbar extends ConsumerWidget {
     if (capabilities.contains(ViewerCapability.textSettings)) {
       controls.add(IconButton(
         icon: icon(Icons.text_format),
+        tooltip: 'Text settings',
         color: colors.contentSecondary,
         onPressed: () => _execute(ref, context, ViewerCapability.textSettings),
       ));
