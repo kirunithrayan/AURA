@@ -178,5 +178,58 @@ void main() {
 
       expect(zoom.payloads, <String>['in', 'out']);
     });
+
+    testWidgets('E. page counter exposes a descriptive "Page X of Y" label',
+        (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      await tester.pumpWidget(_harness(
+        capabilities: <ViewerCapability>{ViewerCapability.pageNavigation},
+        registry: ViewerActionRegistry(),
+        currentPage: 3,
+        pageCount: 10,
+      ));
+      await tester.pumpAndSettle();
+
+      // The raw "3 / 10" glyphs are excluded from semantics; the descriptive
+      // label replaces them for screen readers.
+      expect(find.bySemanticsLabel('Page 3 of 10'), findsOneWidget);
+
+      handle.dispose();
+    });
+
+    testWidgets('E2. page counter carries the button role',
+        (WidgetTester tester) async {
+      final SemanticsHandle handle = tester.ensureSemantics();
+      await tester.pumpWidget(_harness(
+        capabilities: <ViewerCapability>{ViewerCapability.pageNavigation},
+        registry: ViewerActionRegistry(),
+        currentPage: 3,
+        pageCount: 10,
+      ));
+      await tester.pumpAndSettle();
+
+      final node = tester.getSemantics(find.bySemanticsLabel('Page 3 of 10'));
+      expect(node.flagsCollection.isButton, isTrue,
+          reason: 'page counter must announce as a button');
+
+      handle.dispose();
+    });
+
+    testWidgets('E3. tapping the page counter opens the jump-to-page dialog',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(_harness(
+        capabilities: <ViewerCapability>{ViewerCapability.pageNavigation},
+        registry: ViewerActionRegistry(),
+        currentPage: 3,
+        pageCount: 10,
+      ));
+      await tester.pumpAndSettle();
+
+      // Tap the visible page-counter text; behavior must be preserved.
+      await tester.tap(find.text('3 / 10'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Jump to Page'), findsOneWidget);
+    });
   });
 }

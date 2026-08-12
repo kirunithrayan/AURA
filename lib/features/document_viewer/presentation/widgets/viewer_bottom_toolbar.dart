@@ -53,27 +53,35 @@ class ViewerBottomToolbar extends ConsumerWidget {
             : null,
       ));
       controls.add(
-        InkWell(
-          onTap: () async {
-            final page = await showDialog<int>(
-              context: context,
-              builder: (ctx) => JumpToPageDialog(
-                currentPage: state.viewState.currentPage,
-                pageCount: state.viewState.pageCount,
+        Semantics(
+          button: true,
+          label:
+              'Page ${state.viewState.currentPage} of ${state.viewState.pageCount}',
+          child: InkWell(
+            onTap: () async {
+              final page = await showDialog<int>(
+                context: context,
+                builder: (ctx) => JumpToPageDialog(
+                  currentPage: state.viewState.currentPage,
+                  pageCount: state.viewState.pageCount,
+                ),
+              );
+              if (page != null && context.mounted) {
+                _execute(ref, context, ViewerCapability.pageNavigation, page);
+              }
+            },
+            child: ExcludeSemantics(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AuraSpacing.componentGap,
+                  vertical: AuraSpacing.gapTight,
+                ),
+                child: Text(
+                  '${state.viewState.currentPage} / ${state.viewState.pageCount}',
+                  style:
+                      AuraTypography.label.copyWith(color: colors.contentPrimary),
+                ),
               ),
-            );
-            if (page != null && context.mounted) {
-              _execute(ref, context, ViewerCapability.pageNavigation, page);
-            }
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AuraSpacing.componentGap,
-              vertical: AuraSpacing.gapTight,
-            ),
-            child: Text(
-              '${state.viewState.currentPage} / ${state.viewState.pageCount}',
-              style: AuraTypography.label.copyWith(color: colors.contentPrimary),
             ),
           ),
         ),
