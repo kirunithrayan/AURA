@@ -66,7 +66,7 @@ exist so the interfaces are stable; none of them should be counted as a feature.
   instead of a password prompt.
 - **DOCX formatting**: the parser extracts text and headings but drops tables and
   inline images.
-- **14 analyzer warnings** remain, mostly unused private fields and two
+- **14 analyzer infos** remain, mostly unused private fields and two
   `invalid_use_of_protected_member` uses of Riverpod's `state` in
   `action_commands.dart`.
 
@@ -97,8 +97,9 @@ exist so the interfaces are stable; none of them should be counted as a feature.
   colors. `Workspace.color` (legacy nullable ARGB) is unused and there is no
   authoritative course-color policy; replacing that one function is the whole
   migration when a policy exists.
-- **`workspace_grid.dart` and `workspace_card.dart` are now unreferenced**
-  following the retirement of `workspace_list_screen.dart`. They are left for
-  the Step 9 legacy sweep.
+- ~~`workspace_grid.dart` and `workspace_card.dart` are now unreferenced~~
+  **Resolved (Step 9).** Both files were unreferenced following the
+  retirement of `workspace_list_screen.dart` and have since been removed by
+  the Step 9 legacy-presentation sweep.
 - **`HomeScreen` retains its class and file name** while presenting the Library,
   to avoid router and test churn mid-migration.

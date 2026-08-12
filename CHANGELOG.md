@@ -4,6 +4,45 @@ All notable changes to the AURA project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+Design-token/design-system UI migration (Steps 0–9) and a subsequent
+accessibility and documentation cleanup pass. Not yet tagged; `pubspec.yaml`
+remains at 0.6.0+1.
+
+### Added
+- Design Token Foundation — color, typography, spacing, and icon-metric
+  tokens, plus a golden-image test suite (light/dark/200% text scale)
+  covering the migrated screens and components.
+- Library, Course/Workspace, Search, and Settings screens, and the shared
+  component library, migrated onto the design-token system (Steps 4–7).
+- Reader chrome (top/bottom toolbar) restyled to design tokens, with
+  auto-hide-on-scroll for text/DOCX content (Step 8).
+- **Explain with AURA** — a selection-triggered answer sheet, added
+  alongside the existing routed Ask AURA conversation as a second surface
+  over the same retrieval pipeline. Both surfaces still require a
+  user-supplied Gemini API key to generate answers.
+- Accessible tooltips on the seven reader bottom-toolbar action buttons
+  (previous/next page, zoom in/out, rotate left/right, text settings).
+- An explicit "Page X of Y" semantic button label on the reader's
+  page-counter jump-to-page control.
+
+### Changed
+- Diagnostics screen unrouted from Settings and app navigation; the
+  screen/viewmodel/state remain in the codebase but are no longer
+  user-reachable (blueprint-classified not user-facing).
+- Corrected documentation of reading-position persistence in
+  [TECH_DEBT.md](TECH_DEBT.md): it was previously described as missing; it
+  exists and works (`saveViewerState()` → `updateViewerState()` →
+  `updateFileViewerState()` → `workspace_files`, restored by
+  `DocumentViewerViewModel`).
+
+### Not verified in this cycle
+- Device/hardware behavior for any of the above — no Android device or
+  emulator was available in this development environment.
+- Live Gemini generation, for either Ask AURA surface.
+- Real PDF/DOCX/image rendering on-device.
+
 ## [v0.6.0] - 2026-08-02 (Accuracy Release)
 
 A correction release. The previous tag was labelled v1.0.0 and documented several

@@ -1,19 +1,26 @@
 # Project Statistics
 
-Measured on 2026-08-03, after v0.6.0. Regenerate with the commands noted below
-rather than editing by hand.
+Measured on 2026-08-03, after v0.6.0; codebase-size and test figures
+re-measured 2026-08-12 following the Steps 0–9 UI migration and subsequent
+accessibility cleanup. Regenerate with the commands noted below rather than
+editing by hand.
 
 ## Codebase Size
 
 | Metric | Value |
 | :--- | ---: |
-| Dart files (total) | 360 |
-| Dart files (excluding generated `.g.dart` / `.freezed.dart`) | 351 |
-| Lines of Dart (total) | 20,474 |
-| Lines of Dart (excluding generated) | 19,096 |
+| Dart files (total) | 382 |
+| Dart files (excluding generated `.g.dart` / `.freezed.dart`) | 373 |
+| Lines of Dart (total) | 22,584 |
+| Lines of Dart (excluding generated) | 21,206 |
 
-Down from 382 files / 21,871 lines at v0.6.0: an unused `Abstract*` AI
-abstraction layer with no consumers was deleted (see [TECH_DEBT.md](TECH_DEBT.md)).
+At the v0.6.0 accuracy release this table read 360 total / 351 excluding
+generated (20,474 / 19,096 lines), itself down from a pre-release 382 files /
+21,871 lines after an unused `Abstract*` AI abstraction layer with no
+consumers was deleted — see [TECH_DEBT.md](TECH_DEBT.md). The current figures
+above are higher again because they include the Steps 0–9 design-system/UI
+migration and the accessibility work that followed it — growth, not a
+regression of that cleanup.
 
 ```bash
 find lib -name '*.dart' ! -name '*.g.dart' ! -name '*.freezed.dart' | wc -l
@@ -26,13 +33,17 @@ find lib -name '*.dart' ! -name '*.g.dart' ! -name '*.freezed.dart' | wc -l
 | Analyzer errors | 0 |
 | Analyzer warnings | 0 |
 | Analyzer info-level lints | 14 |
-| Tests passing | 31 / 31 |
-| Test files | 12 |
-| Lines of test code | 884 |
-| Approximate line coverage | ~3% |
+| Tests passing | 230 / 230 |
+| Test files | 31 |
+| Lines of test code | ~5,020 |
+| Approximate line coverage | ~3% (v0.6.0 baseline; not remeasured since) |
 
-Coverage is low and concentrated in search ranking, document chunking, and text
-preprocessing. Widget and integration tests are a known gap tracked in
+Coverage was concentrated in search ranking, document chunking, and text
+preprocessing at the v0.6.0 baseline. Widget-test coverage has since grown
+substantially — onboarding, reader auto-hide, bottom-toolbar and page-counter
+accessibility, and Explain with AURA all have dedicated widget tests — but a
+current line-coverage percentage has not been computed, and integration/
+full-flow and on-device testing remain limited. Tracked in
 [TECH_DEBT.md](TECH_DEBT.md).
 
 ## Architecture Components
@@ -42,7 +53,7 @@ preprocessing. Widget and integration tests are a known gap tracked in
 | GetIt registrations | 82 |
 | Screens | 15 |
 | ViewModels | 12 |
-| Database tables | 9 |
+| Database tables | 15 |
 
 ## Implementation Status
 

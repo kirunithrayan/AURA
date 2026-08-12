@@ -28,7 +28,10 @@ API key — ask questions about them.
 | **Keyword search** | Real inverted-index pipeline: tokenizing, stop-word filtering, BM25-style matching, snippet generation with highlights |
 | **Document viewers** | PDF, Markdown, plain text, and images, with per-document reading state |
 | **Encrypted storage** | SQLite via SQLCipher (AES-256); key held in Android Keystore |
-| **Diagnostics screen** | Index counts, search latency, cache metrics |
+
+> A Diagnostics screen (index counts, search latency, cache metrics) exists in
+> the codebase but is intentionally unrouted from navigation — it is not
+> user-reachable in this build.
 
 ### Not working yet
 
@@ -36,7 +39,7 @@ API key — ask questions about them.
 | :--- | :--- |
 | **On-device embeddings** | `OnnxEmbeddingService` throws `EmbeddingModelUnavailableException`. Needs the MiniLM `.onnx` file plus a Dart WordPiece tokenizer. |
 | **Semantic search** | Depends on embeddings. Returns no results, so hybrid search degrades to keyword-only. |
-| **Ask AURA (RAG)** | Retrieval and prompt assembly are implemented, but generation requires a **Google Gemini API key** supplied by the user. Without one, the feature reports the missing key rather than answering. |
+| **Ask AURA (RAG)** | Two surfaces: the existing routed multi-turn conversation, and a selection-triggered **"Explain with AURA"** sheet. Retrieval and prompt assembly are implemented for both, but generation requires a **Google Gemini API key** supplied by the user. Without one, the feature reports the missing key rather than answering. Not verified on-device. |
 | **Device telemetry** | `BatteryService`, `ThermalService`, and `MemoryService` return fixed values. The adaptive scheduler that would consume them is not built. |
 | **Knowledge graph** | UI scaffold only. |
 | **Vector persistence** | Embeddings are not stored; there is no vector index yet. Blocked on on-device embeddings. |
@@ -82,6 +85,10 @@ Each feature is split into `domain/` (entities, interfaces, failures),
 (screens, widgets, viewmodels). Dependencies point inward.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the dependency graph and data flow.
+
+The UI is built on a committed design-token/design-system foundation (colors,
+typography, spacing, icon metrics) and verified with a golden-image test suite
+(light/dark/200% text scale).
 
 ---
 
@@ -157,13 +164,16 @@ build-time configuration and no key in the repository.
 | :--- | :--- |
 | Dart files (excluding generated) | 367 |
 | Lines of Dart (excluding generated) | ~19,500 |
-| Test files | 12 |
-| Lines of test code | ~880 |
+| Test files | 31 |
+| Lines of test code | ~5,020 |
 | Analyzer errors | 0 |
-| Tests passing | 31 / 31 |
+| Tests passing | 230 / 230 |
 
-Test coverage is low (~3% by line count) and concentrated in search ranking,
-chunking, and text preprocessing. Widget and integration tests are a known gap.
+Test coverage was last measured at ~3% by line count as of the v0.6.0 baseline
+and has not been remeasured since. Widget-test coverage has grown substantially
+since then (onboarding, reader auto-hide, bottom-toolbar and page-counter
+accessibility, Explain with AURA — see [TECH_DEBT.md](TECH_DEBT.md)), but
+integration/full-flow and on-device testing remain limited.
 
 ---
 
