@@ -83,6 +83,18 @@ dev_dependencies:
   json_serializable: ^6.8.0
   riverpod_generator: ^2.6.3
   mockito: ^5.4.6
+  flutter_launcher_icons: ^0.14.1
+
+# Android launcher icon generation (AURA brand identity).
+# Sources live in assets/launcher/ (not bundled into the app).
+# Regenerate with: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: false
+  min_sdk_android: 24
+  image_path: "assets/launcher/aura-legacy.png"
+  adaptive_icon_foreground: "assets/launcher/aura-fg.png"
+  adaptive_icon_background: "assets/launcher/aura-bg.png"
 
 flutter:
   uses-material-design: true
