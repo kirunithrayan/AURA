@@ -1,6 +1,7 @@
 import '../../../../core/database/database_helper.dart';
 import '../../../../core/constants/db_constants.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../models/workspace_model.dart';
 import '../models/workspace_file_model.dart';
 
@@ -64,7 +65,8 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
       final db = await dbHelper.database;
       await db.insert(DbConstants.workspacesTable, workspace.toMap());
       return workspace;
-    } catch (e) {
+    } catch (e, s) {
+      AppLogger.error('createWorkspace failed', e, s, LogCategory.workspace);
       throw DatabaseException('Failed to create workspace: $e');
     }
   }
