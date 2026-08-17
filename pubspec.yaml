@@ -46,6 +46,10 @@ dependencies:
   # PDF
   pdfx: ^2.7.0
   syncfusion_flutter_pdfviewer: ^28.2.3
+  # Text extraction for search indexing. Already resolved transitively via
+  # syncfusion_flutter_pdfviewer; declared directly so the parser import is
+  # not a reference to an undeclared package. No new package is pulled in.
+  syncfusion_flutter_pdf: ^28.2.3
 
   # Image Viewing
   photo_view: ^0.15.0

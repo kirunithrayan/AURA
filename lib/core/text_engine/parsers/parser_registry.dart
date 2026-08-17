@@ -1,6 +1,7 @@
 import 'abstract_document_parser.dart';
 import 'txt_parser.dart';
 import 'docx_parser.dart';
+import 'pdf_parser.dart';
 
 class ParserRegistry {
   ParserRegistry._();
@@ -8,6 +9,7 @@ class ParserRegistry {
   static final List<AbstractDocumentParser> _parsers = [
     TxtParser(),
     DocxParser(),
+    PdfParser(),
   ];
 
   static AbstractDocumentParser? getParserForExtension(String extension) {
