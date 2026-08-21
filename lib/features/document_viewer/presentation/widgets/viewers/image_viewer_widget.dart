@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:aura/core/widgets/aura_empty_state.dart';
 import 'package:aura/features/workspace/domain/entities/workspace_file.dart';
 import 'package:aura/features/document_viewer/presentation/viewmodels/document_viewer_viewmodel.dart';
+import '../base_viewer_screen.dart';
 import 'viewer_lifecycle.dart';
 import 'image/abstract_image_controller.dart';
 import 'image/image_engine_wrapper.dart';
@@ -52,23 +52,27 @@ class _ImageViewerWidgetState extends ConsumerState<ImageViewerWidget> implement
     final stateAsync = ref.watch(documentViewerViewModelProvider(widget.file.id));
 
     return stateAsync.when(
-      data: (state) => Container(
-          color: Colors.black, // Dark background for images
-          child: Center(
-            child: ImageEngineWrapper(
-              filePath: widget.file.filePath,
-              initialZoom: state.viewState.zoomLevel,
-              initialRotation: state.viewState.rotation,
-              controller: _imageController,
-              onZoomChanged: (zoom) {
-                ref.read(documentViewerViewModelProvider(widget.file.id).notifier).updateZoom(zoom);
-              },
-              onTap: () {},
+      data: (state) => BaseViewerScreen(
+          title: widget.file.fileName,
+          file: widget.file,
+          child: Container(
+            color: Colors.black, // Dark background for images
+            child: Center(
+              child: ImageEngineWrapper(
+                filePath: widget.file.filePath,
+                initialZoom: state.viewState.zoomLevel,
+                initialRotation: state.viewState.rotation,
+                controller: _imageController,
+                onZoomChanged: (zoom) {
+                  ref.read(documentViewerViewModelProvider(widget.file.id).notifier).updateZoom(zoom);
+                },
+                onTap: () {},
+              ),
             ),
           ),
         ),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, st) => AuraEmptyState(icon: Icons.error, title: 'Error', message: e.toString()),
+      loading: () => const BaseViewerScreen(title: 'Loading', isLoading: true, child: SizedBox.shrink()),
+      error: (e, st) => BaseViewerScreen(title: 'Error', error: e.toString(), child: const SizedBox.shrink()),
     );
   }
 }

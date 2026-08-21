@@ -6,6 +6,7 @@ enum ViewerCapability {
   textSettings,
   metadata,
   share,
+  print,
   openExternally,
   copy,
   search,

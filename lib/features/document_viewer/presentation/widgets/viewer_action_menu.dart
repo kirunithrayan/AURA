@@ -46,6 +46,13 @@ class ViewerActionMenu extends ConsumerWidget {
           ));
         }
 
+        if (capabilities.contains(ViewerCapability.print)) {
+          items.add(const PopupMenuItem(
+            value: ViewerCapability.print,
+            child: Text('Print'),
+          ));
+        }
+
         if (capabilities.contains(ViewerCapability.openExternally)) {
           items.add(const PopupMenuItem(
             value: ViewerCapability.openExternally,

@@ -43,8 +43,9 @@ class FileUtils {
       case 'pdf':
         return 'application/pdf';
       case 'doc':
-      case 'docx':
         return 'application/msword';
+      case 'docx':
+        return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
       case 'txt':
         return 'text/plain';
       case 'jpg':

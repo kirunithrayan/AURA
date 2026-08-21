@@ -74,6 +74,13 @@ dependencies:
   # Native APIs
   share_plus: ^7.2.1
   url_launcher: ^6.3.2
+  # Native Android/iOS print dialog (PrintManager / UIPrintInteractionController).
+  # No custom printer UI is built on top of it.
+  printing: ^5.14.2
+  # Already resolved transitively via printing; declared directly so
+  # document_print_service_impl.dart's import is not a reference to an
+  # undeclared package. No new package is pulled in.
+  pdf: ^3.12.0
   google_generative_ai: ^0.4.7
   flutter_markdown: ^0.7.7+1
 
@@ -87,6 +94,10 @@ dev_dependencies:
   json_serializable: ^6.8.0
   riverpod_generator: ^2.6.3
   mockito: ^5.4.6
+  # Already resolved transitively via path_provider; declared directly so
+  # document_share_service_test.dart's fake PathProviderPlatform is not a
+  # reference to an undeclared package. No new package is pulled in.
+  path_provider_platform_interface: ^2.1.3
   flutter_launcher_icons: ^0.14.1
 
 # Android launcher icon generation (AURA brand identity).
