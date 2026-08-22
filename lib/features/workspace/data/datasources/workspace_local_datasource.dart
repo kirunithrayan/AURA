@@ -176,28 +176,88 @@ class WorkspaceLocalDataSourceImpl implements WorkspaceLocalDataSource {
     }
   }
 
+  // File-scoped sibling of [deleteWorkspace]: removes a SINGLE file and only
+  // the rows that file strictly owns, in one transaction. Every delete is keyed
+  // on the file id (embeddings/ai_jobs/scheduler_queue/graph_layouts by
+  // file_id, document_interactions by document_id), never on workspace_id, so a
+  // file's removal can never touch its siblings. As with deleteWorkspace,
+  // `PRAGMA foreign_keys` is off, so these explicit deletes are what actually
+  // clean up; declared cascades never fire.
+  //
+  // Knowledge graph: only the document's OWN node and its edges are removed. A
+  // document node's id equals the file id (1:1 owned by this file), so it is
+  // deleted by `id = fileId`. Concept nodes (ids like `concept:...`) are shared
+  // across documents and MUST survive — this never deletes knowledge_nodes by
+  // document_id, which would corrupt those shared concepts. conversation_summaries
+  // and search_history are workspace-scoped, not file-scoped, and are left intact.
+  // search_indexes has no FK and is cleaned at the repository layer via
+  // SearchIndexService, exactly as deleteWorkspace does.
   @override
   Future<void> removeFile(String id) async {
     try {
       final db = await dbHelper.database;
-      
-      final fileResult = await db.query(DbConstants.workspaceFilesTable, where: 'id = ?', whereArgs: [id]);
-      if (fileResult.isNotEmpty) {
-        final file = WorkspaceFileModel.fromMap(fileResult.first);
-        
-        await db.rawUpdate('''
-          UPDATE ${DbConstants.workspacesTable} 
-          SET file_count = file_count - 1, 
-              total_size = total_size - ? 
-          WHERE id = ?
-        ''', [file.size ?? 0, file.workspaceId]);
-      }
+      await db.transaction((txn) async {
+        final fileRows = await txn.query(
+          DbConstants.workspaceFilesTable,
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        // If the row is already gone, the deletes below simply no-op; only the
+        // counter update is skipped (there is no parent workspace to adjust).
+        // Read only the two columns the counter update needs rather than parsing
+        // a full model: removeFile must not fail because some unrelated column
+        // (e.g. a null timestamp, which the schema permits) can't be cast.
+        final Map<String, Object?>? fileRow =
+            fileRows.isEmpty ? null : fileRows.first;
+        final String? fileWorkspaceId = fileRow?['workspace_id'] as String?;
+        final int fileSize = (fileRow?['size'] as int?) ?? 0;
 
-      await db.delete(
-        DbConstants.workspaceFilesTable,
-        where: 'id = ?',
-        whereArgs: [id],
-      );
+        await txn.delete(DbConstants.embeddingsTable,
+            where: 'file_id = ?', whereArgs: [id]);
+        await txn.delete(DbConstants.documentInteractionsTable,
+            where: 'document_id = ?', whereArgs: [id]);
+        await txn.delete(DbConstants.aiJobsTable,
+            where: 'file_id = ?', whereArgs: [id]);
+        await txn.delete(DbConstants.schedulerQueueTable,
+            where: 'file_id = ?', whereArgs: [id]);
+        // graph_layouts is deleted file-scoped ONLY; deleting by workspace_id
+        // here would wipe layouts belonging to the file's siblings.
+        await txn.delete(DbConstants.graphLayoutsTable,
+            where: 'file_id = ?', whereArgs: [id]);
+
+        // Declared ON DELETE SET NULL: nullify rather than delete, keeping the
+        // interaction record while dropping the dangling reference.
+        await txn.update(
+          DbConstants.searchInteractionsTable,
+          {'clicked_document_id': null},
+          where: 'clicked_document_id = ?',
+          whereArgs: [id],
+        );
+
+        // knowledge_edges references node ids; the document node's id == file id,
+        // so its edges are the ones with this id as an endpoint. Delete edges
+        // before the node. Then delete ONLY the strictly-owned document node
+        // (id == file id); shared concept nodes are never matched by this.
+        await txn.delete(
+          DbConstants.knowledgeEdgesTable,
+          where: 'source_id = ? OR target_id = ?',
+          whereArgs: [id, id],
+        );
+        await txn.delete(DbConstants.knowledgeNodesTable,
+            where: 'id = ?', whereArgs: [id]);
+
+        if (fileWorkspaceId != null) {
+          await txn.rawUpdate(
+            'UPDATE ${DbConstants.workspacesTable} '
+            'SET file_count = file_count - 1, total_size = total_size - ? '
+            'WHERE id = ?',
+            [fileSize, fileWorkspaceId],
+          );
+        }
+
+        await txn.delete(DbConstants.workspaceFilesTable,
+            where: 'id = ?', whereArgs: [id]);
+      });
     } catch (e) {
       throw DatabaseException('Failed to remove file: $e');
     }

@@ -6,6 +6,7 @@ import '../../domain/usecases/get_workspace_files.dart';
 import '../../domain/usecases/pin_document.dart';
 import '../../domain/usecases/unpin_document.dart';
 import '../../domain/usecases/import_files.dart';
+import '../../domain/usecases/remove_file.dart';
 import '../../../../services/file_service.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../search/domain/services/batch_indexing_service.dart';
@@ -47,6 +48,7 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
   late final PinDocument _pinDocument;
   late final UnpinDocument _unpinDocument;
   late final ImportFile _importFile;
+  late final RemoveFile _removeFile;
   late final FileService _fileService;
 
   @override
@@ -56,6 +58,7 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
     _pinDocument = PinDocument(repo);
     _unpinDocument = UnpinDocument(repo);
     _importFile = ImportFile(repo);
+    _removeFile = RemoveFile(repo);
     _fileService = ref.watch(fileServiceProvider);
 
     return _fetchData(workspaceId);
@@ -133,6 +136,18 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
     if (result.isRight()) {
       state = AsyncValue.data(await _fetchData(workspaceId));
     }
+  }
+
+  Future<void> removeFile(String fileId) async {
+    if (!state.hasValue || state.value == null) return;
+    final result = await _removeFile(fileId);
+    await result.fold(
+      (failure) async => throw Exception(failure.message),
+      (_) async {
+        // Re-fetch so the workspace stays open with the file gone; do not pop.
+        state = AsyncValue.data(await _fetchData(workspaceId));
+      },
+    );
   }
 
   Future<void> importFiles() async {

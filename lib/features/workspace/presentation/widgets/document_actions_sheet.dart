@@ -8,13 +8,16 @@ import '../../../../core/widgets/aura_sheet.dart';
 /// control.
 ///
 /// Composed at the screen layer from committed components; it introduces no new
-/// component and no new action. Pin/unpin is the only action: the Design System
-/// defers AI Insights from v1.0, so the legacy inline insights action is gone.
+/// component. The Design System defers AI Insights from v1.0, so the legacy
+/// inline insights action is gone. Two actions remain: Pin/unpin, and a
+/// destructive Delete that closes the sheet and hands off to [onDelete] (which
+/// the screen wires to the delete-confirmation flow).
 Future<void> showDocumentActionsSheet({
   required BuildContext context,
   required String fileName,
   required bool isPinned,
   required VoidCallback onTogglePin,
+  required VoidCallback onDelete,
 }) =>
     AuraSheet.show<void>(
       context: context,
@@ -22,14 +25,29 @@ Future<void> showDocumentActionsSheet({
       variant: AuraSheetVariant.metadata,
       child: Padding(
         padding: const EdgeInsets.only(bottom: AuraSpacing.componentGap),
-        child: AuraButton(
-          label: isPinned ? 'Unpin' : 'Pin',
-          variant: AuraButtonVariant.text,
-          icon: isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-          onPressed: () {
-            Navigator.of(context).pop();
-            onTogglePin();
-          },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            AuraButton(
+              label: isPinned ? 'Unpin' : 'Pin',
+              variant: AuraButtonVariant.text,
+              icon: isPinned ? Icons.push_pin : Icons.push_pin_outlined,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onTogglePin();
+              },
+            ),
+            AuraButton(
+              label: 'Delete',
+              variant: AuraButtonVariant.text,
+              icon: Icons.delete_outline,
+              onPressed: () {
+                Navigator.of(context).pop();
+                onDelete();
+              },
+            ),
+          ],
         ),
       ),
     );

@@ -16,6 +16,7 @@ import '../../../../core/widgets/aura_sheet.dart';
 import '../../domain/entities/workspace_file.dart';
 import '../viewmodels/workspace_detail_viewmodel.dart';
 import '../widgets/document_actions_sheet.dart';
+import '../widgets/delete_confirmation_dialog.dart';
 import '../../../ai/personalization/presentation/widgets/recommendations_section.dart';
 import '../../../home/presentation/adapters/library_adapters.dart';
 
@@ -66,6 +67,39 @@ class WorkspaceDetailScreen extends ConsumerWidget {
         ),
       );
 
+  // Single-document deletion. Unlike workspace deletion (which pops back to the
+  // library), this keeps the workspace screen open — the ViewModel re-fetches so
+  // the tile disappears in place.
+  Future<void> _confirmDocumentDelete(
+    BuildContext context,
+    WorkspaceDetailViewModel notifier,
+    WorkspaceFile file,
+  ) =>
+      showDialog<void>(
+        context: context,
+        builder: (_) => DeleteConfirmationDialog(
+          title: 'Delete document?',
+          message: "This permanently deletes '${file.fileName}'. "
+              'This cannot be undone.',
+          onConfirm: () => _performDocumentDelete(context, notifier, file),
+        ),
+      );
+
+  Future<void> _performDocumentDelete(
+    BuildContext context,
+    WorkspaceDetailViewModel notifier,
+    WorkspaceFile file,
+  ) async {
+    try {
+      await notifier.removeFile(file.id);
+      if (!context.mounted) return;
+      context.showSnackBar("'${file.fileName}' deleted.");
+    } catch (_) {
+      if (!context.mounted) return;
+      context.showSnackBar('Failed to delete document. Please try again.', isError: true);
+    }
+  }
+
   Widget _documentTile(
     BuildContext context,
     WorkspaceDetailViewModel notifier,
@@ -86,6 +120,7 @@ class WorkspaceDetailScreen extends ConsumerWidget {
           onTogglePin: () => isPinned
               ? notifier.unpinFile(file.id)
               : notifier.pinFile(file.id),
+          onDelete: () => _confirmDocumentDelete(context, notifier, file),
         ),
       );
 

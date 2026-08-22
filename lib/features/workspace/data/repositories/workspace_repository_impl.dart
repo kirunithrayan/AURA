@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/utils/app_logger.dart';
 import '../../domain/entities/workspace.dart';
 import '../../domain/entities/workspace_file.dart';
 import '../../domain/repositories/workspace_repository.dart';
@@ -11,6 +12,8 @@ import '../models/workspace_file_model.dart';
 
 import '../../../../services/file_service.dart';
 import '../../../../services/thumbnail_service.dart';
+import '../../../search/data/indexing/search_index_service.dart';
+import '../../../search/domain/cache/abstract_search_cache.dart';
 
 class WorkspaceRepositoryImpl implements WorkspaceRepository {
 
@@ -18,10 +21,14 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     required this.localDataSource,
     required this.fileService,
     required this.thumbnailService,
+    required this.searchIndexService,
+    required this.searchCache,
   });
   final WorkspaceLocalDataSource localDataSource;
   final FileService fileService;
   final ThumbnailService thumbnailService;
+  final SearchIndexService searchIndexService;
+  final AbstractSearchCache searchCache;
 
   @override
   Future<Either<Failure, List<Workspace>>> getWorkspaces() async {
@@ -145,12 +152,51 @@ class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
   }
 
+  /// Deletes a single file and everything it owns.
+  ///
+  /// The file is captured before deletion because once the workspace_files row
+  /// is gone there is no way to recover which physical file and search index
+  /// belonged to it. The database transaction inside [localDataSource.removeFile]
+  /// is the single source of truth for success: if it throws, this returns a
+  /// Failure and touches nothing else.
+  ///
+  /// Search-index removal and physical file deletion happen only after that
+  /// transaction has committed, and are best-effort from there — a missing file
+  /// or an index-cleanup error must not undo an already-committed deletion, so
+  /// each is caught and logged rather than propagated. Only [filePath] (the
+  /// AURA-owned copy) is ever deleted; [originalPath] points at the user's
+  /// source file outside app storage and must never be removed.
   @override
   Future<Either<Failure, void>> removeFile(String fileId) async {
     try {
-      // Remove from DB (Workspace stats are updated automatically inside localDataSource)
+      final file = await localDataSource.getFileById(fileId);
+
       await localDataSource.removeFile(fileId);
-      // Note: In production we would also call FileService.deleteFile(file.filePath);
+
+      try {
+        await searchIndexService.removeIndex(fileId);
+      } catch (e, s) {
+        AppLogger.error(
+          'removeIndex failed while cleaning up deleted file $fileId',
+          e,
+          s,
+          LogCategory.workspace,
+        );
+      }
+
+      try {
+        await fileService.deleteFile(file.filePath);
+      } catch (e, s) {
+        AppLogger.error(
+          'deleteFile failed while cleaning up deleted file $fileId',
+          e,
+          s,
+          LogCategory.workspace,
+        );
+      }
+
+      searchCache.invalidate();
+
       return const Right(null);
     } on DatabaseException catch (e) {
       return Left(DatabaseFailure(e.message));

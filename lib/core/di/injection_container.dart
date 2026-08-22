@@ -268,6 +268,8 @@ Future<void> initInjection() async {
       localDataSource: sl(),
       fileService: sl(),
       thumbnailService: sl(),
+      searchIndexService: sl(),
+      searchCache: sl(),
     ),
   );
 
