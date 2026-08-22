@@ -98,6 +98,12 @@ dev_dependencies:
   # document_share_service_test.dart's fake PathProviderPlatform is not a
   # reference to an undeclared package. No new package is pulled in.
   path_provider_platform_interface: ^2.1.3
+  # Host-side (desktop) SQLite driver for real-database integration tests.
+  # Test-only; the app ships on sqflite_sqlcipher. Lets the multi-table
+  # workspace-deletion transaction run against a real in-memory SQLite DB
+  # instead of a fake datasource. See test/features/workspace/
+  # workspace_deletion_datasource_test.dart.
+  sqflite_common_ffi: ^2.3.6
   flutter_launcher_icons: ^0.14.1
 
 # Android launcher icon generation (AURA brand identity).
