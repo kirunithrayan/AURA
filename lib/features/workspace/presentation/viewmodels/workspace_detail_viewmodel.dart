@@ -159,7 +159,7 @@ class WorkspaceDetailViewModel extends _$WorkspaceDetailViewModel {
     try {
       final pickedFiles = await _fileService.pickFiles(
         allowMultiple: true,
-        allowedExtensions: ['pdf', 'doc', 'docx', 'txt', 'png', 'jpg', 'jpeg'],
+        allowedExtensions: ['pdf', 'doc', 'docx', 'txt', 'png', 'jpg', 'jpeg', 'webp'],
       );
       
       if (pickedFiles.isEmpty) {
